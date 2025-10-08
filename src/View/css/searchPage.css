@@ -1,0 +1,415 @@
+/*------------------- Search Results --------------------*/
+/* Search Results Container */
+.search-container {
+    padding: 1rem;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+/* Search Result Card */
+.search-card {
+    background: white;
+    border-radius: 20px;
+    padding: 0.8rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    z-index: 500;
+    max-width: 280px;
+    margin: 0 auto;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.search-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.search-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.search-card h2 {
+    color: #2a1b3d;
+    margin: 0.8rem 0;
+    font-size: 1rem;
+    line-height: 1.2;
+    height: 2.4em;
+    overflow: hidden;
+}
+
+.search-card p {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 4.0em;
+}
+
+/* Search Card Price Tag */
+.search-price-tag {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: auto;
+    padding-top: 0.5rem;
+}
+
+.search-original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 0.9rem;
+}
+
+.search-promo-price {
+    color: #ff4444;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Search Discount Label */
+.search-discount-label {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 15px;
+    font-family: 'Irish Grover', cursive;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+/* Search Loading and Error States */
+.search-loading, .search-error {
+    color: #FEC564;
+    text-align: center;
+    padding: 2rem;
+    width: 100%;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.pagination-btn {
+    background-color: #FFB536;
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: 'Irish Grover', cursive;
+    font-size: 1.2rem;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background-color: #ff9900c7;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.page-number {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: 'Irish Grover', cursive;
+    font-size: 1.2rem;
+    color: #ffffff;
+    background-color: transparent;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.page-number:hover {
+    border-color: #FFB536;
+}
+
+.page-number.active {
+    background-color: #FFB536;
+    color: #ffffff;
+}
+
+/* All Products Page Styles */
+.all-products-container {
+    padding: 1rem;
+    margin: 0 auto;
+    max-width: 1400px;
+}
+
+.categories-quick-links {
+    margin-top: 3rem;
+}
+
+.category-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.category-card h3 {
+    color: #FEC564;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.category-card:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+    border-color: #FEC564;
+}
+
+.category-card.active {
+    background: rgba(254, 197, 100, 0.2);
+    border-color: #FEC564;
+    box-shadow: 0 0 15px rgba(254, 197, 100, 0.5);
+}
+/* All Products Page Styles End */
+
+/*-------------------- Responsive -------------------------*/
+
+/* breakpoint1 */
+@media screen and (max-width: 1024px) {
+    .search-container {
+        padding: 0.8rem;
+    }
+
+    .search-card {
+        max-width: 250px;
+    }
+
+    .search-card img {
+        height: 160px;
+    }
+
+    .search-card h2 {
+        font-size: 0.95rem;
+    }
+
+    .search-discount-label {
+        font-size: 1.1rem;
+    }
+
+    .pagination-btn {
+        padding: 0.4rem 1.2rem;
+        font-size: 1.1rem;
+    }
+
+    .page-number {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+}
+
+/* breakpoint2 */
+@media screen and (max-width: 768px) {
+    .search-container {
+        padding: 0.6rem;
+    }
+
+    .search-card {
+        max-width: 220px;
+        padding: 0.7rem;
+    }
+
+    .search-card img {
+        height: 140px;
+    }
+
+    .search-card h2 {
+        font-size: 0.9rem;
+        margin: 0.6rem 0;
+    }
+
+    .search-card p {
+        font-size: 0.8rem;
+    }
+
+    .search-discount-label {
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    .pagination-container {
+        gap: 0.8rem;
+    }
+
+    .pagination-btn {
+        padding: 0.3rem 1rem;
+        font-size: 1rem;
+    }
+
+    .page-number {
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
+    }
+
+    /* For All Product page */
+    .category-card h3 {
+        font-size: 1rem;
+    }
+}
+
+/* breakpoint3 */
+@media screen and (max-width: 440px) {
+    .search-container {
+        padding: 0.5rem;
+    }
+
+    .search-card {
+        max-width: 180px;
+        padding: 0.6rem;
+    }
+
+    .search-card img {
+        height: 120px;
+    }
+
+    .search-card h2 {
+        font-size: 0.85rem;
+        margin: 0.5rem 0;
+        height: 2.2em;
+    }
+
+    .search-card p {
+        font-size: 0.75rem;
+        height: 3.6em;
+    }
+
+    .search-price-tag {
+        gap: 0.5rem;
+    }
+
+    .search-original-price {
+        font-size: 0.8rem;
+    }
+
+    .search-promo-price {
+        font-size: 0.9rem;
+    }
+
+    .search-discount-label {
+        font-size: 0.9rem;
+        padding: 0.3rem 0.5rem;
+        top: -5px;
+        right: -5px;
+    }
+
+    .pagination-container {
+        gap: 0.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .pagination-btn {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .page-number {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    /* For All Product page */
+    .categories-quick-links .row {
+        gap: 0.5rem;
+    }
+    
+    .category-card {
+        padding: 0.7rem;
+    }
+    
+    .category-card h3 {
+        font-size: 0.9rem;
+    }
+}
+
+/* breakpoint4 */
+@media screen and (max-width: 375px) {
+    .search-container {
+        padding: 0.4rem;
+    }
+
+    .search-card {
+        max-width: 160px;
+        padding: 0.5rem;
+    }
+
+    .search-card img {
+        height: 110px;
+    }
+
+    .search-card h2 {
+        font-size: 0.8rem;
+        height: 2em;
+    }
+
+    .search-card p {
+        font-size: 0.7rem;
+        height: 3.2em;
+    }
+
+    .search-price-tag {
+        padding-top: 0.3rem;
+    }
+
+    .search-original-price {
+        font-size: 0.75rem;
+    }
+
+    .search-promo-price {
+        font-size: 0.85rem;
+    }
+
+    .pagination-btn {
+        padding: 0.25rem 0.7rem;
+        font-size: 0.85rem;
+    }
+
+    .page-number {
+        width: 25px;
+        height: 25px;
+        font-size: 0.85rem;
+    }
+}

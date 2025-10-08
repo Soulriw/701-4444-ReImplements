@@ -1,0 +1,12 @@
+Members for 953262 (Frontend)
+1.ShunShung Julalak Khamluerit 662115005
+2.pongpiphat-k Pongpiphat Kalasuk 662115032
+3.Soulriw Ratchanon Danintha 662115040
+4.jaytakuz Watcharapong Wanna 662115047
+
+Members for 953234 (DevOp)
+1.ShunShung Julalak Khamluerit 662115005 702
+2.pongpiphat-k Pongpiphat Kalasuk 662115032 702
+3.Soulriw Ratchanon Danintha 662115040 702
+4.jaytakuz Watcharapong Wanna 662115047 702
+

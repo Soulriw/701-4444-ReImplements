@@ -1,0 +1,141 @@
+<!-- Main Navigation Bar -->
+<nav class="navbar navbar-expand-lg bg-black fixed-top">
+
+  <!-- Left Side: Logo and Search -->
+  <div class="navcon">
+
+    <!-- Logo with Toggle Navigation Function -->
+    <div class="navbar-brand" onclick="toggleNav()">
+      <img src="/src/Model/image/navImg/logo.png" alt="Logo" />
+    </div>
+
+    <!-- Search Form -->
+    <form class="search" action="/searchPage" method="GET">
+      <input type="text" class="search-bar" name="q" placeholder="Search..." />
+      <button type="submit">
+        <img src="/src/Model/image/navImg/search.png" alt="" />
+      </button>
+    </form>
+  </div>
+
+  <!-- Cart Icon with Counter -->
+  <a href="/cart" class="cart">
+    <img src="/src/Model/image/navImg/cart.png" alt="" />
+    <span class="cart-counter" id="cartCounter"></span>
+  </a>
+
+  <!-- Navigation Menu -->
+  <div class="nav hidden" id="nav">
+    <ul>
+      <% if (locals.user) { %>
+
+        <!-- Authenticated User Navigation -->
+        <!-- Username Display -->
+        <p class="usernameList"><img src="/src/Model/image/login/userwhite.png" alt="username"
+            class="username-img-nav">&nbsp;<%= truncateUsername(user.username) %>
+        </p>
+
+        <!-- Main Navigation Links -->
+        <a href="/" class="nav-item home">
+          <li>Home</li>
+        </a>
+        <a href="/allProduct" class="nav-item home">
+          <li>All Product</li>
+        </a>
+
+        <!-- Categories Dropdown Menu -->
+        <div class="dropdown-container">
+          <a href="#" class="nav-item dropdown-toggle" onclick="toggleCategoriesDropdown(event)">
+            <li>Categories <i class="fas fa-caret-down"></i></li>
+          </a>
+          <div id="categoriesDropdown" class="categories-dropdown">
+            <% if (categories && categories.length> 0) { %>
+
+              <!-- Dynamic Category List -->
+              <% categories.forEach(category=> { %>
+                <a href="/category/<%= category.categoryID %>" class="dropdown-item">
+                  <li>
+                    <%= category.categoryName %>
+                  </li>
+                </a>
+                <% }); %>
+                  <% } else { %>
+
+                    <!-- Fallback for No Categories -->
+                    <a href="#" class="dropdown-item">
+                      <li>No categories found</li>
+                    </a>
+                    <% } %>
+          </div>
+        </div>
+
+        <!-- Additional Links -->
+        <a href="/contact" class="nav-item home">
+          <li>Contact</li>
+        </a>
+        <a href="/logout" class="nav-item logout">
+          <li>Logout</li>
+        </a>
+        <% } else { %>
+
+          <!-- Guest User Navigation -->
+          <a href="/login" class="nav-item login">
+            <li>Login</li>
+          </a>
+          <a href="/register" class="nav-item register">
+            <li>Register</li>
+          </a>
+          <% } %>
+    </ul>
+  </div>
+</nav>
+
+<!-- Cart Counter Management -->
+<script>
+
+  // Function to update cart count from the server
+  async function updateCartCount() {
+    try {
+
+      // Fetch current cart count from API
+      const response = await fetch('/api/cart/count');
+      const data = await response.json();
+
+      // Update the cart counter UI
+      const cartCounter = document.getElementById('cartCounter');
+      if (cartCounter) {
+        if (data.count > 0) {
+          cartCounter.textContent = data.count;
+          cartCounter.style.display = 'flex';
+        } else {
+          cartCounter.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching cart count:', error);
+    }
+  }
+
+  // Make the function globally available for other components
+  window.refreshCartCount = updateCartCount;
+
+  //Initialize cart counter on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    updateCartCount();
+
+    // Set up polling to refresh the cart count periodically
+    setInterval(updateCartCount, 30000);
+  });
+
+  // Listen for cart updates from other scripts
+  document.addEventListener('cartUpdated', function () {
+    updateCartCount();
+  });
+
+  // Listen for storage events (for cross-tab synchronization)
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'cartUpdated') {
+      updateCartCount();
+    }
+  });
+</script>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/src/Model/image/navImg/logo.png" />
+
+    <title>Cart</title>
+
+    <!--- Fonts --->
+    <link href="https://fonts.googleapis.com/css?family=Irish Grover" rel="stylesheet" />
+
+    <!--- Bootstrap --->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous" />
+
+    <!--- CSS --->
+    <link rel="stylesheet" href="/src/View/css/homePage.css" />
+    <link rel="stylesheet" href="/src/View/css/navBar.css" />
+    <link rel="stylesheet" href="/src/View/css/cart.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!--- JavaScript --->
+    <script src="/src/Controller/homeScript.js" defer></script>
+    <script src="/src/Controller/navBarScript.js" defer></script>
+    <script src="/src/Controller/cartScript.js" defer></script>
+</head>
+
+<body>
+    <!--- NavBar --->
+    <nav>
+        <%- include('navBar');%>
+    </nav>
+    <!--- NavBar End --->
+
+    <!--- star --->
+    <div class="stars"></div>
+
+    <!--- Cart Section --->
+    <div class="cart-container">
+        <h1 class="cart-title">Cart</h1>
+
+        <div class="divider"></div>
+
+        <!-- Cart Items List -->
+        <div id="cart-items-container">
+            <% if (cartItems && cartItems.length> 0) { %>
+                <% cartItems.forEach(item=> { %>
+
+                    <!-- Cart Item -->
+                    <div class="cart-item" data-cart-id="<%= item.cartID %>" data-book-id="<%= item.cartBookID %>">
+
+                        <!-- Checkbox for item selection -->
+                        <div class="item-checkbox">
+                            <input type="checkbox" class="item-select" />
+                        </div>
+
+                        <!-- Item information section -->
+                        <div class="item-info">
+                            <!-- Book image -->
+                            <div class="item-image">
+                                <img src="/src/Model/image/books/<%= item.cartBookID %>.jpg" alt="<%= item.bookName %>"
+                                    onerror="this.src='/src/Model/image/books/default.jpg'" />
+                            </div>
+
+                            <!-- Book details -->
+                            <div class="item-details">
+                                <h2 class="item-name">
+                                    <%= item.bookName %>
+                                </h2>
+                                <!-- Price display with promotion handling -->
+                                <p class="item-price">
+                                    <% if (item.isPromotionBook && item.hasDiscount) { %>
+
+                                        <!-- Promotion book with discount -->
+                                        <span class="original-price">
+                                            <%= item.price %>
+                                        </span>
+                                        <span class="promo-price">
+                                            <%= item.proPrice %> Galleon
+                                        </span>
+                                        <% } else { %>
+
+                                            <!-- Regular book or promotion without discount -->
+                                            <span class="promo-price">
+                                                <%= item.price %> Galleon
+                                            </span>
+                                            <% } %>
+                                </p>
+
+                                <!-- Enchantment details if any -->
+                                <% if (item.enchantment && item.enchantment.length> 0) { %>
+                                    <p class="item-enchantment">Enchantments: <%= item.enchantment %>
+                                    </p>
+                                    <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Quantity display -->
+                        <div class="item-quantity">
+                            <span>x <%= item.quantity %></span>
+                        </div>
+
+                        <!-- Action buttons -->
+                        <div class="item-actions">
+                            <button class="delete-btn">Delete</button>
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <% }); %>
+
+                        <!-- Cart Actions -->
+                        <div class="cart-actions">
+                            <div class="select-all-container">
+                                <input type="checkbox" id="select-all" />
+                                <label for="select-all">Select All</label>
+                            </div>
+                            <button id="continue-shopping">Continue shopping</button>
+                        </div>
+
+                        <!-- Cart Summary -->
+                        <div class="cart-summary">
+                            <div class="total-container">
+                                <h2>Total Payment <span id="total-amount">0 Galleon</span></h2>
+                            </div>
+                            <button id="purchase-btn">Purchase</button>
+                        </div>
+                        <% } else { %>
+
+                            <!-- Empty Cart Display -->
+                            <div class="empty-cart">
+                                <h2>Your cart is empty</h2>
+                                <p>Add some magical books to your cart!</p>
+                                <button id="continue-shopping" class="continue-shopping-btn">Continue shopping</button>
+                            </div>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Purchase Confirmation Popup -->
+    <div class="purchase-popup-overlay" id="purchasePopup">
+        <div class="purchase-popup">
+            <button class="popup-close" id="closePopup">✕</button>
+            <h2 class="popup-title">Purchase Complete</h2>
+            <p class="popup-message">Thank you for your payment</p>
+            <button class="return-home-btn" id="returnHomeBtn">Return to Home</button>
+        </div>
+    </div>
+
+    <!-- Purchase Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const purchaseBtn = document.getElementById('purchase-btn');
+            const purchasePopup = document.getElementById('purchasePopup');
+            const closePopupBtn = document.getElementById('closePopup');
+            const returnHomeBtn = document.getElementById('returnHomeBtn');
+
+            if (purchaseBtn) {
+                // Original click handler for the purchase button
+                const originalClickHandler = purchaseBtn.onclick;
+
+                // Replace with new handler that shows popup after successful purchase
+                purchaseBtn.onclick = async function (event) {
+                    // Get all selected items
+                    const selectedItems = document.querySelectorAll('.item-select:checked');
+
+                    if (selectedItems.length === 0) {
+                        alert('Please select at least one item to purchase');
+                        return;
+                    }
+
+                    // Extract cart IDs from selected items
+                    const selectedItemIds = Array.from(selectedItems).map(checkbox => {
+                        const cartItem = checkbox.closest('.cart-item');
+                        return cartItem.dataset.cartId;
+                    });
+
+                    try {
+                        // Show loading state
+                        purchaseBtn.disabled = true;
+                        purchaseBtn.textContent = 'Processing...';
+
+                        // Send checkout request to API
+                        const response = await fetch('/api/checkout', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                cartIds: selectedItemIds
+                            })
+                        });
+
+                        // Handle response
+                        if (response.ok) {
+                            // Show the purchase confirmation popup
+                            purchasePopup.classList.add('show');
+                        } else {
+                            const data = await response.json();
+                            alert(`Purchase failed: ${data.error}`);
+                            purchaseBtn.disabled = false;
+                            purchaseBtn.textContent = 'Purchase';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Something went wrong. Please try again later.');
+                        purchaseBtn.disabled = false;
+                        purchaseBtn.textContent = 'Purchase';
+                    }
+                };
+            }
+
+            // Close popup when X is clicked
+            if (closePopupBtn) {
+                closePopupBtn.addEventListener('click', function () {
+                    purchasePopup.classList.remove('show');
+                    // Reload to update cart
+                    location.reload();
+                });
+            }
+
+            // Return to home page when button is clicked
+            if (returnHomeBtn) {
+                returnHomeBtn.addEventListener('click', function () {
+                    window.location.href = '/';
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+name: Bug Report
+description: Report an issue with the application
+labels: [bug]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Bug Report
+        Please provide the details below to help us resolve the issue quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: "What happened? Include any relevant details."
+      placeholder: "Describe the issue you encountered..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: Expected vs Actual Results
+      placeholder: |
+        Expected:
+        [What should have happened]
+
+        Actual:
+        [What actually happened]
+    validations:
+      required: true
+      
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: "If applicable, add screenshots to help explain your problem."
+      placeholder: "Paste, drop, or click to add files"
+    validations:
+      required: false
+      
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verification
+      options:
+        - label: "I've checked for existing issues and provided all relevant information"
+          required: true
