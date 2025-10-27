@@ -1,57 +1,73 @@
 <template>
-  <div class="login-page">
-    <div class="stars" :style="starsStyle"></div>
-    <div class="login-container">
-      <div class="login-form">
-        <div class="logo-container">
-          <img src="/src/model/image/login/logofull.png" alt="Logo" class="logo" />
+  <!-- Login page with purple background, centered container -->
+  <div class="min-h-screen flex flex-col justify-center items-center bg-[#432667] m-0 pb-0">
+    <!-- Main container with flex column layout -->
+    <div class="flex flex-col items-center w-[99%] flex-grow justify-center">
+      <!-- Title with golden color and styling - responsive font size -->
+      <h1 class="text-[#FEC564] text-4xl max-[440px]:text-3xl tracking-wide mb-2.5 pt-9 font-['Irish_Grover']">
+        Welcome back
+      </h1>
+      
+      <!-- Divider line - responsive width -->
+      <div class="w-1/2 max-[440px]:w-4/5 h-[1.5px] bg-[#FEC564] my-2.5 clear-both"></div>
+      
+      <!-- Login box container - responsive layout changes on mobile -->
+      <div class="flex max-[440px]:flex-col w-full max-w-[670px] max-[440px]:max-w-[85%] h-[460px] max-[440px]:h-[500px] max-[440px]:bg-white rounded-[25px] border-3 border-white shadow-lg mt-4 overflow-hidden">
+        <!-- Logo section on the left - hidden on mobile -->
+        <div class="bg-black w-[45%] max-[440px]:w-0 max-[440px]:h-0 flex flex-col justify-center items-center overflow-hidden">
+          <div class="flex flex-col items-center justify-center text-white h-full w-full">
+            <!-- Logo image - hidden on mobile, fills available space with padding -->
+            <img src="/src/model/image/login/logofull.png" alt="Logo" class="h-full w-full object-contain max-[440px]:hidden" />
+          </div>
         </div>
         
-        <h2 class="login-title">Welcome Back</h2>
-        
-        <form @submit.prevent="handleLogin" class="form">
-          <div class="form-group">
-            <div class="input-container">
-              <img src="/src/model/image/login/username.png" alt="Username" class="input-icon" />
+        <!-- Form section on the right - full width on mobile -->
+        <div class="bg-white w-[55%] max-[440px]:w-[88%] h-full p-10 max-[440px]:p-0 max-[440px]:mt-[60px] max-[440px]:ml-5 flex flex-col justify-center">
+          <form @submit.prevent="handleLogin">
+            <!-- Username input group - responsive width and spacing on mobile -->
+            <div class="relative mb-[65px] max-[440px]:mb-[60px] max-[440px]:w-4/5 max-[440px]:ml-[30px] flex items-center border-b border-gray-300 pb-1.5">
+              <img src="/src/model/image/login/username.png" alt="Username" class="w-[35px] h-[35px]" />
               <input 
                 type="text" 
                 v-model="form.username" 
                 placeholder="Username" 
-                class="form-input"
+                class="w-full border-none outline-none py-2 text-base ml-2.5"
                 required
               />
             </div>
-          </div>
-          
-          <div class="form-group">
-            <div class="input-container">
-              <img src="/src/model/image/login/password.png" alt="Password" class="input-icon" />
+            
+            <!-- Password input group - responsive width and spacing on mobile -->
+            <div class="relative mb-5 max-[440px]:w-4/5 max-[440px]:ml-[30px] -mt-6 flex items-center border-b border-gray-300 pb-1.5">
+              <img src="/src/model/image/login/password.png" alt="Password" class="w-[35px] h-[35px]" />
               <input 
                 type="password" 
                 v-model="form.password" 
                 placeholder="Password" 
-                class="form-input"
+                class="w-full border-none outline-none py-2 text-base ml-2.5"
                 required
               />
             </div>
-          </div>
+            
+            <!-- Error message display -->
+            <div v-if="errorMessage" class="bg-red-100 text-red-700 p-2.5 mb-4 rounded-md text-center">
+              {{ errorMessage }}
+            </div>
+            
+            <!-- Login button - responsive sizing on mobile -->
+            <button 
+              type="submit" 
+              class="bg-gray-200 text-gray-800 border-none rounded-[25px] py-3 max-[440px]:py-2.5 max-[440px]:mb-5 w-[55%] max-[440px]:w-[56%] text-base max-[440px]:text-xl font-black cursor-pointer mt-10 max-[440px]:mt-5 transition-colors duration-300 mx-auto block hover:bg-gray-300 disabled:opacity-60 disabled:cursor-not-allowed"
+              :disabled="loading"
+            >
+              <span v-if="loading">LOGGING IN...</span>
+              <span v-else>LOG IN</span>
+            </button>
+          </form>
           
-          <div v-if="errorMessage" class="error-message">
-            {{ errorMessage }}
+          <!-- Register link section - responsive text size on mobile -->
+          <div class="text-center mt-8 max-[440px]:mt-5 max-[440px]:-ml-1.5">
+            <p class="text-gray-500 text-base max-[440px]:text-2xl mb-1">do not have an account? <router-link to="/register" class="text-[#FEC564] text-base max-[440px]:text-2xl hover:underline font-bold">Register now</router-link></p>
           </div>
-          
-          <button 
-            type="submit" 
-            class="login-btn"
-            :disabled="loading"
-          >
-            <span v-if="loading">Logging in...</span>
-            <span v-else>Login</span>
-          </button>
-        </form>
-        
-        <div class="register-link">
-          <p>Don't have an account? <router-link to="/register">Register here</router-link></p>
         </div>
       </div>
     </div>
@@ -69,26 +85,17 @@ export default {
     const router = useRouter()
     const authStore = useAuthStore()
     
+    // Form data with username and password
     const form = ref({
       username: '',
       password: ''
     })
+    // Loading state for button disabled state
     const loading = ref(false)
+    // Error message for displaying login errors
     const errorMessage = ref('')
 
-    const starsStyle = {
-      backgroundImage: `
-        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-        radial-gradient(1px 1px at 130px 80px, #fff, transparent),
-        radial-gradient(2px 2px at 160px 30px, #fff, transparent)
-      `,
-      backgroundRepeat: 'repeat',
-      backgroundSize: '200px 100px',
-      animation: 'sparkle 20s linear infinite'
-    }
-
+    // Handle login form submission
     const handleLogin = async () => {
       loading.value = true
       errorMessage.value = ''
@@ -117,180 +124,17 @@ export default {
       form,
       loading,
       errorMessage,
-      handleLogin,
-      starsStyle
+      handleLogin
     }
   }
 }
 </script>
 
 <style scoped>
-.login-page {
-  min-height: calc(100vh - 80px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-  position: relative;
-  padding-top: 80px;
-}
-
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.login-container {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.login-form {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.logo-container {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.logo {
-  max-width: 200px;
-  height: auto;
-}
-
-.login-title {
-  color: #FEC564;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 15px;
-  width: 20px;
-  height: 20px;
-  z-index: 2;
-}
-
-.form-input {
-  width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  color: white;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #FEC564;
-  box-shadow: 0 0 0 2px rgba(254, 197, 100, 0.2);
-}
-
-.form-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.login-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-}
-
-.login-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.login-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.register-link {
-  text-align: center;
-  color: #ccc;
-}
-
-.register-link a {
-  color: #FEC564;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.register-link a:hover {
-  text-decoration: underline;
-}
-
-@keyframes sparkle {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100px);
-  }
-}
-
-@media (max-width: 480px) {
-  .login-container {
-    padding: 1rem;
-  }
-  
-  .login-form {
-    padding: 2rem 1.5rem;
-  }
-  
-  .login-title {
-    font-size: 1.5rem;
-  }
+/* Mobile responsive styles using Tailwind utilities */
+@media screen and (max-width: 440px) {
+  /* Note: Most responsive styles are now handled by Tailwind classes */
+  /* Custom styles can be added here if needed beyond Tailwind capabilities */
 }
 </style>
 
