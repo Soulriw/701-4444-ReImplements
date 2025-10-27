@@ -31,7 +31,7 @@
                 type="text" 
                 v-model="form.username" 
                 placeholder="Username" 
-                class="w-full border-none outline-none py-2 text-base ml-2.5"
+                class="w-full border-none outline-none py-2 text-base ml-2.5 text-black"
                 required
               />
             </div>
@@ -43,7 +43,7 @@
                 type="password" 
                 v-model="form.password" 
                 placeholder="Password" 
-                class="w-full border-none outline-none py-2 text-base ml-2.5"
+                class="w-full border-none outline-none py-2 text-base ml-2.5 text-black"
                 required
               />
             </div>
