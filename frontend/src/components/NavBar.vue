@@ -2,13 +2,9 @@
   <nav class="navbar navbar-expand-lg bg-black fixed-top">
     <!-- Left Side: Logo and Search -->
     <div class="navcon">
-      <!-- Logo with Toggle Navigation Function -->
-      <div class="navbar-brand" @click="toggleNav">
-        <img src="/src/model/image/navImg/logo.png" alt="Logo" />
-      </div>
 
       <!-- Search Form -->
-      <form class="search" @submit.prevent="handleSearch">
+      <form class="search" @submit.prevent="handleSearch" v-if="!isLoginOrRegister">
         <input 
           type="text" 
           class="search-bar" 
@@ -22,13 +18,13 @@
     </div>
 
     <!-- Cart Icon with Counter -->
-    <router-link to="/cart" class="cart">
+    <router-link to="/cart" class="cart" v-if="!isLoginOrRegister">
       <img src="/src/model/image/navImg/cart.png" alt="" />
       <span class="cart-counter" v-if="cartCount > 0">{{ cartCount }}</span>
     </router-link>
 
     <!-- Navigation Menu -->
-    <div class="nav" :class="{ hidden: !navOpen }" id="nav">
+    <div class="nav" :class="{ hidden: !navOpen || isLoginOrRegister }" id="nav" v-if="!isLoginOrRegister">
       <ul>
         <template v-if="isAuthenticated">
           <!-- Authenticated User Navigation -->
@@ -155,6 +151,12 @@ export default {
 
     const categories = computed(() => booksStore.categories)
     const cartCount = computed(() => cartStore.count)
+    
+    // Check if current route is login or register page
+    const isLoginOrRegister = computed(() => {
+      const currentPath = router.currentRoute.value.path
+      return currentPath === '/login' || currentPath === '/register'
+    })
 
     const toggleNav = () => {
       navOpen.value = !navOpen.value
@@ -220,6 +222,7 @@ export default {
       username,
       categories,
       cartCount,
+      isLoginOrRegister,
       toggleNav,
       toggleCategoriesDropdown,
       closeDropdowns,
@@ -262,6 +265,14 @@ export default {
 .navbar-brand img {
   height: 50px;
   width: auto;
+}
+
+.navbar-brand.no-pointer {
+  cursor: default;
+}
+
+.navbar-brand.no-pointer:hover {
+  transform: none;
 }
 
 /* Search Form */
