@@ -3,9 +3,11 @@ package com.quadgrimoire.service;
 import com.quadgrimoire.model.Cart;
 import com.quadgrimoire.model.Book;
 import com.quadgrimoire.model.History;
+import com.quadgrimoire.model.PromotionBook;
 import com.quadgrimoire.repository.CartRepository;
 import com.quadgrimoire.repository.BookRepository;
 import com.quadgrimoire.repository.HistoryRepository;
+import com.quadgrimoire.repository.PromotionBookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,9 @@ public class CartService {
 
     @Autowired
     private HistoryRepository historyRepository;
+
+    @Autowired
+    private PromotionBookRepository promotionBookRepository;
 
     /**
      * Get all cart items
@@ -93,6 +98,16 @@ public class CartService {
 
             Book book = bookOpt.get();
 
+            // Check if book has promotion
+            PromotionBook promotionBook = promotionBookRepository.findByBookID(bookID);
+            BigDecimal promotionPrice = null;
+            
+            if (promotionBook != null && promotionBook.getProPrice() != null) {
+                promotionPrice = promotionBook.getProPrice();
+            } else if (book.getProPrice() != null) {
+                promotionPrice = book.getProPrice();
+            }
+
             // Create cart entry
             Cart cart = new Cart();
             cart.setCartBookID(bookID);
@@ -101,7 +116,7 @@ public class CartService {
             cart.setCategoryName(book.getCategoryName());
             cart.setBookDescription(book.getBookDescription());
             cart.setPrice(book.getPrice());
-            cart.setProPrice(book.getProPrice() != null ? book.getProPrice() : book.getPrice());
+            cart.setProPrice(promotionPrice);
             cart.setQuantity(quantity);
             cart.setEnchantment(enchantment);
 
@@ -232,6 +247,8 @@ public class CartService {
             // Convert cart items to history entries
             List<History> historyEntries = new ArrayList<>();
             BigDecimal totalAmount = BigDecimal.ZERO;
+            BigDecimal totalNormalAmount = BigDecimal.ZERO;
+            BigDecimal totalPromotionAmount = BigDecimal.ZERO;
 
             for (Cart cartItem : cartItems) {
                 History history = new History();
@@ -249,10 +266,17 @@ public class CartService {
 
                 historyEntries.add(history);
 
-                // Calculate total
-                totalAmount = totalAmount.add(
-                        sellPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()))
-                );
+                // Calculate totals
+                BigDecimal normalPrice = cartItem.getPrice();
+                BigDecimal itemTotal = sellPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+                BigDecimal normalTotal = normalPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+                
+                totalAmount = totalAmount.add(itemTotal);
+                totalNormalAmount = totalNormalAmount.add(normalTotal);
+                
+                if (cartItem.getProPrice() != null) {
+                    totalPromotionAmount = totalPromotionAmount.add(itemTotal);
+                }
             }
 
             // Save all history entries
@@ -264,6 +288,9 @@ public class CartService {
             response.put("success", true);
             response.put("message", "Checkout completed successfully");
             response.put("totalAmount", totalAmount);
+            response.put("totalNormalAmount", totalNormalAmount);
+            response.put("totalPromotionAmount", totalPromotionAmount);
+            response.put("totalSavings", totalNormalAmount.subtract(totalAmount));
             response.put("itemCount", cartItems.size());
             return response;
         } catch (Exception e) {
@@ -283,20 +310,40 @@ public class CartService {
 
         int totalItems = 0;
         BigDecimal totalPrice = BigDecimal.ZERO;
+        BigDecimal totalNormalPrice = BigDecimal.ZERO;
+        BigDecimal totalPromotionPrice = BigDecimal.ZERO;
 
         for (Cart item : cartItems) {
             totalItems += item.getQuantity();
-            BigDecimal itemPrice = item.getProPrice() != null ?
-                    item.getProPrice() : item.getPrice();
-            totalPrice = totalPrice.add(
-                    itemPrice.multiply(BigDecimal.valueOf(item.getQuantity()))
+            
+            // Calculate normal price total
+            BigDecimal normalPrice = item.getPrice();
+            totalNormalPrice = totalNormalPrice.add(
+                    normalPrice.multiply(BigDecimal.valueOf(item.getQuantity()))
             );
+            
+            // Calculate promotion price total if available
+            if (item.getProPrice() != null) {
+                totalPromotionPrice = totalPromotionPrice.add(
+                        item.getProPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                );
+                totalPrice = totalPrice.add(
+                        item.getProPrice().multiply(BigDecimal.valueOf(item.getQuantity()))
+                );
+            } else {
+                totalPrice = totalPrice.add(
+                        normalPrice.multiply(BigDecimal.valueOf(item.getQuantity()))
+                );
+            }
         }
 
         Map<String, Object> summary = new HashMap<>();
         summary.put("itemCount", cartItems.size());
         summary.put("totalQuantity", totalItems);
         summary.put("totalPrice", totalPrice);
+        summary.put("totalNormalPrice", totalNormalPrice);
+        summary.put("totalPromotionPrice", totalPromotionPrice);
+        summary.put("totalSavings", totalNormalPrice.subtract(totalPrice));
 
         return summary;
     }
