@@ -2,6 +2,10 @@
   <nav class="navbar navbar-expand-lg bg-black fixed-top">
     <!-- Left Side: Logo and Search -->
     <div class="navcon">
+      <!-- Logo with Toggle Navigation Function -->
+      <div class="navbar-brand" @click="toggleNav">
+        <img src="/src/model/image/navImg/logo.png" alt="Logo" />
+      </div>
 
       <!-- Search Form -->
       <form class="search" @submit.prevent="handleSearch" v-if="!isLoginOrRegister">
