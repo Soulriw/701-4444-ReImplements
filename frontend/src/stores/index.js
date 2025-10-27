@@ -164,9 +164,10 @@ export const useBooksStore = defineStore('books', {
     async fetchPromotionBooks() {
       try {
         const response = await axios.get('/api/promotionBooks')
-        this.promotionBooks = response.data
+        this.promotionBooks = response.data || []
       } catch (error) {
         console.error('Error fetching promotion books:', error)
+        this.promotionBooks = []
       }
     },
     

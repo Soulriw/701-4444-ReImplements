@@ -366,12 +366,17 @@ export default {
       message.value = ''
 
       try {
+        // Get category name
+        const selectedCategory = categories.value.find(cat => cat.categoryID === Number.parseInt(newBook.value.categoryID))
+        const categoryName = selectedCategory ? selectedCategory.categoryName : ''
+
         const response = await axios.post('/api/books', {
           bookName: newBook.value.name,
-          categoryID: newBook.value.categoryID,
+          categoryID: Number.parseInt(newBook.value.categoryID),
+          categoryName: categoryName,
           bookDescription: newBook.value.description,
-          price: parseFloat(newBook.value.price),
-          proPrice: newBook.value.proPrice ? parseFloat(newBook.value.proPrice) : null,
+          price: Number.parseFloat(newBook.value.price),
+          proPrice: newBook.value.proPrice ? Number.parseFloat(newBook.value.proPrice) : null,
           isPromotionBook: newBook.value.isPromotionBook
         })
 
@@ -421,12 +426,17 @@ export default {
       message.value = ''
 
       try {
+        // Get category name
+        const selectedCategory = categories.value.find(cat => cat.categoryID === editingBook.value.categoryID)
+        const categoryName = selectedCategory ? selectedCategory.categoryName : editingBook.value.categoryName
+
         const response = await axios.put(`/api/books/${editingBook.value.bookID}`, {
           bookName: editingBook.value.bookName,
           categoryID: editingBook.value.categoryID,
+          categoryName: categoryName,
           bookDescription: editingBook.value.bookDescription,
-          price: parseFloat(editingBook.value.price),
-          proPrice: editingBook.value.proPrice ? parseFloat(editingBook.value.proPrice) : null,
+          price: Number.parseFloat(editingBook.value.price),
+          proPrice: editingBook.value.proPrice ? Number.parseFloat(editingBook.value.proPrice) : null,
           isPromotionBook: editingBook.value.isPromotionBook
         })
 

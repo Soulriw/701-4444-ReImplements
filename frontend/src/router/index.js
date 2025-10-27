@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import AllProducts from '../views/AllProducts.vue'
-// import ProductDetail from '../views/ProductDetail.vue'
+import ProductDetail from '../views/ProductDetail.vue'
 import Cart from '../views/Cart.vue'
 import SearchPage from '../views/SearchPage.vue'
 import Contact from '../views/Contact.vue'
@@ -25,12 +25,13 @@ const routes = [
     component: AllProducts,
     meta: { requiresAuth: true }
   },
-  // {
-  //   path: '/productDetail',
-  //   name: 'ProductDetail',
-  //   component: ProductDetail,
-  //   meta: { requiresAuth: true }
-  // },
+  {
+    path: '/productDetail/:id?',
+    name: 'ProductDetail',
+    component: ProductDetail,
+    props: true,
+    meta: { requiresAuth: false }
+  },
   {
     path: '/cart',
     name: 'Cart',
@@ -95,19 +96,48 @@ const router = createRouter({
 // Navigation guards
 router.beforeEach((to, from, next) => {
   // Check authentication status
-  const isAuthenticated = localStorage.getItem('user') !== null
-  const user = isAuthenticated ? JSON.parse(localStorage.getItem('user')) : null
-  const isAdmin = user?.isAdmin
+  let isAuthenticated = false
+  let user = null
+  let isAdmin = false
+  
+  try {
+    const userStr = localStorage.getItem('user')
+    if (userStr) {
+      user = JSON.parse(userStr)
+      isAuthenticated = true
+      isAdmin = user?.isAdmin || false
+    }
+  } catch (error) {
+    console.error('Error parsing user from localStorage:', error)
+    localStorage.removeItem('user')
+  }
+
+  // Handle initial navigation
+  if (to.path === '/login' && !isAuthenticated) {
+    return next()
+  }
+
+  // Allow product detail page regardless of auth (handle both with and without params)
+  if (to.path.startsWith('/productDetail')) {
+    return next()
+  }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login')
-  } else if (to.meta.requiresGuest && isAuthenticated) {
-    next('/')
-  } else if (to.meta.requiresAdmin && !isAdmin) {
-    next('/login')
-  } else {
-    next()
+    return
   }
+  
+  if (to.meta.requiresGuest && isAuthenticated) {
+    next('/')
+    return
+  }
+  
+  if (to.meta.requiresAdmin && !isAdmin) {
+    next('/login')
+    return
+  }
+  
+  next()
 })
 
 export default router

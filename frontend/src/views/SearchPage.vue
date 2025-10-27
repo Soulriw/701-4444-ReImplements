@@ -28,24 +28,7 @@
             :key="book.bookID" 
             class="col-6 col-lg"
           >
-            <router-link :to="`/productDetail?id=${book.bookID}`" class="book-link" style="text-decoration: none; color: inherit;">
-              <div class="search-card">
-                <div v-if="hasDiscount(book)" class="search-discount-label">
-                  {{ getDiscountPercentage(book) }}%
-                </div>
-                <img 
-                  :src="`/src/model/image/books/${book.bookID}.jpg`" 
-                  :alt="book.bookName" 
-                  @error="$event.target.src='/src/model/image/books/default.jpg'"
-                />
-                <h2>{{ book.bookName }}</h2>
-                <p>{{ book.bookDescription || 'No description available.' }}</p>
-                <div class="search-price-tag">
-                  <span v-if="hasDiscount(book)" class="search-original-price">{{ book.price }}</span>
-                  <span class="search-promo-price">{{ getDisplayPrice(book) }} G</span>
-                </div>
-              </div>
-            </router-link>
+            <BookItem :book="book" />
           </div>
         </div>
       </div>
@@ -54,12 +37,16 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBooksStore } from '../stores'
+import BookItem from '../components/BookItem.vue'
 
 export default {
   name: 'SearchPage',
+  components: {
+    BookItem
+  },
   setup() {
     const route = useRoute()
     const booksStore = useBooksStore()
@@ -67,25 +54,6 @@ export default {
     const searchResults = ref([])
     const loading = ref(false)
     const searchTerm = ref('')
-
-    const promotionBooks = computed(() => booksStore.promotionBooks)
-
-    const hasDiscount = (book) => {
-      return promotionBooks.value.some(promo => promo.bookID === book.bookID)
-    }
-
-    const getDiscountPercentage = (book) => {
-      const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
-      if (promotionInfo) {
-        return Math.round((1 - book.proPrice / book.price) * 100)
-      }
-      return 0
-    }
-
-    const getDisplayPrice = (book) => {
-      const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
-      return promotionInfo ? book.proPrice : book.price
-    }
 
     const performSearch = async () => {
       const query = route.query.q
@@ -121,11 +89,7 @@ export default {
     return {
       searchResults,
       loading,
-      searchTerm,
-      promotionBooks,
-      hasDiscount,
-      getDiscountPercentage,
-      getDisplayPrice
+      searchTerm
     }
   }
 }

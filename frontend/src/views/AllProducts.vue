@@ -54,24 +54,7 @@
           :key="book.bookID" 
           class="col-6 col-lg"
         >
-          <router-link :to="`/productDetail?id=${book.bookID}`" class="book-link" style="text-decoration: none; color: inherit;">
-            <div class="search-card">
-              <div v-if="hasDiscount(book)" class="search-discount-label">
-                {{ getDiscountPercentage(book) }}%
-              </div>
-              <img 
-                :src="`/src/model/image/books/${book.bookID}.jpg`" 
-                :alt="book.bookName" 
-                @error="$event.target.src='/src/model/image/books/default.jpg'"
-              />
-              <h2>{{ book.bookName }}</h2>
-              <p>{{ book.bookDescription || 'No description available.' }}</p>
-              <div class="search-price-tag">
-                <span v-if="hasDiscount(book)" class="search-original-price">{{ book.price }}</span>
-                <span class="search-promo-price">{{ getDisplayPrice(book) }} G</span>
-              </div>
-            </div>
-          </router-link>
+          <BookItem :book="book" />
         </div>
       </div>
     </div>
@@ -112,9 +95,13 @@
 <script>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useBooksStore } from '../stores'
+import BookItem from '../components/BookItem.vue'
 
 export default {
   name: 'AllProducts',
+  components: {
+    BookItem
+  },
   setup() {
     const booksStore = useBooksStore()
     
@@ -143,23 +130,6 @@ export default {
       const endIndex = Math.min(startIndex + itemsPerPage, filteredBooks.value.length)
       return filteredBooks.value.slice(startIndex, endIndex)
     })
-
-    const hasDiscount = (book) => {
-      return promotionBooks.value.some(promo => promo.bookID === book.bookID)
-    }
-
-    const getDiscountPercentage = (book) => {
-      const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
-      if (promotionInfo) {
-        return Math.round((1 - book.proPrice / book.price) * 100)
-      }
-      return 0
-    }
-
-    const getDisplayPrice = (book) => {
-      const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
-      return promotionInfo ? book.proPrice : book.price
-    }
 
     const filterByCategory = (categoryId) => {
       if (currentCategory.value === categoryId) {
@@ -222,9 +192,6 @@ export default {
       filteredBooks,
       totalPages,
       currentPageBooks,
-      hasDiscount,
-      getDiscountPercentage,
-      getDisplayPrice,
       filterByCategory,
       prevPage,
       nextPage,
@@ -236,6 +203,31 @@ export default {
 </script>
 
 <style scoped>
+.home-page {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 120px;
+  background-color: #0a0a0a;
+  color: #ffffff;
+}
+
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.all-products-container {
+  position: relative;
+  z-index: 1;
+  padding: 0 2rem;
+}
+
 .category-filters {
   margin: 2rem 0;
 }
@@ -312,6 +304,85 @@ export default {
   background: #FEC564;
   color: #000;
   border-color: #FEC564;
+}
+
+/* Search card styling */
+.search-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(254, 197, 100, 0.3);
+  border-color: #FEC564;
+}
+
+.search-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.search-card h2 {
+  color: #FEC564;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.search-card p {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.search-discount-label {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #FEC564;
+  color: #000;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 1.2rem;
+  z-index: 10;
+}
+
+.search-price-tag {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.search-original-price {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 1rem;
+}
+
+.search-promo-price {
+  color: #FEC564;
+  font-size: 1.3rem;
+  font-weight: bold;
 }
 </style>
 

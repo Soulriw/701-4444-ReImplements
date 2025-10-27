@@ -7,7 +7,7 @@
     <div class="container d-flex justify-content-center align-items-end book-container">
       <!-- 2nd Best Seller Book -->
       <div class="book">
-        <router-link to="/productDetail?id=110" style="text-decoration: none">
+        <router-link to="/productDetail/110" style="text-decoration: none">
           <!-- Crown Image for 2nd Place -->
           <div class="crown">
             <img src="/src/model/image/bestSeller/crown2.png" alt="2nd seller" />
@@ -29,7 +29,7 @@
 
       <!-- 1st Best Seller Book (Center Position) -->
       <div class="book center">
-        <router-link to="/productDetail?id=301" style="text-decoration: none">
+        <router-link to="/productDetail/301" style="text-decoration: none">
           <!-- Crown Image for 1st Place -->
           <div class="crown">
             <img src="/src/model/image/bestSeller/crown1.png" alt="1st seller" />
@@ -51,7 +51,7 @@
 
       <!-- 3rd Best Seller Book -->
       <div class="book">
-        <router-link to="/productDetail?id=201" style="text-decoration: none">
+        <router-link to="/productDetail/201" style="text-decoration: none">
           <!-- Crown Image for 3rd Place -->
           <div class="crown">
             <img src="/src/model/image/bestSeller/crown3.png" alt="3rd seller" />
@@ -92,31 +92,7 @@
             :key="book.bookID" 
             class="col-6 col-lg"
           >
-            <router-link :to="`/productDetail?id=${book.bookID}`" style="text-decoration: none; color: inherit">
-              <div class="book-card">
-                <!-- Discount Label -->
-                <div class="discount-label">
-                  {{ book.discountPercentage }}%
-                </div>
-
-                <!-- Book Cover Image -->
-                <img 
-                  :src="`/src/model/image/books/${book.bookID}.jpg`" 
-                  :alt="book.bookName"
-                  @error="$event.target.src='/src/model/image/books/default.jpg'" 
-                />
-                
-                <!-- Book Details -->
-                <h2>{{ book.bookName }}</h2>
-                <p>{{ book.bookDescription || 'No description available.' }}</p>
-
-                <!-- Price Display with Original and Promotional Prices -->
-                <div class="price-tag">
-                  <span class="original-price">{{ book.price }}</span>
-                  <span class="promo-price">{{ book.proPrice }} G</span>
-                </div>
-              </div>
-            </router-link>
+            <BookItem :book="book" />
           </div>
         </div>
       </div>
@@ -136,7 +112,7 @@
 
         <!-- First Recommended Book -->
         <div class="col-sm-12 col-lg-6 rec">
-          <router-link to="/productDetail?id=302" style="text-decoration: none; color: inherit">
+          <router-link to="/productDetail/302" style="text-decoration: none; color: inherit">
             <img src="/src/model/image/recommendBook/R1.png" alt="quad" class="img-fluid" />
             <br />
             <br />
@@ -152,7 +128,7 @@
 
         <!-- Second Recommended Book -->
         <div class="col-sm-12 col-lg-6 rec">
-          <router-link to="/productDetail?id=401" style="text-decoration: none; color: inherit">
+          <router-link to="/productDetail/401" style="text-decoration: none; color: inherit">
             <img src="/src/model/image/recommendBook/R2.png" alt="quad" class="img-fluid" />
             <br />
             <br />
@@ -177,17 +153,24 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useBooksStore } from '../stores'
+import BookItem from '../components/BookItem.vue'
 
 export default {
   name: 'Home',
+  components: {
+    BookItem
+  },
   setup() {
     const booksStore = useBooksStore()
     const itemsPerPage = 5
 
-    const promotionBooks = computed(() => booksStore.promotionBooks)
+    const promotionBooks = computed(() => booksStore.promotionBooks || [])
     const firstPageBooks = computed(() => {
+      if (!promotionBooks.value || promotionBooks.value.length === 0) {
+        return []
+      }
       return promotionBooks.value.slice(0, itemsPerPage)
     })
 
@@ -212,7 +195,11 @@ export default {
     }
 
     onMounted(async () => {
-      await booksStore.fetchPromotionBooks()
+      try {
+        await booksStore.fetchPromotionBooks()
+      } catch (error) {
+        console.error('Error fetching promotion books:', error)
+      }
     })
 
     return {

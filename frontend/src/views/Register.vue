@@ -154,12 +154,13 @@ export default {
 
 <style scoped>
 .register-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 80px);
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
   position: relative;
+  padding-top: 80px;
 }
 
 .stars {
@@ -177,6 +178,8 @@ export default {
   width: 100%;
   max-width: 400px;
   padding: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .register-form {

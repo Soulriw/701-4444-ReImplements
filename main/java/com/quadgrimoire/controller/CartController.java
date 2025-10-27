@@ -2,8 +2,10 @@ package com.quadgrimoire.controller;
 
 import com.quadgrimoire.model.Cart;
 import com.quadgrimoire.model.Book;
+import com.quadgrimoire.model.History;
 import com.quadgrimoire.repository.CartRepository;
 import com.quadgrimoire.repository.BookRepository;
+import com.quadgrimoire.repository.HistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api")
@@ -24,6 +27,9 @@ public class CartController {
     
     @Autowired
     private BookRepository bookRepository;
+    
+    @Autowired
+    private HistoryRepository historyRepository;
     
     @GetMapping("/cart")
     public ResponseEntity<List<Cart>> getCart() {
@@ -109,9 +115,40 @@ public class CartController {
         Map<String, Object> response = new HashMap<>();
         
         try {
+            if (cartIds == null || cartIds.isEmpty()) {
+                response.put("success", false);
+                response.put("error", "No items selected for checkout");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
             List<Cart> cartItems = cartRepository.findAllById(cartIds);
             
-            // Move to history (simplified - you'll need to implement History entity logic)
+            if (cartItems.isEmpty()) {
+                response.put("success", false);
+                response.put("error", "No cart items found");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            // Convert cart items to history entries
+            List<History> historyEntries = new ArrayList<>();
+            for (Cart cartItem : cartItems) {
+                History history = new History();
+                history.setBookID(cartItem.getCartBookID());
+                history.setBookName(cartItem.getBookName());
+                history.setCategoryID(cartItem.getCategoryID());
+                history.setCategoryName(cartItem.getCategoryName());
+                history.setQuantity(cartItem.getQuantity());
+                
+                // Use promotion price if available, otherwise use regular price
+                BigDecimal sellPrice = cartItem.getProPrice() != null ? cartItem.getProPrice() : cartItem.getPrice();
+                history.setSellPrice(sellPrice);
+                history.setEnchantment(cartItem.getEnchantment());
+                
+                historyEntries.add(history);
+            }
+            
+            // Save all history entries
+            historyRepository.saveAll(historyEntries);
             
             // Remove from cart
             cartRepository.deleteAllById(cartIds);
@@ -120,7 +157,9 @@ public class CartController {
             response.put("message", "Checkout completed successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            response.put("error", "Failed to complete checkout");
+            response.put("success", false);
+            response.put("error", "Failed to complete checkout: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(response);
         }
     }

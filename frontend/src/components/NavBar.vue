@@ -38,46 +38,64 @@
             &nbsp;{{ truncateUsername(username) }}
           </p>
 
-          <!-- Main Navigation Links -->
-          <router-link to="/" class="nav-item home">
-            <li>Home</li>
-          </router-link>
-          <router-link to="/allProduct" class="nav-item home">
-            <li>All Product</li>
-          </router-link>
-
-          <!-- Categories Dropdown Menu -->
-          <div class="dropdown-container">
-            <a href="#" class="nav-item dropdown-toggle" @click.prevent="toggleCategoriesDropdown">
-              <li>Categories <i class="fas fa-caret-down"></i></li>
+          <!-- Admin Links -->
+          <template v-if="isAdmin">
+            <router-link to="/categoryManagement" class="nav-item admin">
+              <li>Category Management</li>
+            </router-link>
+            <router-link to="/productManagement" class="nav-item admin">
+              <li>Product Management</li>
+            </router-link>
+            <router-link to="/history" class="nav-item admin">
+              <li>Sales History</li>
+            </router-link>
+            <a href="#" class="nav-item logout" @click.prevent="logout">
+              <li>Logout</li>
             </a>
-            <div id="categoriesDropdown" class="categories-dropdown" :class="{ show: categoriesDropdownOpen }">
-              <template v-if="categories.length > 0">
-                <router-link 
-                  v-for="category in categories" 
-                  :key="category.categoryID"
-                  :to="`/category/${category.categoryID}`" 
-                  class="dropdown-item"
-                  @click="closeDropdowns"
-                >
-                  <li>{{ category.categoryName }}</li>
-                </router-link>
-              </template>
-              <template v-else>
-                <a href="#" class="dropdown-item">
-                  <li>No categories found</li>
-                </a>
-              </template>
-            </div>
-          </div>
+          </template>
+          
+          <!-- Regular User Links -->
+          <template v-else>
+            <router-link to="/" class="nav-item home">
+              <li>Home</li>
+            </router-link>
+            <router-link to="/allProduct" class="nav-item home">
+              <li>All Product</li>
+            </router-link>
 
-          <!-- Additional Links -->
-          <router-link to="/contact" class="nav-item home">
-            <li>Contact</li>
-          </router-link>
-          <a href="#" class="nav-item logout" @click.prevent="logout">
-            <li>Logout</li>
-          </a>
+            <!-- Categories Dropdown Menu -->
+            <div class="dropdown-container">
+              <a href="#" class="nav-item dropdown-toggle" @click.prevent="toggleCategoriesDropdown">
+                <li>Categories <i class="fas fa-caret-down"></i></li>
+              </a>
+              <div id="categoriesDropdown" class="categories-dropdown" :class="{ show: categoriesDropdownOpen }">
+                <template v-if="categories.length > 0">
+                  <router-link 
+                    v-for="category in categories" 
+                    :key="category.categoryID"
+                    :to="`/category/${category.categoryID}`" 
+                    class="dropdown-item"
+                    @click="closeDropdowns"
+                  >
+                    <li>{{ category.categoryName }}</li>
+                  </router-link>
+                </template>
+                <template v-else>
+                  <a href="#" class="dropdown-item">
+                    <li>No categories found</li>
+                  </a>
+                </template>
+              </div>
+            </div>
+
+            <!-- Additional Links -->
+            <router-link to="/contact" class="nav-item home">
+              <li>Contact</li>
+            </router-link>
+            <a href="#" class="nav-item logout" @click.prevent="logout">
+              <li>Logout</li>
+            </a>
+          </template>
         </template>
         <template v-else>
           <!-- Guest User Navigation -->
@@ -94,11 +112,9 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores'
-import { useCartStore } from '../stores'
-import { useBooksStore } from '../stores'
+import { useAuthStore, useCartStore, useBooksStore } from '../stores'
 
 export default {
   name: 'NavBar',
@@ -111,9 +127,32 @@ export default {
     const navOpen = ref(false)
     const categoriesDropdownOpen = ref(false)
     const searchTerm = ref('')
+    const isAuthenticated = ref(false)
+    const username = ref('')
 
-    const isAuthenticated = computed(() => authStore.isAuthenticated)
-    const username = computed(() => authStore.username)
+    const isAdmin = ref(false)
+
+    const updateAuthState = () => {
+      try {
+        const userStr = localStorage.getItem('user')
+        if (userStr) {
+          const user = JSON.parse(userStr)
+          isAuthenticated.value = true
+          username.value = user?.username || ''
+          isAdmin.value = user?.isAdmin || false
+        } else {
+          isAuthenticated.value = false
+          username.value = ''
+          isAdmin.value = false
+        }
+      } catch (error) {
+        console.error('Error parsing user:', error)
+        isAuthenticated.value = false
+        username.value = ''
+        isAdmin.value = false
+      }
+    }
+
     const categories = computed(() => booksStore.categories)
     const cartCount = computed(() => cartStore.count)
 
@@ -142,7 +181,8 @@ export default {
 
     const logout = () => {
       authStore.logout()
-      router.push('/login')
+      // Force a full page reload to clear all state
+      globalThis.location.href = '/login'
     }
 
     const truncateUsername = (username, maxLength = 9) => {
@@ -153,8 +193,17 @@ export default {
     }
 
     onMounted(async () => {
+      // Initialize auth
+      authStore.initializeAuth()
+      updateAuthState()
+      
       await booksStore.fetchCategories()
       await cartStore.getCartCount()
+      
+      // Watch for route changes to update auth state
+      watch(() => router.currentRoute.value.path, () => {
+        updateAuthState()
+      })
       
       // Set up polling to refresh cart count periodically
       setInterval(() => {
@@ -167,6 +216,7 @@ export default {
       categoriesDropdownOpen,
       searchTerm,
       isAuthenticated,
+      isAdmin,
       username,
       categories,
       cartCount,
@@ -175,7 +225,8 @@ export default {
       closeDropdowns,
       handleSearch,
       logout,
-      truncateUsername
+      truncateUsername,
+      updateAuthState
     }
   }
 }
@@ -385,6 +436,15 @@ export default {
 
 .logout:hover {
   background: rgba(255, 68, 68, 0.1) !important;
+}
+
+/* Admin Links */
+.admin {
+  color: #ffd700 !important;
+}
+
+.admin:hover {
+  background: rgba(255, 215, 0, 0.1) !important;
 }
 
 /* Responsive */

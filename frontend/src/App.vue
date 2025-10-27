@@ -15,6 +15,11 @@ export default {
   name: 'App',
   components: {
     NavBar
+  },
+  errorCaptured(err, instance, info) {
+    console.error('App error:', err, info)
+    // Return true to stop propagation and show error UI
+    return true
   }
 }
 </script>

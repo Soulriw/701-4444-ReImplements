@@ -142,12 +142,14 @@ export default {
     const fetchCategories = async () => {
       categoriesLoading.value = true
       try {
-        const response = await axios.get('/api/categories/sorted-by-name')
-        categories.value = response.data.map(cat => ({
-          ...cat,
-          editing: false,
-          editName: cat.categoryName
-        }))
+        const response = await axios.get('/api/categories')
+        categories.value = response.data
+          .map(cat => ({
+            ...cat,
+            editing: false,
+            editName: cat.categoryName
+          }))
+          .sort((a, b) => a.categoryName.localeCompare(b.categoryName))
       } catch (error) {
         console.error('Error fetching categories:', error)
         message.value = 'Failed to load categories'
