@@ -1,20 +1,23 @@
 <template>
-  <div class="book-item-container">
-    <router-link :to="`/productDetail/${book.bookID}`" @click="handleClick" style="text-decoration: none; color: inherit;">
-      <div class="search-card">
-        <div v-if="hasDiscount(book)" class="search-discount-label">
+  <!-- Book item card container -->
+  <div class="w-full">
+    <router-link :to="`/productDetail/${book.bookID}`" @click="handleClick" class="no-underline text-inherit">
+      <div class="bg-white/5 border border-white/10 rounded-[15px] p-4 transition-all duration-300 relative overflow-hidden h-full flex flex-col hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(254,197,100,0.3)] hover:border-[#FEC564]">
+        <!-- Discount label badge -->
+        <div v-if="hasDiscount(book)" class="absolute top-[15px] right-[15px] bg-[#FEC564] text-black py-2 px-4 rounded-[20px] font-bold text-xl z-10 max-[1024px]:text-lg max-[768px]:text-base max-[440px]:top-[10px] max-[440px]:right-[10px] max-[440px]:py-1.5 max-[440px]:px-3 max-[375px]:text-sm">
           {{ getDiscountPercentage(book) }}%
         </div>
         <img 
           :src="`/src/model/image/books/${book.bookID}.jpg`" 
           :alt="book.bookName" 
+          class="w-full h-auto rounded-[10px] mb-4"
           @error="$event.target.src='/src/model/image/books/default.jpg'"
         />
-        <h2>{{ book.bookName }}</h2>
-        <p>{{ book.bookDescription || 'No description available.' }}</p>
-        <div class="search-price-tag">
-          <span v-if="hasDiscount(book)" class="search-original-price">{{ book.price }}</span>
-          <span class="search-promo-price">{{ getDisplayPrice(book) }} G</span>
+        <h2 class="text-[#FEC564] text-xl mb-2 font-bold max-[1024px]:text-lg max-[768px]:text-base">{{ book.bookName }}</h2>
+        <p class="text-gray-300 text-sm mb-4 flex-grow overflow-hidden text-ellipsis line-clamp-2 max-[1024px]:text-xs max-[768px]:text-xs">{{ book.bookDescription || 'No description available.' }}</p>
+        <div class="flex items-center gap-4 mt-auto">
+          <span v-if="hasDiscount(book)" class="text-gray-400 line-through text-base max-[440px]:text-sm">{{ book.price }}</span>
+          <span class="text-[#FEC564] text-xl font-bold max-[440px]:text-base">{{ getDisplayPrice(book) }} G</span>
         </div>
       </div>
     </router-link>
@@ -70,85 +73,6 @@ export default {
 </script>
 
 <style scoped>
-.book-item-container {
-  width: 100%;
-}
-
-.search-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.search-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(254, 197, 100, 0.3);
-  border-color: #FEC564;
-}
-
-.search-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-
-.search-card h2 {
-  color: #FEC564;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.search-card p {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.search-discount-label {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #FEC564;
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1.2rem;
-  z-index: 10;
-}
-
-.search-price-tag {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: auto;
-}
-
-.search-original-price {
-  color: #999;
-  text-decoration: line-through;
-  font-size: 1rem;
-}
-
-.search-promo-price {
-  color: #FEC564;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
+/* Styles now handled by Tailwind classes */
 </style>
 
