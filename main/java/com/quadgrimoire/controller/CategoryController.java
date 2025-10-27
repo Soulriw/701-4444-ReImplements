@@ -1,12 +1,11 @@
 package com.quadgrimoire.controller;
 
 import com.quadgrimoire.model.Category;
-import com.quadgrimoire.repository.CategoryRepository;
+import com.quadgrimoire.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,79 +16,49 @@ import java.util.Optional;
 public class CategoryController {
     
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
     
     @GetMapping("/categories")
     public ResponseEntity<List<Category>> getCategories() {
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
     
     @GetMapping("/categoryInfo/{id}")
     public ResponseEntity<Category> getCategoryInfo(@PathVariable Integer id) {
-        Optional<Category> category = categoryRepository.findById(id);
+        Optional<Category> category = categoryService.getCategoryById(id);
         return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     
     @PostMapping("/categories")
-    public ResponseEntity<Map<String, Object>> addCategory(@RequestBody Map<String, String> categoryData) {
-        String categoryName = categoryData.get("categoryName");
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Category category = new Category();
-            category.setCategoryName(categoryName.trim());
-            categoryRepository.save(category);
-            
-            response.put("success", true);
-            response.put("categoryID", category.getCategoryID());
-            response.put("message", "Category added successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Failed to add category");
-            return ResponseEntity.badRequest().body(response);
-        }
+    public ResponseEntity<Map<String, Object>> addCategory(@RequestBody Map<String, Object> categoryData) {
+        Map<String, Object> response = categoryService.addCategory(categoryData);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
     }
     
     @PutMapping("/categories/{id}")
     public ResponseEntity<Map<String, Object>> updateCategory(@PathVariable Integer id, 
-                                                               @RequestBody Map<String, String> categoryData) {
-        String categoryName = categoryData.get("categoryName");
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            Optional<Category> categoryOpt = categoryRepository.findById(id);
-            if (categoryOpt.isEmpty()) {
-                response.put("error", "Category not found");
-                return ResponseEntity.notFound().build();
-            }
-            
-            Category category = categoryOpt.get();
-            category.setCategoryName(categoryName.trim());
-            categoryRepository.save(category);
-            
-            response.put("success", true);
-            response.put("message", "Category updated successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Failed to update category");
-            return ResponseEntity.badRequest().body(response);
-        }
+                                                               @RequestBody Map<String, Object> categoryData) {
+        Map<String, Object> response = categoryService.updateCategory(id, categoryData);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
     }
     
     @DeleteMapping("/categories/{id}")
     public ResponseEntity<Map<String, Object>> deleteCategory(@PathVariable Integer id) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            categoryRepository.deleteById(id);
-            response.put("success", true);
-            response.put("message", "Category deleted successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Failed to delete category");
-            return ResponseEntity.badRequest().body(response);
-        }
+        Map<String, Object> response = categoryService.deleteCategory(id);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
+    }
+    
+    @GetMapping("/categories/stats")
+    public ResponseEntity<Map<String, Object>> getCategoryStats() {
+        Map<String, Object> stats = categoryService.getCategoryStats();
+        return ResponseEntity.ok(stats);
     }
 }
 
