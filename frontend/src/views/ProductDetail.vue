@@ -1,109 +1,119 @@
 <template>
-  <div class="product-detail-page">
-    <div class="stars"></div>
+  <div class="relative min-h-screen pt-[120px] pb-8 bg-dark">
+    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px; animation: sparkle 20s linear infinite;"></div>
     
-    <div v-if="loading" class="loading-container">
-      <h2 style="color: #FEC564;">Loading book details...</h2>
+    <div v-if="loading" class="flex justify-center items-center min-h-[80vh] relative z-10">
+      <h2 class="text-gold">Loading book details...</h2>
     </div>
 
-    <div v-else-if="!book" class="no-book">
-      <div class="no-book-content">
-        <i class="fas fa-book fa-3x"></i>
-        <h2>Book not found</h2>
-        <p>Sorry, this book is not available</p>
-        <router-link to="/allProduct" class="back-btn">
+    <div v-else-if="!book" class="flex justify-center items-center min-h-[80vh] relative z-10">
+      <div class="text-center text-gray-300">
+        <i class="fas fa-book fa-3x text-gold mb-4"></i>
+        <h2 class="text-gold mb-4">Book not found</h2>
+        <p class="text-gray-400 mb-8">Sorry, this book is not available</p>
+        <router-link to="/allProduct" class="inline-block px-6 py-3 bg-gold text-black rounded font-bold transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5">
           <i class="fas fa-arrow-left"></i> Back to All Products
         </router-link>
       </div>
     </div>
 
-    <div v-else class="product-detail-container">
-      <div class="container">
-        <div class="row">
-          <!-- Book Image -->
-          <div class="col-12 col-md-5 col-lg-4">
-            <div class="book-image-container">
-              <div v-if="hasDiscount(book)" class="discount-badge">
-                {{ getDiscountPercentage(book) }}% OFF
-              </div>
-              <img 
-                :src="`/src/model/image/books/${book.bookID}.jpg`" 
-                :alt="book.bookName"
-                @error="$event.target.src='/src/model/image/books/default.jpg'"
-                class="book-image"
-              />
+    <div v-else class="relative z-10 max-w-[1200px] mx-auto bg-dark px-4">
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Book Image -->
+        <div class="w-full md:w-2/5 lg:w-1/3">
+          <div class="relative bg-white/5 border border-white/10 rounded-[15px] p-8 mb-8 text-center z-10">
+            <div v-if="hasDiscount(book)" class="absolute top-5 right-5 bg-gold text-black px-4 py-2 rounded-[20px] font-bold z-10">
+              {{ getDiscountPercentage(book) }}% OFF
             </div>
-          </div>
-
-          <!-- Book Details -->
-          <div class="col-12 col-md-7 col-lg-8">
-            <div class="book-details">
-              <h1 class="book-title">{{ book.bookName }}</h1>
-              <p class="book-category">{{ book.categoryName }}</p>
-              
-              <!-- Price Section -->
-              <div class="price-section">
-                <span v-if="hasDiscount(book)" class="original-price">{{ book.price }} G</span>
-                <span class="current-price">{{ getDisplayPrice(book) }} G</span>
-                <span v-if="hasDiscount(book)" class="discount-info">Save {{ getDiscountPercentage(book) }}%</span>
-              </div>
-
-              <!-- Description -->
-              <div class="book-description">
-                <h3>Description</h3>
-                <p>{{ book.bookDescription || 'No description available for this magical tome.' }}</p>
-              </div>
-
-              <!-- Add to Cart -->
-              <div class="cart-section">
-                <div class="quantity-selector">
-                  <label for="quantity">Quantity:</label>
-                  <button @click="decreaseQuantity" :disabled="quantity === 1" class="qty-btn">-</button>
-                  <input 
-                    type="number" 
-                    id="quantity"
-                    v-model.number="quantity" 
-                    min="1"
-                    max="99"
-                    class="qty-input"
-                  />
-                  <button @click="increaseQuantity" :disabled="quantity === 99" class="qty-btn">+</button>
-                </div>
-                
-                <div v-if="message" class="message" :class="messageType">
-                  {{ message }}
-                </div>
-
-                <button @click="addToCart" class="add-to-cart-btn" :disabled="addingToCart">
-                  <i class="fas fa-shopping-cart"></i> 
-                  <span v-if="addingToCart">Adding to Cart...</span>
-                  <span v-else>Add to Cart</span>
-                </button>
-              </div>
-            </div>
+            <img 
+              :src="`/src/model/image/books/${book.bookID}.jpg`" 
+              :alt="book.bookName"
+              class="w-full max-w-[400px] h-auto rounded-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] mx-auto"
+              @error="$event.target.src='/src/model/image/books/default.jpg'"
+            />
           </div>
         </div>
 
-        <!-- Related Books Section -->
-        <div v-if="relatedBooks.length > 0" class="related-books-section">
-          <div class="divider"></div>
-          <h2 class="section-title">Related Books</h2>
-          <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center g-4">
-            <div 
-              v-for="relatedBook in relatedBooks.slice(0, 5)" 
-              :key="relatedBook.bookID" 
-              class="col-6 col-lg"
-            >
-              <BookItem :book="relatedBook" />
+        <!-- Book Details -->
+        <div class="w-full md:w-3/5 lg:w-2/3">
+          <div class="px-4 z-10 relative">
+            <h1 class="text-gold text-4xl mb-2 font-bold max-md:text-3xl">{{ book.bookName }}</h1>
+            <p class="text-gray-300 text-xl mb-8">{{ book.categoryName }}</p>
+            
+            <!-- Price Section -->
+            <div class="flex items-center gap-4 mb-8 py-4 border-t border-b border-white/10">
+              <span v-if="hasDiscount(book)" class="text-gray-400 line-through text-2xl">{{ book.price }} G</span>
+              <span class="text-gold text-4xl font-bold max-md:text-3xl">{{ getDisplayPrice(book) }} G</span>
+              <span v-if="hasDiscount(book)" class="bg-gold/20 text-gold px-4 py-2 rounded-[20px] text-sm">Save {{ getDiscountPercentage(book) }}%</span>
             </div>
+
+            <!-- Description -->
+            <div class="mb-8">
+              <h3 class="text-gold mb-4 text-2xl">Description</h3>
+              <p class="text-gray-300 leading-relaxed text-lg">{{ book.bookDescription || 'No description available for this magical tome.' }}</p>
+            </div>
+
+            <!-- Add to Cart -->
+            <div class="mt-8">
+              <div class="flex items-center gap-4 mb-6">
+                <label for="quantity" class="text-gold font-bold text-lg">Quantity:</label>
+                <button @click="decreaseQuantity" :disabled="quantity === 1" class="w-10 h-10 bg-white/10 border border-white/20 rounded text-white cursor-pointer text-xl transition-all duration-300 hover:bg-white/20 hover:border-gold disabled:opacity-50 disabled:cursor-not-allowed">-</button>
+                <input 
+                  type="number" 
+                  id="quantity"
+                  v-model.number="quantity" 
+                  min="1"
+                  max="99"
+                  class="w-20 px-2 py-2 bg-white/10 border border-white/20 rounded text-white text-xl text-center font-bold focus:outline-none focus:border-gold"
+                />
+                <button @click="increaseQuantity" :disabled="quantity === 99" class="w-10 h-10 bg-white/10 border border-white/20 rounded text-white cursor-pointer text-xl transition-all duration-300 hover:bg-white/20 hover:border-gold disabled:opacity-50 disabled:cursor-not-allowed">+</button>
+              </div>
+              
+              <div 
+                v-if="message" 
+                class="p-4 rounded mb-4 text-center font-bold"
+                :class="{
+                  'bg-green/20 text-green border border-green/30': messageType === 'success',
+                  'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+                }"
+              >
+                {{ message }}
+              </div>
+
+              <button 
+                @click="addToCart" 
+                class="w-full px-8 py-4 bg-gold text-black border-none rounded flex items-center justify-center gap-2 text-xl font-bold cursor-pointer transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
+                :disabled="addingToCart"
+              >
+                <i class="fas fa-shopping-cart"></i> 
+                <span v-if="addingToCart">Adding to Cart...</span>
+                <span v-else>Add to Cart</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Books Section -->
+      <div v-if="relatedBooks.length > 0" class="mt-16">
+        <div class="h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent my-8"></div>
+        <h2 class="text-gold text-3xl text-center mb-8">Related Books</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
+          <div 
+            v-for="relatedBook in relatedBooks.slice(0, 5)" 
+            :key="relatedBook.bookID" 
+            class="w-full"
+          >
+            <BookItem :book="relatedBook" />
           </div>
         </div>
       </div>
     </div>
 
     <!-- Back Button -->
-    <div class="back-button" @click="$router.back()">
-      <i class="fas fa-arrow-left"></i>
+    <div class="fixed bottom-[30px] right-[30px] bg-gold text-black w-[50px] h-[50px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 z-[100] shadow-[0_5px_15px_rgba(254,197,100,0.3)] hover:bg-[#ffd700] hover:-translate-y-1" @click="$router.back()">
+      <i class="fas fa-arrow-left text-2xl"></i>
     </div>
   </div>
 </template>
@@ -288,38 +298,6 @@ export default {
 </script>
 
 <style scoped>
-.product-detail-page {
-  position: relative;
-  min-height: 100vh;
-  padding-top: 120px;
-  padding-bottom: 2rem;
-  background-color: #0a0a0a;
-}
-
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.stars::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-              radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-              radial-gradient(1px 1px at 90px 40px, #fff, transparent);
-  background-repeat: repeat;
-  background-size: 200px 100px;
-  animation: sparkle 20s linear infinite;
-}
-
 @keyframes sparkle {
   from {
     transform: translateY(0);
@@ -328,322 +306,4 @@ export default {
     transform: translateY(-100px);
   }
 }
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-
-.no-book {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-
-.no-book-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.no-book-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-book-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-book-content p {
-  color: #888;
-  margin-bottom: 2rem;
-}
-
-.back-btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background: #FEC564;
-  color: #000;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-.back-btn:hover {
-  background: #ffd700;
-  transform: translateY(-2px);
-}
-
-.product-detail-container {
-  position: relative;
-  z-index: 10;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #0a0a0a;
-}
-
-.book-image-container {
-  position: relative;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  z-index: 10;
-}
-
-.discount-badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #FEC564;
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1rem;
-  z-index: 10;
-}
-
-.book-image {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.book-details {
-  padding: 0 1rem;
-  z-index: 10;
-  position: relative;
-}
-
-.book-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.book-category {
-  color: #ccc;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-}
-
-.price-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.original-price {
-  color: #999;
-  text-decoration: line-through;
-  font-size: 1.5rem;
-}
-
-.current-price {
-  color: #FEC564;
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-.discount-info {
-  background: rgba(254, 197, 100, 0.2);
-  color: #FEC564;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-.book-description {
-  margin-bottom: 2rem;
-}
-
-.book-description h3 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-.book-description p {
-  color: #ccc;
-  line-height: 1.8;
-  font-size: 1.1rem;
-}
-
-.cart-section {
-  margin-top: 2rem;
-}
-
-.quantity-selector {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.quantity-selector label {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.qty-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-}
-
-.qty-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #FEC564;
-}
-
-.qty-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.qty-input {
-  width: 80px;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  color: white;
-  font-size: 1.2rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.qty-input:focus {
-  outline: none;
-  border-color: #FEC564;
-}
-
-.add-to-cart-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.add-to-cart-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.add-to-cart-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.related-books-section {
-  margin-top: 4rem;
-}
-
-.divider {
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #FEC564, transparent);
-  margin: 2rem 0;
-}
-
-.section-title {
-  color: #FEC564;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.back-button {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #FEC564;
-  color: #000;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 100;
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.back-button:hover {
-  background: #ffd700;
-  transform: translateY(-5px);
-}
-
-.back-button i {
-  font-size: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .book-title {
-    font-size: 2rem;
-  }
-  
-  .current-price {
-    font-size: 2rem;
-  }
-  
-  .product-detail-container {
-    padding: 0 1rem;
-  }
-}
 </style>
-

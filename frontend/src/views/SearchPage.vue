@@ -1,35 +1,29 @@
 <template>
-  <div class="search-page">
-    <div class="stars"></div>
-    
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Search Results</h1>
+  <div class="py-8 min-h-[80vh] pt-[120px] relative">
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="w-full">
+        <h1 class="text-gold text-4xl mb-8 text-center">Search Results</h1>
+      </div>
+
+      <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
+        <h2 class="text-gold">Searching...</h2>
+      </div>
+
+      <div v-else-if="searchResults.length === 0" class="flex justify-center items-center min-h-[50vh]">
+        <div class="text-center text-gray-300">
+          <i class="fas fa-search fa-3x text-gold mb-4"></i>
+          <h2 class="text-gold mb-4">No books found</h2>
+          <p class="text-gray-400">Try searching with different keywords</p>
         </div>
       </div>
 
-      <div v-if="loading" class="loading-container">
-        <h2 style="color: #FEC564;">Searching...</h2>
-      </div>
-
-      <div v-else-if="searchResults.length === 0" class="no-results">
-        <div class="no-results-content">
-          <i class="fas fa-search fa-3x"></i>
-          <h2>No books found</h2>
-          <p>Try searching with different keywords</p>
-        </div>
-      </div>
-
-      <div v-else class="search-results">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center g-4">
-          <div 
-            v-for="book in searchResults" 
-            :key="book.bookID" 
-            class="col-6 col-lg"
-          >
-            <BookItem :book="book" />
-          </div>
+      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
+        <div 
+          v-for="book in searchResults" 
+          :key="book.bookID" 
+          class="w-full"
+        >
+          <BookItem :book="book" />
         </div>
       </div>
     </div>
@@ -94,51 +88,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.search-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.no-results-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content p {
-  color: #888;
-}
-</style>
-

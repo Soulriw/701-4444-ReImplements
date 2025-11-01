@@ -1,70 +1,76 @@
 <template>
-  <div class="contact-page">
-    <div class="stars"></div>
+  <div class="py-8 min-h-[80vh] pt-[120px] relative">
+    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px;"></div>
     
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Contact Us</h1>
-        </div>
+    <div class="container mx-auto px-4 relative z-10">
+      <div class="w-full">
+        <h1 class="text-gold text-4xl mb-8 text-center">Contact Us</h1>
       </div>
 
-      <div class="row">
-        <div class="col-lg-8">
-          <div class="contact-form">
-            <h3>Send us a Message</h3>
+      <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-2/3">
+          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 mb-8">
+            <h3 class="text-gold mb-6 text-xl">Send us a Message</h3>
             <form @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="name">Name</label>
+              <div class="mb-6">
+                <label for="name" class="text-gold font-bold mb-2 block">Name</label>
                 <input 
                   type="text" 
                   id="name" 
                   v-model="form.name" 
-                  class="form-control"
+                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
                   required
                 />
               </div>
               
-              <div class="form-group">
-                <label for="email">Email</label>
+              <div class="mb-6">
+                <label for="email" class="text-gold font-bold mb-2 block">Email</label>
                 <input 
                   type="email" 
                   id="email" 
                   v-model="form.email" 
-                  class="form-control"
+                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
                   required
                 />
               </div>
               
-              <div class="form-group">
-                <label for="subject">Subject</label>
+              <div class="mb-6">
+                <label for="subject" class="text-gold font-bold mb-2 block">Subject</label>
                 <input 
                   type="text" 
                   id="subject" 
                   v-model="form.subject" 
-                  class="form-control"
+                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
                   required
                 />
               </div>
               
-              <div class="form-group">
-                <label for="message">Message</label>
+              <div class="mb-6">
+                <label for="message" class="text-gold font-bold mb-2 block">Message</label>
                 <textarea 
                   id="message" 
                   v-model="form.message" 
-                  class="form-control"
+                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
                   rows="5"
                   required
                 ></textarea>
               </div>
               
-              <div v-if="message" class="message" :class="messageType">
+              <div 
+                v-if="message" 
+                class="p-4 rounded-md mb-4 text-center font-bold"
+                :class="{
+                  'bg-green/20 text-green border border-green/30': messageType === 'success',
+                  'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+                }"
+              >
                 {{ message }}
               </div>
               
               <button 
                 type="submit" 
-                class="submit-btn"
+                class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-lg font-bold cursor-pointer transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
                 :disabled="loading"
               >
                 <span v-if="loading">Sending...</span>
@@ -74,39 +80,39 @@
           </div>
         </div>
 
-        <div class="col-lg-4">
-          <div class="contact-info">
-            <h3>Get in Touch</h3>
+        <div class="lg:w-1/3">
+          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8">
+            <h3 class="text-gold mb-6 text-xl">Get in Touch</h3>
             
-            <div class="contact-item">
-              <img src="/src/model/image/contact/mail.png" alt="Email" class="contact-icon" />
+            <div class="flex items-center mb-6">
+              <img src="/src/model/image/contact/mail.png" alt="Email" class="w-10 h-10 mr-4" />
               <div>
-                <h4>Email</h4>
-                <p>info@quadgrimoire.com</p>
+                <h4 class="text-gold mb-1 text-lg">Email</h4>
+                <p class="text-gray-300 m-0">info@quadgrimoire.com</p>
               </div>
             </div>
             
-            <div class="contact-item">
-              <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="contact-icon" />
+            <div class="flex items-center mb-6">
+              <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="w-10 h-10 mr-4" />
               <div>
-                <h4>Facebook</h4>
-                <p>@QuadGrimoire</p>
+                <h4 class="text-gold mb-1 text-lg">Facebook</h4>
+                <p class="text-gray-300 m-0">@QuadGrimoire</p>
               </div>
             </div>
             
-            <div class="contact-item">
-              <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="contact-icon" />
+            <div class="flex items-center mb-6">
+              <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="w-10 h-10 mr-4" />
               <div>
-                <h4>Twitter</h4>
-                <p>@QuadGrimoire</p>
+                <h4 class="text-gold mb-1 text-lg">Twitter</h4>
+                <p class="text-gray-300 m-0">@QuadGrimoire</p>
               </div>
             </div>
             
-            <div class="contact-item">
-              <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="contact-icon" />
+            <div class="flex items-center mb-6">
+              <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="w-10 h-10 mr-4" />
               <div>
-                <h4>Instagram</h4>
-                <p>@QuadGrimoire</p>
+                <h4 class="text-gold mb-1 text-lg">Instagram</h4>
+                <p class="text-gray-300 m-0">@QuadGrimoire</p>
               </div>
             </div>
           </div>
@@ -171,148 +177,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.contact-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.contact-form {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.contact-form h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  color: #FEC564;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  color: white;
-  font-size: 1rem;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #FEC564;
-  box-shadow: 0 0 0 2px rgba(254, 197, 100, 0.2);
-}
-
-.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.contact-info {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-}
-
-.contact-info h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.contact-icon {
-  width: 40px;
-  height: 40px;
-  margin-right: 1rem;
-}
-
-.contact-item h4 {
-  color: #FEC564;
-  margin-bottom: 0.25rem;
-  font-size: 1.1rem;
-}
-
-.contact-item p {
-  color: #ccc;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .contact-form,
-  .contact-info {
-    padding: 1.5rem;
-  }
-}
-</style>
-

@@ -1,118 +1,119 @@
 <template>
-  <div class="admin-page">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Category Management</h1>
-        </div>
+  <div class="py-8 min-h-[80vh] pt-[120px]">
+    <div class="container mx-auto px-4">
+      <div class="w-full">
+        <h1 class="text-gold text-4xl mb-8 text-center">Category Management</h1>
       </div>
 
       <!-- Add Category Form -->
-      <div class="row mb-4">
-        <div class="col-12">
-          <div class="admin-form">
-            <h3>Add New Category</h3>
-            <form @submit.prevent="addCategory">
-              <div class="form-group">
-                <label for="categoryName">Category Name</label>
-                <input 
-                  type="text" 
-                  id="categoryName" 
-                  v-model="newCategory.name" 
-                  class="form-control"
-                  required
-                />
-              </div>
-              
-              <div v-if="message" class="message" :class="messageType">
-                {{ message }}
-              </div>
-              
-              <button 
-                type="submit" 
-                class="submit-btn"
-                :disabled="loading"
-              >
-                <span v-if="loading">Adding...</span>
-                <span v-else>Add Category</span>
-              </button>
-            </form>
-          </div>
+      <div class="w-full mb-8">
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 mb-8">
+          <h3 class="text-gold mb-6 text-xl">Add New Category</h3>
+          <form @submit.prevent="addCategory">
+            <div class="mb-6">
+              <label for="categoryName" class="text-gold font-bold mb-2 block">Category Name</label>
+              <input 
+                type="text" 
+                id="categoryName" 
+                v-model="newCategory.name" 
+                class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
+                required
+              />
+            </div>
+            
+            <div 
+              v-if="message" 
+              class="p-4 rounded mb-4 text-center font-bold"
+              :class="{
+                'bg-green/20 text-green border border-green/30': messageType === 'success',
+                'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+              }"
+            >
+              {{ message }}
+            </div>
+            
+            <button 
+              type="submit" 
+              class="px-8 py-3 bg-gold text-black border-none rounded font-bold cursor-pointer transition-all duration-300 hover:bg-[#ffd700] disabled:opacity-60 disabled:cursor-not-allowed"
+              :disabled="loading"
+            >
+              <span v-if="loading">Adding...</span>
+              <span v-else>Add Category</span>
+            </button>
+          </form>
         </div>
       </div>
 
       <!-- Categories List -->
-      <div class="row">
-        <div class="col-12">
-          <div class="admin-table">
-            <h3>Existing Categories</h3>
-            
-            <div v-if="categoriesLoading" class="loading">
-              <h4 style="color: #FEC564;">Loading categories...</h4>
-            </div>
-            
-            <div v-else-if="categories.length === 0" class="no-data">
-              <h4>No categories found</h4>
-            </div>
-            
-            <div v-else class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Category Name</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="category in categories" :key="category.categoryID">
-                    <td>{{ category.categoryID }}</td>
-                    <td>
-                      <span v-if="!category.editing">{{ category.categoryName }}</span>
-                      <input 
-                        v-else
-                        v-model="category.editName"
-                        class="form-control edit-input"
-                        @keyup.enter="saveCategory(category)"
-                        @keyup.escape="cancelEdit(category)"
-                      />
-                    </td>
-                    <td>
-                      <div v-if="!category.editing" class="action-buttons">
-                        <button 
-                          @click="startEdit(category)" 
-                          class="btn btn-warning btn-sm me-2"
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          @click="deleteCategory(category.categoryID)" 
-                          class="btn btn-danger btn-sm"
-                          :disabled="deleting"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                      <div v-else class="action-buttons">
-                        <button 
-                          @click="saveCategory(category)" 
-                          class="btn btn-success btn-sm me-2"
-                          :disabled="saving"
-                        >
-                          Save
-                        </button>
-                        <button 
-                          @click="cancelEdit(category)" 
-                          class="btn btn-secondary btn-sm"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+      <div class="w-full">
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 mb-8">
+          <h3 class="text-gold mb-6 text-xl">Existing Categories</h3>
+          
+          <div v-if="categoriesLoading" class="text-center py-8 text-gray-300">
+            <h4 class="text-gold">Loading categories...</h4>
+          </div>
+          
+          <div v-else-if="categories.length === 0" class="text-center py-8 text-gray-300">
+            <h4>No categories found</h4>
+          </div>
+          
+          <div v-else class="overflow-x-auto">
+            <table class="w-full text-white">
+              <thead>
+                <tr>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">ID</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Category Name</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="category in categories" :key="category.categoryID">
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ category.categoryID }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">
+                    <span v-if="!category.editing">{{ category.categoryName }}</span>
+                    <input 
+                      v-else
+                      v-model="category.editName"
+                      class="w-[200px] px-3 py-2 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
+                      @keyup.enter="saveCategory(category)"
+                      @keyup.escape="cancelEdit(category)"
+                    />
+                  </td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">
+                    <div v-if="!category.editing" class="flex gap-2">
+                      <button 
+                        @click="startEdit(category)" 
+                        class="px-3 py-1.5 bg-[#ffc107] text-black border-none rounded text-sm cursor-pointer transition-all duration-300 hover:opacity-80 hover:-translate-y-0.5"
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        @click="deleteCategory(category.categoryID)" 
+                        class="px-3 py-1.5 bg-[#dc3545] text-white border-none rounded text-sm cursor-pointer transition-all duration-300 hover:opacity-80 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                        :disabled="deleting"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                    <div v-else class="flex gap-2">
+                      <button 
+                        @click="saveCategory(category)" 
+                        class="px-3 py-1.5 bg-[#28a745] text-white border-none rounded text-sm cursor-pointer transition-all duration-300 hover:opacity-80 hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                        :disabled="saving"
+                      >
+                        Save
+                      </button>
+                      <button 
+                        @click="cancelEdit(category)" 
+                        class="px-3 py-1.5 bg-[#6c757d] text-white border-none rounded text-sm cursor-pointer transition-all duration-300 hover:opacity-80 hover:-translate-y-0.5"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -294,170 +295,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.admin-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.admin-form,
-.admin-table {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.admin-form h3,
-.admin-table h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  color: #FEC564;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  color: white;
-  font-size: 1rem;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #FEC564;
-  box-shadow: 0 0 0 2px rgba(254, 197, 100, 0.2);
-}
-
-.edit-input {
-  width: 200px;
-}
-
-.submit-btn {
-  padding: 0.75rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #ffd700;
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.loading,
-.no-data {
-  text-align: center;
-  padding: 2rem;
-  color: #ccc;
-}
-
-.table {
-  color: white;
-}
-
-.table th {
-  background: rgba(254, 197, 100, 0.2);
-  color: #FEC564;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.table td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  vertical-align: middle;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn {
-  padding: 0.375rem 0.75rem;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-}
-
-.btn-warning {
-  background: #ffc107;
-  color: #000;
-}
-
-.btn-danger {
-  background: #dc3545;
-  color: white;
-}
-
-.btn-success {
-  background: #28a745;
-  color: white;
-}
-
-.btn-secondary {
-  background: #6c757d;
-  color: white;
-}
-
-.btn:hover:not(:disabled) {
-  opacity: 0.8;
-  transform: translateY(-1px);
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-</style>
-

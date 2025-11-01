@@ -1,127 +1,131 @@
 <template>
-  <div class="cart-page">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Shopping Cart</h1>
-        </div>
+  <div class="py-8 min-h-[80vh] pt-[120px]">
+    <div class="container mx-auto px-4">
+      <div class="w-full">
+        <h1 class="text-gold text-4xl mb-8 text-center">Shopping Cart</h1>
       </div>
 
-      <div v-if="loading" class="loading-container">
-        <h2 style="color: #FEC564;">Loading cart...</h2>
+      <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
+        <h2 class="text-gold">Loading cart...</h2>
       </div>
 
-      <div v-else-if="cartItems.length === 0" class="empty-cart">
-        <div class="empty-cart-content">
-          <i class="fas fa-shopping-cart fa-3x"></i>
-          <h2>Your cart is empty</h2>
-          <p>Add some magical books to get started!</p>
-          <router-link to="/allProduct" class="btn btn-primary">
+      <div v-else-if="cartItems.length === 0" class="flex justify-center items-center min-h-[50vh]">
+        <div class="text-center text-gray-300">
+          <i class="fas fa-shopping-cart fa-3x text-gold mb-4"></i>
+          <h2 class="text-gold mb-4">Your cart is empty</h2>
+          <p class="mb-8">Add some magical books to get started!</p>
+          <router-link to="/allProduct" class="inline-block px-6 py-3 bg-gold text-black rounded-lg font-bold hover:bg-[#ffd700] transition-colors">
             Browse Books
           </router-link>
         </div>
       </div>
 
-      <div v-else class="cart-content">
+      <div v-else class="flex flex-col lg:flex-row gap-8">
         <!-- Cart Items -->
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="cart-items">
-              <div 
-                v-for="item in cartItems" 
-                :key="item.cartID" 
-                class="cart-item"
-              >
-                <div class="item-checkbox">
-                  <input 
-                    type="checkbox" 
-                    :id="`item-${item.cartID}`"
-                    v-model="selectedItems"
-                    :value="item.cartID"
-                    class="item-check"
-                  />
-                  <label :for="`item-${item.cartID}`"></label>
+        <div class="lg:w-2/3">
+          <div class="space-y-4">
+            <div 
+              v-for="item in cartItems" 
+              :key="item.cartID" 
+              class="flex items-center gap-4 p-6 bg-white/5 border border-white/10 rounded-[10px] max-md:flex-col max-md:text-center"
+            >
+              <div class="flex-shrink-0">
+                <input 
+                  type="checkbox" 
+                  :id="`item-${item.cartID}`"
+                  v-model="selectedItems"
+                  :value="item.cartID"
+                  class="w-5 h-5 accent-gold"
+                />
+                <label :for="`item-${item.cartID}`" class="sr-only"></label>
+              </div>
+
+              <div class="flex-shrink-0">
+                <img 
+                  :src="`/src/model/image/books/${item.cartBookID}.jpg`" 
+                  :alt="item.bookName"
+                  class="w-20 h-30 object-cover rounded max-md:w-[120px] max-md:h-[180px]"
+                  @error="$event.target.src='/src/model/image/books/default.jpg'"
+                />
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <h3 class="text-gold mb-2 text-xl font-bold">{{ item.bookName }}</h3>
+                <p class="text-gray-400 text-sm mb-2">{{ item.categoryName }}</p>
+                <p class="text-gray-300 text-sm mb-2 line-clamp-2">{{ item.bookDescription }}</p>
+                
+                <div v-if="item.enchantment" class="mb-2">
+                  <span class="text-gray-400 text-xs">Enchantment:</span>
+                  <span class="text-gold font-bold ml-2">{{ item.enchantment }}</span>
                 </div>
 
-                <div class="item-image">
-                  <img 
-                    :src="`/src/model/image/books/${item.cartBookID}.jpg`" 
-                    :alt="item.bookName"
-                    @error="$event.target.src='/src/model/image/books/default.jpg'"
-                  />
+                <div class="mb-2">
+                  <span class="text-gray-400 text-xs">Quantity:</span>
+                  <span class="text-white font-bold ml-2">{{ item.quantity }}</span>
                 </div>
+              </div>
 
-                <div class="item-details">
-                  <h3>{{ item.bookName }}</h3>
-                  <p class="item-category">{{ item.categoryName }}</p>
-                  <p class="item-description">{{ item.bookDescription }}</p>
-                  
-                  <div v-if="item.enchantment" class="item-enchantment">
-                    <span class="enchantment-label">Enchantment:</span>
-                    <span class="enchantment-value">{{ item.enchantment }}</span>
-                  </div>
-
-                  <div class="item-quantity">
-                    <span class="quantity-label">Quantity:</span>
-                    <span class="quantity-value">{{ item.quantity }}</span>
-                  </div>
+              <div class="text-right flex-shrink-0 max-md:text-center">
+                <div v-if="item.isPromotionBook && item.hasDiscount" class="mb-2">
+                  <span class="text-gray-400 line-through text-sm block">{{ item.price }} G</span>
+                  <span class="text-gold font-bold text-lg">{{ item.proPrice }} G</span>
+                  <div class="bg-[#ff4444] text-white px-2 py-1 rounded-[10px] text-xs font-bold mt-1 inline-block">{{ item.discountPercentage }}% OFF</div>
                 </div>
-
-                <div class="item-price">
-                  <div v-if="item.isPromotionBook && item.hasDiscount" class="price-container">
-                    <span class="original-price">{{ item.price }} G</span>
-                    <span class="promo-price">{{ item.proPrice }} G</span>
-                    <div class="discount-badge">{{ item.discountPercentage }}% OFF</div>
-                  </div>
-                  <div v-else class="price-container">
-                    <span class="regular-price">{{ item.price }} G</span>
-                  </div>
-                  
-                  <div class="total-price">
-                    Total: {{ (item.isPromotionBook ? item.proPrice : item.price) * item.quantity }} G
-                  </div>
+                <div v-else class="mb-2">
+                  <span class="text-gold font-bold text-lg">{{ item.price }} G</span>
                 </div>
-
-                <div class="item-actions">
-                  <button 
-                    @click="removeItem(item.cartID)" 
-                    class="remove-btn"
-                    :disabled="removing"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
+                
+                <div class="text-white font-bold">
+                  Total: {{ (item.isPromotionBook ? item.proPrice : item.price) * item.quantity }} G
                 </div>
+              </div>
+
+              <div class="flex-shrink-0">
+                <button 
+                  @click="removeItem(item.cartID)" 
+                  class="bg-[#ff4444] text-white border-none rounded px-2 py-2 cursor-pointer transition-all duration-300 hover:bg-[#ff6666] hover:scale-110 disabled:opacity-60 disabled:cursor-not-allowed"
+                  :disabled="removing"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Cart Summary -->
-          <div class="col-lg-4">
-            <div class="cart-summary">
-              <h3>Order Summary</h3>
-              
-              <div class="summary-item">
-                <span>Items ({{ selectedItemsCount }}):</span>
-                <span>{{ selectedTotalPrice }} G</span>
-              </div>
-              
-              <div class="summary-total">
-                <span>Total:</span>
-                <span>{{ selectedTotalPrice }} G</span>
-              </div>
+        <!-- Cart Summary -->
+        <div class="lg:w-1/3">
+          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 sticky top-8">
+            <h3 class="text-gold mb-6 text-center text-xl">Order Summary</h3>
+            
+            <div class="flex justify-between mb-4 text-gray-300">
+              <span>Items ({{ selectedItemsCount }}):</span>
+              <span>{{ selectedTotalPrice }} G</span>
+            </div>
+            
+            <div class="flex justify-between mb-8 text-gold font-bold text-xl border-t border-white/10 pt-4">
+              <span>Total:</span>
+              <span>{{ selectedTotalPrice }} G</span>
+            </div>
 
-              <button 
-                @click="checkout" 
-                :disabled="selectedItemsCount === 0 || checkingOut"
-                class="checkout-btn"
-              >
-                <span v-if="checkingOut">Processing...</span>
-                <span v-else>Checkout</span>
-              </button>
+            <button 
+              @click="checkout" 
+              :disabled="selectedItemsCount === 0 || checkingOut"
+              class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-xl font-bold cursor-pointer transition-all duration-300 mb-4 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <span v-if="checkingOut">Processing...</span>
+              <span v-else>Checkout</span>
+            </button>
 
-              <div v-if="checkoutMessage" class="checkout-message" :class="checkoutMessageType">
-                {{ checkoutMessage }}
-              </div>
+            <div 
+              v-if="checkoutMessage" 
+              class="p-4 rounded-md text-center font-bold"
+              :class="{
+                'bg-green/20 text-green border border-green/30': checkoutMessageType === 'success',
+                'bg-red/20 text-[#ff4444] border border-red/30': checkoutMessageType === 'error'
+              }"
+            >
+              {{ checkoutMessage }}
             </div>
           </div>
         </div>
@@ -261,301 +265,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.cart-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.empty-cart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.empty-cart-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.empty-cart-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.empty-cart-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.empty-cart-content p {
-  margin-bottom: 2rem;
-}
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-
-.item-checkbox {
-  flex-shrink: 0;
-}
-
-.item-check {
-  width: 20px;
-  height: 20px;
-  accent-color: #FEC564;
-}
-
-.item-image {
-  flex-shrink: 0;
-}
-
-.item-image img {
-  width: 80px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.item-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.item-details h3 {
-  color: #FEC564;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.item-category {
-  color: #888;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.item-description {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.item-enchantment {
-  margin-bottom: 0.5rem;
-}
-
-.enchantment-label {
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.enchantment-value {
-  color: #FEC564;
-  font-weight: bold;
-  margin-left: 0.5rem;
-}
-
-.item-quantity {
-  margin-bottom: 0.5rem;
-}
-
-.quantity-label {
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.quantity-value {
-  color: white;
-  font-weight: bold;
-  margin-left: 0.5rem;
-}
-
-.item-price {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.price-container {
-  margin-bottom: 0.5rem;
-}
-
-.original-price {
-  color: #888;
-  text-decoration: line-through;
-  font-size: 0.9rem;
-  display: block;
-}
-
-.promo-price {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.regular-price {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.discount-badge {
-  background: #ff4444;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-top: 0.25rem;
-}
-
-.total-price {
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.item-actions {
-  flex-shrink: 0;
-}
-
-.remove-btn {
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.remove-btn:hover:not(:disabled) {
-  background: #ff6666;
-  transform: scale(1.1);
-}
-
-.remove-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.cart-summary {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  position: sticky;
-  top: 2rem;
-}
-
-.cart-summary h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  color: #ccc;
-}
-
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1rem;
-}
-
-.checkout-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-}
-
-.checkout-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.checkout-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.checkout-message {
-  padding: 1rem;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.checkout-message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.checkout-message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-@media (max-width: 768px) {
-  .cart-item {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .item-image img {
-    width: 120px;
-    height: 180px;
-  }
-  
-  .item-price {
-    text-align: center;
-  }
-}
-</style>
-

@@ -1,105 +1,93 @@
 <template>
-  <div class="admin-page">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Sales History</h1>
-        </div>
+  <div class="py-8 min-h-[80vh] pt-[120px]">
+    <div class="container mx-auto px-4">
+      <div class="w-full">
+        <h1 class="text-gold text-4xl mb-8 text-center">Sales History</h1>
       </div>
 
       <!-- History Stats -->
-      <div class="row mb-4">
-        <div class="col-md-3">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-book"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ totalBooks }}</h3>
-              <p>Total Books Sold</p>
-            </div>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-6 flex items-center mb-4 max-md:flex-col max-md:text-center">
+          <div class="bg-gold/20 rounded-full w-[60px] h-[60px] flex items-center justify-center mr-4 max-md:mr-0 max-md:mb-4">
+            <i class="fas fa-book text-gold text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-gold text-2xl m-0 font-bold">{{ totalBooks }}</h3>
+            <p class="text-gray-300 m-0 text-sm">Total Books Sold</p>
           </div>
         </div>
         
-        <div class="col-md-3">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-shopping-cart"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ totalOrders }}</h3>
-              <p>Total Orders</p>
-            </div>
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-6 flex items-center mb-4 max-md:flex-col max-md:text-center">
+          <div class="bg-gold/20 rounded-full w-[60px] h-[60px] flex items-center justify-center mr-4 max-md:mr-0 max-md:mb-4">
+            <i class="fas fa-shopping-cart text-gold text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-gold text-2xl m-0 font-bold">{{ totalOrders }}</h3>
+            <p class="text-gray-300 m-0 text-sm">Total Orders</p>
           </div>
         </div>
         
-        <div class="col-md-3">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-coins"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ totalRevenue }} G</h3>
-              <p>Total Revenue</p>
-            </div>
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-6 flex items-center mb-4 max-md:flex-col max-md:text-center">
+          <div class="bg-gold/20 rounded-full w-[60px] h-[60px] flex items-center justify-center mr-4 max-md:mr-0 max-md:mb-4">
+            <i class="fas fa-coins text-gold text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-gold text-2xl m-0 font-bold">{{ totalRevenue }} G</h3>
+            <p class="text-gray-300 m-0 text-sm">Total Revenue</p>
           </div>
         </div>
         
-        <div class="col-md-3">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ averageOrderValue }} G</h3>
-              <p>Average Order Value</p>
-            </div>
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-6 flex items-center mb-4 max-md:flex-col max-md:text-center">
+          <div class="bg-gold/20 rounded-full w-[60px] h-[60px] flex items-center justify-center mr-4 max-md:mr-0 max-md:mb-4">
+            <i class="fas fa-chart-line text-gold text-2xl"></i>
+          </div>
+          <div>
+            <h3 class="text-gold text-2xl m-0 font-bold">{{ averageOrderValue }} G</h3>
+            <p class="text-gray-300 m-0 text-sm">Average Order Value</p>
           </div>
         </div>
       </div>
 
       <!-- History Table -->
-      <div class="row">
-        <div class="col-12">
-          <div class="admin-table">
-            <h3>Sales History</h3>
-            
-            <div v-if="loading" class="loading">
-              <h4 style="color: #FEC564;">Loading history...</h4>
-            </div>
-            
-            <div v-else-if="history.length === 0" class="no-data">
-              <h4>No sales history found</h4>
-            </div>
-            
-            <div v-else class="table-responsive">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Book Name</th>
-                    <th>Category</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Enchantment</th>
-                    <th>Total</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in history" :key="item.historyID">
-                    <td>{{ item.historyID }}</td>
-                    <td>{{ item.bookName }}</td>
-                    <td>{{ item.categoryName }}</td>
-                    <td>{{ item.quantity }}</td>
-                    <td>{{ item.sellPrice }} G</td>
-                    <td>{{ item.enchantment || '-' }}</td>
-                    <td>{{ (item.sellPrice * item.quantity).toFixed(2) }} G</td>
-                    <td>{{ formatDate(item.createdAt || new Date()) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+      <div class="w-full">
+        <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 mb-8">
+          <h3 class="text-gold mb-6 text-xl">Sales History</h3>
+          
+          <div v-if="loading" class="text-center py-8 text-gray-300">
+            <h4 class="text-gold">Loading history...</h4>
+          </div>
+          
+          <div v-else-if="history.length === 0" class="text-center py-8 text-gray-300">
+            <h4>No sales history found</h4>
+          </div>
+          
+          <div v-else class="overflow-x-auto">
+            <table class="w-full text-white">
+              <thead>
+                <tr>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">ID</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Book Name</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Category</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Quantity</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Price</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Enchantment</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Total</th>
+                  <th class="bg-gold/20 text-gold border border-white/10 px-4 py-3 text-left">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in history" :key="item.historyID">
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.historyID }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.bookName }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.categoryName }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.quantity }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.sellPrice }} G</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ item.enchantment || '-' }}</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ (item.sellPrice * item.quantity).toFixed(2) }} G</td>
+                  <td class="border border-white/10 px-4 py-3 align-middle">{{ formatDate(item.createdAt || new Date()) }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -172,104 +160,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.admin-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 1.5rem;
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.stat-icon {
-  background: rgba(254, 197, 100, 0.2);
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-}
-
-.stat-icon i {
-  color: #FEC564;
-  font-size: 1.5rem;
-}
-
-.stat-content h3 {
-  color: #FEC564;
-  font-size: 1.5rem;
-  margin: 0;
-  font-weight: bold;
-}
-
-.stat-content p {
-  color: #ccc;
-  margin: 0;
-  font-size: 0.9rem;
-}
-
-.admin-table {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.admin-table h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.loading,
-.no-data {
-  text-align: center;
-  padding: 2rem;
-  color: #ccc;
-}
-
-.table {
-  color: white;
-}
-
-.table th {
-  background: rgba(254, 197, 100, 0.2);
-  color: #FEC564;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.table td {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  vertical-align: middle;
-}
-
-@media (max-width: 768px) {
-  .stat-card {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .stat-icon {
-    margin-right: 0;
-    margin-bottom: 1rem;
-  }
-}
-</style>
-

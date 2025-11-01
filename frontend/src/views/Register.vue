@@ -1,61 +1,61 @@
 <template>
-  <div class="register-page">
-    <div class="stars" :style="starsStyle"></div>
-    <div class="register-container">
-      <div class="register-form">
-        <div class="logo-container">
-          <img src="/src/model/image/login/logofull.png" alt="Logo" class="logo" />
+  <div class="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-dark to-[#1a1a1a] relative pt-20">
+    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" :style="starsStyle"></div>
+    <div class="w-full max-w-[400px] p-8 relative z-10">
+      <div class="bg-white/5 border border-white/10 rounded-[20px] p-12 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.3)] max-md:p-8">
+        <div class="text-center mb-8">
+          <img src="/src/model/image/login/logofull.png" alt="Logo" class="max-w-[200px] h-auto mx-auto" />
         </div>
         
-        <h2 class="register-title">Join the Magic</h2>
+        <h2 class="text-gold text-center mb-8 text-3xl font-bold max-md:text-2xl">Join the Magic</h2>
         
-        <form @submit.prevent="handleRegister" class="form">
-          <div class="form-group">
-            <div class="input-container">
-              <img src="/src/model/image/login/username.png" alt="Username" class="input-icon" />
+        <form @submit.prevent="handleRegister" class="space-y-6">
+          <div>
+            <div class="relative flex items-center">
+              <img src="/src/model/image/login/username.png" alt="Username" class="absolute left-4 w-5 h-5 z-10" />
               <input 
                 type="text" 
                 v-model="form.username" 
                 placeholder="Username" 
-                class="form-input"
+                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
                 required
               />
             </div>
           </div>
           
-          <div class="form-group">
-            <div class="input-container">
-              <img src="/src/model/image/login/password.png" alt="Password" class="input-icon" />
+          <div>
+            <div class="relative flex items-center">
+              <img src="/src/model/image/login/password.png" alt="Password" class="absolute left-4 w-5 h-5 z-10" />
               <input 
                 type="password" 
                 v-model="form.password" 
                 placeholder="Password" 
-                class="form-input"
+                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
                 required
               />
             </div>
           </div>
           
-          <div class="form-group">
-            <div class="input-container">
-              <img src="/src/model/image/login/password.png" alt="Confirm Password" class="input-icon" />
+          <div>
+            <div class="relative flex items-center">
+              <img src="/src/model/image/login/password.png" alt="Confirm Password" class="absolute left-4 w-5 h-5 z-10" />
               <input 
                 type="password" 
                 v-model="form.confirmPassword" 
                 placeholder="Confirm Password" 
-                class="form-input"
+                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
                 required
               />
             </div>
           </div>
           
-          <div v-if="errorMessage" class="error-message">
+          <div v-if="errorMessage" class="bg-red/20 text-[#ff4444] p-4 rounded-md text-center border border-red/30">
             {{ errorMessage }}
           </div>
           
           <button 
             type="submit" 
-            class="register-btn"
+            class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-lg font-bold cursor-pointer transition-all duration-300 mb-4 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
             :disabled="loading"
           >
             <span v-if="loading">Creating Account...</span>
@@ -63,8 +63,8 @@
           </button>
         </form>
         
-        <div class="login-link">
-          <p>Already have an account? <router-link to="/login">Login here</router-link></p>
+        <div class="text-center mt-8 text-gray-300">
+          <p>Already have an account? <router-link to="/login" class="text-gold font-bold hover:underline">Login here</router-link></p>
         </div>
       </div>
     </div>
@@ -151,174 +151,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.register-page {
-  min-height: calc(100vh - 80px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-  position: relative;
-  padding-top: 80px;
-}
-
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.register-container {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
-  position: relative;
-  z-index: 1;
-}
-
-.register-form {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 3rem 2rem;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.logo-container {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.logo {
-  max-width: 200px;
-  height: auto;
-}
-
-.register-title {
-  color: #FEC564;
-  text-align: center;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-  font-weight: bold;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.input-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.input-icon {
-  position: absolute;
-  left: 15px;
-  width: 20px;
-  height: 20px;
-  z-index: 2;
-}
-
-.form-input {
-  width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  color: white;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #FEC564;
-  box-shadow: 0 0 0 2px rgba(254, 197, 100, 0.2);
-}
-
-.form-input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.register-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-}
-
-.register-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.register-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.error-message {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.login-link {
-  text-align: center;
-  color: #ccc;
-}
-
-.login-link a {
-  color: #FEC564;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-.login-link a:hover {
-  text-decoration: underline;
-}
-
-@keyframes sparkle {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100px);
-  }
-}
-
-@media (max-width: 480px) {
-  .register-container {
-    padding: 1rem;
-  }
-  
-  .register-form {
-    padding: 2rem 1.5rem;
-  }
-  
-  .register-title {
-    font-size: 1.5rem;
-  }
-}
-</style>
-
