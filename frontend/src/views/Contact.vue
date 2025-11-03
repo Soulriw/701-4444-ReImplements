@@ -1,10 +1,10 @@
 <template>
   <!-- Home page with gradient background -->
-  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+  <div class="min-h-screen relative pb-20 max-md:pb-16 max-[480px]:pb-12 max-[375px]:pb-10" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     
     <!-- Content with padding for navbar -->
-    <div class="relative z-[500] font-['Arial',sans-serif] max-w-[1200px] mx-auto my-[80px_auto_50px] max-[1024px]:max-w-[90%] max-[1024px]:my-[60px_auto_40px] max-[440px]:my-[40px_auto_30px]">
-    <h1 class="pt-[20px] font-['Irish_Grover'] text-center text-[#FEC564] text-[2.5rem] mb-5 mt-[30px] max-[1024px]:text-[2.2rem] max-md:text-[2rem] max-md:mt-5 max-[440px]:text-[1.8rem] max-[375px]:text-[1.6rem]">Contact Us</h1>
+    <div class="relative z-[500] font-['Arial',sans-serif] max-w-[1200px] mx-auto pt-[80px] mb-[50px] max-[1024px]:max-w-[90%] max-[1024px]:pt-[60px] max-[1024px]:mb-[40px] max-[440px]:pt-[40px] max-[440px]:mb-[30px]" style="border-top: none;">
+    <h1 class="pt-[10px] font-['Irish_Grover'] text-center text-[#FEC564] text-5xl mb-5 mt-[10px] lg:text-4xl md:text-3xl md:mt-5 sm:text-3xl max-[480px]:text-2xl max-[375px]:text-xl">Contact Us</h1>
     
     <div class="flex bg-white rounded-[30px] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.1)] w-full max-md:flex-col max-[440px]:rounded-[20px]">
       <!-- Map Container -->
@@ -81,7 +81,7 @@
     </div>
 
     <!-- Footer with Social Icons -->
-    <footer class="mb-5">
+    <footer class="mb-16 max-md:mb-12 max-[480px]:mb-10 max-[375px]:mb-8">
       <div class="flex justify-center gap-[15px] mt-[15px] max-[440px]:gap-[10px]">
         <div class="transition-transform duration-300 ease-in-out hover:scale-110">
           <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
