@@ -4,15 +4,19 @@
     
     <!-- Content with padding for navbar -->
     <div class="relative z-[500]">
+      <h1 class="text-[#FEC564] text-center pt-10 text-4xl font-bold" style="font-family: 'Irish Grover', cursive;">Search Results</h1>
+      
     <!-- Search Container -->
     <div class="p-4 mx-auto max-w-[1400px] max-[1024px]:p-[12.8px] max-md:p-[9.6px] max-[440px]:p-[8px] max-[375px]:p-[6.4px]">
       <!-- Loading State -->
       <div v-if="loading" class="text-[#FEC564] text-center py-8 w-full">
         <h2 class="text-[#FEC564]">Searching...</h2>
       </div>
+      
 
 
       <!-- Search Results Grid -->
+       
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
         <div 
           v-for="book in paginatedResults" 
@@ -24,31 +28,32 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="searchResults.length > 0 && totalPages > 1" class="flex justify-center items-center gap-4 my-8 max-[440px]:gap-2 max-[440px]:my-6 max-[375px]:gap-2 max-[375px]:my-[24px]">
+      <div v-if="searchResults.length > 0 && totalPages > 1" class="flex justify-center items-center gap-4 my-8 relative z-10 max-md:gap-3 max-md:my-6 max-[480px]:gap-2 max-[480px]:my-5 max-[375px]:gap-1.5 max-[375px]:my-4">
         <button 
           @click="previousPage"
           :disabled="currentPage === 1"
-          class="bg-[#FFB536] text-white border-none py-2 px-6 rounded-[25px] cursor-pointer font-['Irish_Grover'] text-[19.2px] transition-colors duration-300 ease-in-out disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[#ff9900c7] max-[1024px]:py-[6.4px] max-[1024px]:px-[19.2px] max-[1024px]:text-[17.6px] max-md:py-[4.8px] max-md:px-4 max-md:text-base max-[440px]:py-[4.8px] max-[440px]:px-[12.8px] max-[440px]:text-[14.4px] max-[375px]:py-[4px] max-[375px]:px-[11.2px] max-[375px]:text-[13.6px]"
+          class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px] max-md:px-4 max-md:py-1.5 max-md:text-[16px] max-md:rounded-[20px] max-[480px]:px-3 max-[480px]:py-1 max-[480px]:text-[14px] max-[480px]:rounded-[15px] max-[375px]:px-2.5 max-[375px]:py-0.5 max-[375px]:text-[12px] max-[375px]:rounded-[12px]"
+          style="font-family: 'Irish Grover', cursive;"
         >
           Previous
         </button>
-        <div class="flex gap-2 items-center max-[440px]:gap-2 max-[375px]:gap-2">
-          <button 
+        <div class="flex gap-2 max-md:gap-1.5 max-[480px]:gap-1 max-[375px]:gap-0.5">
+          <div 
             v-for="page in pageNumbers" 
             :key="page"
+            class="w-[40px] h-[40px] flex items-center justify-center rounded-full cursor-pointer text-white bg-transparent border-2 border-transparent transition-all duration-300 hover:border-[#FFB536] text-[19.2px] max-md:w-[35px] max-md:h-[35px] max-md:text-[16px] max-[480px]:w-[30px] max-[480px]:h-[30px] max-[480px]:text-[14px] max-[375px]:w-[28px] max-[375px]:h-[28px] max-[375px]:text-[12px]"
+            :class="{ 'bg-[#FFB536] border-[#FFB536]': page === currentPage }"
             @click="currentPage = page"
-            :class="[
-              'w-10 h-10 flex items-center justify-center rounded-full cursor-pointer font-[\'Irish_Grover\'] text-[19.2px] text-white bg-transparent border-[2px] border-transparent transition-all duration-300 ease-in-out hover:border-[#FFB536] max-[1024px]:w-[35px] max-[1024px]:h-[35px] max-[1024px]:text-[17.6px] max-md:w-[30px] max-md:h-[30px] max-md:text-base max-[440px]:w-[28px] max-[440px]:h-[28px] max-[440px]:text-[14.4px] max-[375px]:w-[25px] max-[375px]:h-[25px] max-[375px]:text-[13.6px]',
-              currentPage === page ? 'bg-[#FFB536] text-white border-transparent' : 'text-white bg-transparent'
-            ]"
+            style="font-family: 'Irish Grover', cursive;"
           >
             {{ page }}
-          </button>
+          </div>
         </div>
         <button 
           @click="nextPage"
           :disabled="currentPage === totalPages"
-          class="bg-[#FFB536] text-white border-none py-2 px-6 rounded-[25px] cursor-pointer font-['Irish_Grover'] text-[19.2px] transition-colors duration-300 ease-in-out disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[#ff9900c7] max-[1024px]:py-[6.4px] max-[1024px]:px-[19.2px] max-[1024px]:text-[17.6px] max-md:py-[4.8px] max-md:px-4 max-md:text-base max-[440px]:py-[4.8px] max-[440px]:px-[12.8px] max-[440px]:text-[14.4px] max-[375px]:py-[4px] max-[375px]:px-[11.2px] max-[375px]:text-[13.6px]"
+          class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px] max-md:px-4 max-md:py-1.5 max-md:text-[16px] max-md:rounded-[20px] max-[480px]:px-3 max-[480px]:py-1 max-[480px]:text-[14px] max-[480px]:rounded-[15px] max-[375px]:px-2.5 max-[375px]:py-0.5 max-[375px]:text-[12px] max-[375px]:rounded-[12px]"
+          style="font-family: 'Irish Grover', cursive;"
         >
           Next
         </button>
