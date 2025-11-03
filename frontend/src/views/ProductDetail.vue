@@ -1,109 +1,153 @@
 <template>
-  <div class="product-detail-page">
-    <div class="stars"></div>
+  <div class="relative min-h-screen pt-0 pb-8" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
     
-    <div v-if="loading" class="loading-container">
-      <h2 style="color: #FEC564;">Loading book details...</h2>
+    <div v-if="loading" class="flex justify-center items-center min-h-[80vh] relative z-10">
+      <h2 class="text-gold">Loading book details...</h2>
     </div>
 
-    <div v-else-if="!book" class="no-book">
-      <div class="no-book-content">
-        <i class="fas fa-book fa-3x"></i>
-        <h2>Book not found</h2>
-        <p>Sorry, this book is not available</p>
-        <router-link to="/allProduct" class="back-btn">
-          <i class="fas fa-arrow-left"></i> Back to All Products
-        </router-link>
+    <div v-else-if="!book" class="flex justify-center items-center min-h-[80vh] relative z-10">
+      <div class="text-center text-gray-300">
+        <i class="fas fa-book fa-3x text-gold mb-4"></i>
       </div>
     </div>
 
-    <div v-else class="product-detail-container">
-      <div class="container">
-        <div class="row">
-          <!-- Book Image -->
-          <div class="col-12 col-md-5 col-lg-4">
-            <div class="book-image-container">
-              <div v-if="hasDiscount(book)" class="discount-badge">
-                {{ getDiscountPercentage(book) }}% OFF
-              </div>
-              <img 
-                :src="`/src/model/image/books/${book.bookID}.jpg`" 
-                :alt="book.bookName"
-                @error="$event.target.src='/src/model/image/books/default.jpg'"
-                class="book-image"
-              />
-            </div>
+    <div v-else class="relative z-10">
+      <!-- Product Container -->
+      <div class="max-w-[900px] mx-auto mt-[70px] max-[1024px]:max-w-[90%] max-md:my-20 max-md:p-[15px] max-[440px]:my-5 max-[440px]:p-[10px]">
+        <!-- Product Detail Section -->
+        <div class="flex gap-10 mb-[30px] max-md:flex-col max-md:items-center max-md:gap-[30px] max-[440px]:gap-[15px] max-[440px]:mb-[15px]">
+          <!-- Product Image -->
+          <div class="flex-1 w-full h-auto -ml-[50px] bg-transparent max-md:ml-0 max-md:mt-[100px] max-[440px]:max-w-[75%] max-[440px]:mt-0">
+            <img 
+              :src="`/src/model/image/books/${book.bookID}.jpg`" 
+              :alt="book.bookName"
+              class="w-full h-auto block border-[4px] border-[#FFD700] max-[440px]:border-2"
+              @error="$event.target.src='/src/model/image/books/default.jpg'"
+            />
           </div>
 
-          <!-- Book Details -->
-          <div class="col-12 col-md-7 col-lg-8">
-            <div class="book-details">
-              <h1 class="book-title">{{ book.bookName }}</h1>
-              <p class="book-category">{{ book.categoryName }}</p>
-              
-              <!-- Price Section -->
-              <div class="price-section">
-                <span v-if="hasDiscount(book)" class="original-price">{{ book.price }} G</span>
-                <span class="current-price">{{ getDisplayPrice(book) }} G</span>
-                <span v-if="hasDiscount(book)" class="discount-info">Save {{ getDiscountPercentage(book) }}%</span>
-              </div>
+          <!-- Product Info -->
+          <div class="flex-1 flex flex-col justify-center gap-[10px] text-white max-md:w-full max-md:items-center">
+            <!-- Product Title -->
+            <h1 class="text-[50px] -mr-[200px] text-[#FEC564] max-[1024px]:text-[40px] max-[1024px]:-mr-[50px] max-md:text-[35px] max-md:mr-0 max-md:text-center max-[440px]:text-[22px] max-[440px]:mb-[5px]">
+              {{ book.bookName }}
+            </h1>
 
-              <!-- Description -->
-              <div class="book-description">
-                <h3>Description</h3>
-                <p>{{ book.bookDescription || 'No description available for this magical tome.' }}</p>
-              </div>
+            <!-- Product Info Column (Price/Quantity and Features) -->
+            <div class="flex gap-10 max-md:flex-row max-md:justify-between max-md:items-center max-md:gap-[70px] max-md:mb-[15px] max-[440px]:gap-[50px]">
+              <!-- Left Column (Price and Quantity) -->
+              <div class="flex flex-col max-[440px]:flex-col">
+                <!-- Product Price -->
+                <div class="mb-[10px] max-md:text-center max-[440px]:mb-0">
+                  <div v-if="hasDiscount(book)" class="text-[25px] text-[#999] relative no-underline flex items-center justify-center mt-[25px] max-[440px]:text-[16px] max-[440px]:mt-0">
+                    <span class="line-through">{{ book.price }} G</span>
+                    <span class="bg-[#ff0000] text-white text-base py-[1px] px-[10px] rounded-[20px] ml-[10px] inline-block max-[440px]:text-xs max-[440px]:py-[1px] max-[440px]:px-2">{{ getDiscountPercentage(book) }}% OFF</span>
+                  </div>
+                  <div class="text-[30px] mb-[10px] text-[#FEC564] max-md:text-center max-[440px]:text-[22px] max-[440px]:-ml-5">
+                    <span class="text-[2.5rem] text-[#FEC564] max-[440px]:text-[22px]">{{ getDisplayPrice(book) }} G</span>
+                  </div>
+                </div>
 
-              <!-- Add to Cart -->
-              <div class="cart-section">
-                <div class="quantity-selector">
-                  <label for="quantity">Quantity:</label>
-                  <button @click="decreaseQuantity" :disabled="quantity === 1" class="qty-btn">-</button>
+                <!-- Quantity Selector -->
+                <div class="text-black flex items-center justify-center mb-5 w-[150px] ml-12 max-md:ml-[35px] max-[440px]:m-0 max-[440px]:w-[90px]">
+                  <button 
+                    @click="decreaseQuantity" 
+                    :disabled="quantity === 1"
+                    class="w-10 h-10 bg-white border-none rounded-[2px] font-bold text-black text-[30px] cursor-pointer flex items-center justify-center max-[440px]:w-[25px] max-[440px]:h-[25px] max-[440px]:text-[18px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    -
+                  </button>
                   <input 
                     type="number" 
                     id="quantity"
                     v-model.number="quantity" 
                     min="1"
                     max="99"
-                    class="qty-input"
+                    class="w-[50px] h-10 border-none border-l border-r border-[#eee] bg-white font-bold text-center text-[32px] max-[440px]:w-[30px] max-[440px]:h-[25px] max-[440px]:text-[18px]"
                   />
-                  <button @click="increaseQuantity" :disabled="quantity === 99" class="qty-btn">+</button>
+                  <button 
+                    @click="increaseQuantity" 
+                    :disabled="quantity === 99"
+                    class="w-10 h-10 bg-white border-none rounded-[2px] font-bold text-black text-[30px] cursor-pointer flex items-center justify-center max-[440px]:w-[25px] max-[440px]:h-[25px] max-[440px]:text-[18px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    +
+                  </button>
                 </div>
-                
-                <div v-if="message" class="message" :class="messageType">
-                  {{ message }}
-                </div>
+              </div>
 
-                <button @click="addToCart" class="add-to-cart-btn" :disabled="addingToCart">
-                  <i class="fas fa-shopping-cart"></i> 
-                  <span v-if="addingToCart">Adding to Cart...</span>
-                  <span v-else>Add to Cart</span>
-                </button>
+              <!-- Right Column (Product Features) -->
+              <div class="flex flex-col gap-[30px] mb-5 -mr-[100px] mt-5 max-[1024px]:-mr-[50px] max-md:mr-0 max-[440px]:m-0 max-[440px]:gap-[10px]">
+                <div v-for="(feature, index) in features" :key="index" class="flex items-start gap-5 text-[23px] max-[440px]:text-base max-[440px]:gap-2">
+                  <input 
+                    type="checkbox" 
+                    :id="`feature-${index}`"
+                    :checked="selectedFeatures.includes(feature.value)"
+                    @change="handleFeatureChange(feature.value, $event)"
+                    class="w-[35px] h-[35px] appearance-none bg-white border-2 border-black relative cursor-pointer rounded-[5px] checked:bg-white checked:border-black max-[440px]:w-[18px] max-[440px]:h-[18px]"
+                  />
+                  <label :for="`feature-${index}`" class="cursor-pointer text-white">{{ feature.label }}</label>
+                </div>
               </div>
             </div>
+
+            <!-- Message -->
+            <div 
+              v-if="message" 
+              class="p-4 rounded mb-4 text-center font-bold"
+              :class="{
+                'bg-green/20 text-green border border-green/30': messageType === 'success',
+                'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+              }"
+            >
+              {{ message }}
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button 
+              @click="addToCart" 
+              class="bg-[#FEC564] text-black border-none text-[32px] font-bold font-['Irish_Grover'] cursor-pointer rounded-[20px] text-center justify-center h-[55px] w-full max-w-[350px] ml-20 transition-colors duration-300 hover:bg-[#fa9e00] disabled:bg-[#cccccc] disabled:cursor-not-allowed disabled:text-[#666666] max-[1024px]:ml-10 max-md:ml-0 max-[440px]:text-[18px] max-[440px]:h-10 max-[440px]:max-w-[50%]"
+              :disabled="addingToCart"
+            >
+              <span v-if="addingToCart">Adding to Cart...</span>
+              <span v-else>Add to Cart</span>
+            </button>
           </div>
         </div>
 
-        <!-- Related Books Section -->
-        <div v-if="relatedBooks.length > 0" class="related-books-section">
-          <div class="divider"></div>
-          <h2 class="section-title">Related Books</h2>
-          <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center g-4">
-            <div 
-              v-for="relatedBook in relatedBooks.slice(0, 5)" 
-              :key="relatedBook.bookID" 
-              class="col-6 col-lg"
-            >
-              <BookItem :book="relatedBook" />
-            </div>
-          </div>
+        <!-- Divider -->
+        <div class="max-w-[2000px] h-[3px] bg-[#FEC564] mt-10 relative -left-[15%] w-[130%] max-[1024px]:-left-[10%] max-[1024px]:w-[120%] max-md:left-0 max-md:w-full max-md:mt-5 max-md:mb-5 max-[440px]:left-0 max-[440px]:w-full max-[440px]:mt-5 max-[440px]:mb-5"></div>
+
+        <!-- Product Description Container -->
+        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
+          <h2 class="text-[#FEC564] text-[2.5rem] -mt-[10px] mb-5 max-md:text-[2rem] max-[440px]:text-[20px] max-[440px]:mb-[10px]">Description</h2>
+          <p class="text-white text-[1.8rem] leading-[1.6] m-0 max-md:text-[1.5rem] max-[440px]:text-base max-[440px]:leading-[1.4] max-[440px]:text-justify">
+            {{ book.bookDescription || 'No description available for this magical tome.' }}
+          </p>
         </div>
       </div>
+
     </div>
 
     <!-- Back Button -->
-    <div class="back-button" @click="$router.back()">
-      <i class="fas fa-arrow-left"></i>
+    <div class="fixed bottom-[30px] right-[30px] bg-gold text-black w-[50px] h-[50px] rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 z-[100] shadow-[0_5px_15px_rgba(254,197,100,0.3)] hover:bg-[#ffd700] hover:-translate-y-1" @click="$router.back()">
+      <i class="fas fa-arrow-left text-2xl"></i>
     </div>
   </div>
 </template>
@@ -130,6 +174,27 @@ export default {
     const addingToCart = ref(false)
     const message = ref('')
     const messageType = ref('')
+    const selectedFeatures = ref([])
+    
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const promotionBooks = computed(() => booksStore.promotionBooks)
     const books = computed(() => booksStore.books)
@@ -137,6 +202,14 @@ export default {
     const hasDiscount = (book) => {
       return promotionBooks.value.some(promo => promo.bookID === book.bookID)
     }
+    
+    const features = computed(() => {
+      return [
+        { label: 'Fire Resistant', value: 'Fire Resistant' },
+        { label: 'Self Repairing', value: 'Self Repairing' },
+        { label: 'Magical Lock', value: 'Magical Lock' }
+      ]
+    })
 
     const getDiscountPercentage = (book) => {
       const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
@@ -167,6 +240,20 @@ export default {
     const increaseQuantity = () => {
       if (quantity.value < 99) {
         quantity.value++
+      }
+    }
+
+    const handleFeatureChange = (featureValue, event) => {
+      if (event.target.checked) {
+        // Only allow one feature to be selected (radio-like behavior)
+        selectedFeatures.value = [featureValue]
+      } else {
+        // If unchecking, ensure at least one is selected
+        if (selectedFeatures.value.length === 1) {
+          event.target.checked = true
+          return
+        }
+        selectedFeatures.value = selectedFeatures.value.filter(v => v !== featureValue)
       }
     }
 
@@ -220,7 +307,10 @@ export default {
       message.value = ''
 
       try {
-        const enchantment = hasDiscount(book.value) ? 'Promotion' : 'Standard'
+        // Use selected feature or default to Fire Resistant
+        const enchantment = selectedFeatures.value.length > 0 
+          ? selectedFeatures.value[0] 
+          : 'Fire Resistant'
 
         // Use the correct endpoint
         await axios.post('/api/cart/add', {
@@ -243,6 +333,13 @@ export default {
         setTimeout(() => { message.value = '' }, 3000)
       }
     }
+    
+    // Watch book changes to set default feature
+    watch(() => book.value, (newBook) => {
+      if (newBook) {
+        selectedFeatures.value = ['Fire Resistant']
+      }
+    }, { immediate: true })
 
     onMounted(async () => {
       try {
@@ -281,369 +378,64 @@ export default {
       getDisplayPrice,
       decreaseQuantity,
       increaseQuantity,
-      addToCart
+      addToCart,
+      features,
+      selectedFeatures,
+      handleFeatureChange,
+      confettiDots
     }
   }
 }
 </script>
 
 <style scoped>
-.product-detail-page {
-  position: relative;
-  min-height: 100vh;
-  padding-top: 120px;
-  padding-bottom: 2rem;
-  background-color: #0a0a0a;
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
 }
 
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  pointer-events: none;
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
   z-index: 0;
 }
 
-.stars::after {
-  content: '';
+/* Checkbox checked state styling */
+input[type="checkbox"]:checked::after {
+  content: '✓';
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-              radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-              radial-gradient(1px 1px at 90px 40px, #fff, transparent);
-  background-repeat: repeat;
-  background-size: 200px 100px;
-  animation: sparkle 20s linear infinite;
-}
-
-@keyframes sparkle {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100px);
-  }
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-
-.no-book {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 80vh;
-}
-
-.no-book-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.no-book-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-book-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-book-content p {
-  color: #888;
-  margin-bottom: 2rem;
-}
-
-.back-btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background: #FEC564;
-  color: #000;
-  border-radius: 5px;
-  text-decoration: none;
+  color: #000000;
+  font-size: 28px;
   font-weight: bold;
-  transition: all 0.3s ease;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.back-btn:hover {
-  background: #ffd700;
-  transform: translateY(-2px);
+/* Checkbox styling */
+input[type="checkbox"] {
+  border: 2px solid #000000 !important;
+  background-color: #ffffff !important;
 }
 
-.product-detail-container {
-  position: relative;
-  z-index: 10;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: #0a0a0a;
+input[type="checkbox"]:checked {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
 }
 
-.book-image-container {
-  position: relative;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  text-align: center;
-  z-index: 10;
-}
-
-.discount-badge {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: #FEC564;
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1rem;
-  z-index: 10;
-}
-
-.book-image {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.book-details {
-  padding: 0 1rem;
-  z-index: 10;
-  position: relative;
-}
-
-.book-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.book-category {
-  color: #ccc;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-}
-
-.price-section {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  padding: 1rem 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.original-price {
-  color: #999;
-  text-decoration: line-through;
-  font-size: 1.5rem;
-}
-
-.current-price {
-  color: #FEC564;
-  font-size: 2.5rem;
-  font-weight: bold;
-}
-
-.discount-info {
-  background: rgba(254, 197, 100, 0.2);
-  color: #FEC564;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-.book-description {
-  margin-bottom: 2rem;
-}
-
-.book-description h3 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-}
-
-.book-description p {
-  color: #ccc;
-  line-height: 1.8;
-  font-size: 1.1rem;
-}
-
-.cart-section {
-  margin-top: 2rem;
-}
-
-.quantity-selector {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.quantity-selector label {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.qty-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-}
-
-.qty-btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.2);
-  border-color: #FEC564;
-}
-
-.qty-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.qty-input {
-  width: 80px;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  color: white;
-  font-size: 1.2rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.qty-input:focus {
-  outline: none;
-  border-color: #FEC564;
-}
-
-.add-to-cart-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.add-to-cart-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.add-to-cart-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.related-books-section {
-  margin-top: 4rem;
-}
-
-.divider {
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #FEC564, transparent);
-  margin: 2rem 0;
-}
-
-.section-title {
-  color: #FEC564;
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.back-button {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #FEC564;
-  color: #000;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  z-index: 100;
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.back-button:hover {
-  background: #ffd700;
-  transform: translateY(-5px);
-}
-
-.back-button i {
-  font-size: 1.5rem;
-}
-
-@media (max-width: 768px) {
-  .book-title {
-    font-size: 2rem;
-  }
-  
-  .current-price {
-    font-size: 2rem;
-  }
-  
-  .product-detail-container {
-    padding: 0 1rem;
+@media screen and (max-width: 440px) {
+  input[type="checkbox"]:checked::after {
+    font-size: 14px;
   }
 }
 </style>
-

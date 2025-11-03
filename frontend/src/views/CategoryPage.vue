@@ -1,37 +1,55 @@
 <template>
-  <div class="category-page">
-    <div class="stars"></div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
     
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">{{ categoryName }}</h1>
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] py-8 min-h-[80vh] pt-[20px]">
+    
+    <!-- Container - matching all-products-container from searchPage.css: padding 16px, max-width 1400px, margin auto -->
+    <div class="mx-auto relative z-[500] p-4 max-w-[1400px]">
+      <!-- Page Header - matching rec class styling from homePage.css: z-index 500, margin 20px -->
+      <div class="w-full text-center z-[500]">
+        <div class="mt-[20px] mb-[20px]">
+          <h1 class="text-4xl text-[#FEC564] m-[20px]">{{ categoryName }}</h1>
         </div>
       </div>
 
-      <div v-if="loading" class="loading-container">
-        <h2 style="color: #FEC564;">Loading books...</h2>
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
+        <h2 class="text-[#FEC564]">Loading books...</h2>
       </div>
 
-      <div v-else-if="categoryBooks.length === 0" class="no-results">
-        <div class="no-results-content">
-          <i class="fas fa-book fa-3x"></i>
-          <h2>No books found</h2>
-          <p>No books available in this category</p>
-        </div>
-      </div>
 
-      <div v-else class="category-books">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center g-4">
+      <!-- Books Grid Container - matching all-products-container styling from searchPage.css -->
+      <div v-else>
+        <div class="pt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-center">
           <div 
             v-for="book in categoryBooks" 
             :key="book.bookID" 
-            class="col-6 col-lg"
+            class="w-full"
           >
             <BookItem :book="book" />
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -55,6 +73,26 @@ export default {
     const categoryBooks = ref([])
     const categoryName = ref('')
     const loading = ref(false)
+    
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const fetchCategoryBooks = async () => {
       const categoryId = route.params.id
@@ -93,56 +131,32 @@ export default {
     return {
       categoryBooks,
       categoryName,
-      loading
+      loading,
+      confettiDots
     }
   }
 }
 </script>
 
 <style scoped>
-.category-page {
-  padding: 2rem 0;
-  min-height: 80vh;
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
 }
 
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
 }
 
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.no-results-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content p {
-  color: #888;
+.confetti-container {
+  z-index: 0;
 }
 </style>
-

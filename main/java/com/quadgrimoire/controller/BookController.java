@@ -2,14 +2,15 @@ package com.quadgrimoire.controller;
 
 import com.quadgrimoire.model.Book;
 import com.quadgrimoire.model.PromotionBook;
-import com.quadgrimoire.repository.BookRepository;
-import com.quadgrimoire.repository.PromotionBookRepository;
+import com.quadgrimoire.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,127 +19,93 @@ import java.util.Optional;
 public class BookController {
     
     @Autowired
-    private BookRepository bookRepository;
-    
-    @Autowired
-    private PromotionBookRepository promotionBookRepository;
+    private BookService bookService;
     
     @GetMapping("/allBooks")
     public ResponseEntity<List<Book>> getAllBooks() {
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }
     
     @GetMapping("/books")
     public ResponseEntity<List<Book>> getBooks() {
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }
     
     @GetMapping("/books/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Integer id) {
-        Optional<Book> book = bookRepository.findById(id);
-        if (book.isPresent()) {
-            Book bookData = book.get();
-            
-            // Check for promotion
-            PromotionBook promotionBook = promotionBookRepository.findByBookID(id);
-            if (promotionBook != null) {
-                bookData.setProPrice(promotionBook.getProPrice());
-            }
-            
-            return ResponseEntity.ok(bookData);
-        }
-        return ResponseEntity.notFound().build();
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     
     @GetMapping("/category/{id}")
     public ResponseEntity<List<Book>> getBooksByCategory(@PathVariable Integer id) {
-        List<Book> books = bookRepository.findByCategoryID(id);
+        List<Book> books = bookService.getBooksByCategory(id);
         return ResponseEntity.ok(books);
     }
     
     @GetMapping("/promotionBooks")
     public ResponseEntity<List<PromotionBook>> getPromotionBooks() {
-        List<PromotionBook> books = promotionBookRepository.findAll();
+        List<PromotionBook> books = bookService.getPromotionBooks();
         return ResponseEntity.ok(books);
     }
     
     @PostMapping("/books")
     public ResponseEntity<?> addBook(@RequestBody BookRequest bookRequest) {
         try {
-            Book book = new Book();
-            book.setBookID(bookRequest.getBookID());
-            book.setBookName(bookRequest.getBookName());
-            book.setCategoryID(bookRequest.getCategoryID());
-            book.setCategoryName(bookRequest.getCategoryName());
-            book.setBookDescription(bookRequest.getBookDescription());
-            book.setPrice(bookRequest.getPrice());
-            book.setProPrice(bookRequest.getProPrice());
+            Map<String, Object> bookData = new HashMap<>();
+            bookData.put("bookID", bookRequest.getBookID());
+            bookData.put("bookName", bookRequest.getBookName());
+            bookData.put("categoryID", bookRequest.getCategoryID());
+            bookData.put("categoryName", bookRequest.getCategoryName());
+            bookData.put("bookDescription", bookRequest.getBookDescription());
+            bookData.put("price", bookRequest.getPrice());
+            bookData.put("proPrice", bookRequest.getProPrice());
+            bookData.put("isPromotionBook", bookRequest.getIsPromotionBook());
             
-            bookRepository.save(book);
-            
-            if (bookRequest.getIsPromotionBook() != null && bookRequest.getIsPromotionBook()) {
-                PromotionBook promotionBook = new PromotionBook();
-                promotionBook.setBookID(book.getBookID());
-                promotionBook.setBookName(book.getBookName());
-                promotionBook.setCategoryID(book.getCategoryID());
-                promotionBook.setCategoryName(book.getCategoryName());
-                promotionBook.setBookDescription(book.getBookDescription());
-                promotionBook.setPrice(book.getPrice());
-                promotionBook.setProPrice(book.getProPrice());
-                promotionBookRepository.save(promotionBook);
-            }
-            
-            return ResponseEntity.ok().build();
+            Map<String, Object> response = bookService.addBook(bookData);
+            return response.get("success").equals(true) ? 
+                ResponseEntity.ok(response) : 
+                ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to add book: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
     
     @PutMapping("/books/{id}")
     public ResponseEntity<?> updateBook(@PathVariable Integer id, @RequestBody BookRequest bookRequest) {
-        Optional<Book> existingBook = bookRepository.findById(id);
-        if (existingBook.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        try {
+            Map<String, Object> bookData = new HashMap<>();
+            bookData.put("bookID", id);
+            bookData.put("bookName", bookRequest.getBookName());
+            bookData.put("categoryID", bookRequest.getCategoryID());
+            bookData.put("categoryName", bookRequest.getCategoryName());
+            bookData.put("bookDescription", bookRequest.getBookDescription());
+            bookData.put("price", bookRequest.getPrice());
+            bookData.put("proPrice", bookRequest.getProPrice());
+            bookData.put("isPromotionBook", bookRequest.getIsPromotionBook());
+            
+            Map<String, Object> response = bookService.updateBook(id, bookData);
+            return response.get("success").equals(true) ? 
+                ResponseEntity.ok(response) : 
+                ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-        
-        Book book = existingBook.get();
-        book.setBookName(bookRequest.getBookName());
-        book.setCategoryID(bookRequest.getCategoryID());
-        book.setCategoryName(bookRequest.getCategoryName());
-        book.setBookDescription(bookRequest.getBookDescription());
-        book.setPrice(bookRequest.getPrice());
-        book.setProPrice(bookRequest.getProPrice());
-        
-        bookRepository.save(book);
-        
-        // Handle promotion book
-        PromotionBook promotionBook = promotionBookRepository.findByBookID(id);
-        if (bookRequest.getIsPromotionBook() != null && bookRequest.getIsPromotionBook()) {
-            if (promotionBook == null) {
-                promotionBook = new PromotionBook();
-                promotionBook.setBookID(id);
-            }
-            promotionBook.setBookName(book.getBookName());
-            promotionBook.setCategoryID(book.getCategoryID());
-            promotionBook.setCategoryName(book.getCategoryName());
-            promotionBook.setBookDescription(book.getBookDescription());
-            promotionBook.setPrice(book.getPrice());
-            promotionBook.setProPrice(book.getProPrice());
-            promotionBookRepository.save(promotionBook);
-        } else if (promotionBook != null) {
-            promotionBookRepository.delete(promotionBook);
-        }
-        
-        return ResponseEntity.ok().build();
     }
     
     @DeleteMapping("/books/{id}")
     public ResponseEntity<?> deleteBook(@PathVariable Integer id) {
         try {
-            bookRepository.deleteById(id);
-            return ResponseEntity.ok().build();
+            Map<String, Object> response = bookService.deleteBook(id);
+            return response.get("success").equals(true) ? 
+                ResponseEntity.ok(response) : 
+                ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -146,7 +113,7 @@ public class BookController {
     
     @GetMapping("/search")
     public ResponseEntity<List<Book>> searchBooks(@RequestParam String term) {
-        List<Book> books = bookRepository.findByBookNameContainingIgnoreCaseOrBookDescriptionContainingIgnoreCase(term, term);
+        List<Book> books = bookService.searchBooks(term);
         return ResponseEntity.ok(books);
     }
     

@@ -1,9 +1,10 @@
 package com.quadgrimoire.controller;
 
+import com.quadgrimoire.service.ContactService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -11,27 +12,19 @@ import java.util.Map;
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:3000"})
 public class ContactController {
     
+    @Autowired
+    private ContactService contactService;
+    
     @PostMapping("/contact")
     public ResponseEntity<Map<String, Object>> contact(@RequestBody Map<String, String> contactData) {
-        Map<String, Object> response = new HashMap<>();
-        
-        String name = contactData.get("name");
-        String email = contactData.get("email");
-        String subject = contactData.get("subject");
-        String message = contactData.get("message");
-        
-        if (name == null || email == null || subject == null || message == null) {
-            response.put("success", false);
-            response.put("error", "All fields are required");
-            return ResponseEntity.ok(response);
-        }
-        
-        // Log contact form submission
-        System.out.println("Contact form submission: " + contactData);
-        
-        response.put("success", true);
-        response.put("message", "Message sent successfully");
+        Map<String, Object> response = contactService.processContactForm(contactData);
         return ResponseEntity.ok(response);
+    }
+    
+    @GetMapping("/contact/stats")
+    public ResponseEntity<Map<String, Object>> getContactStats() {
+        Map<String, Object> stats = contactService.getContactStats();
+        return ResponseEntity.ok(stats);
     }
 }
 

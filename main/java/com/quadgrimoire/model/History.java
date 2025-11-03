@@ -2,6 +2,7 @@ package com.quadgrimoire.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Historys")
@@ -30,6 +31,10 @@ public class History {
     
     @Column(columnDefinition = "TEXT")
     private String enchantment;
+    
+    @jakarta.persistence.Transient
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private LocalDateTime sellDate;
     
     // Default constructor for JPA
     public History() {
@@ -98,6 +103,14 @@ public class History {
     
     public void setEnchantment(String enchantment) {
         this.enchantment = enchantment;
+    }
+    
+    public LocalDateTime getSellDate() {
+        return sellDate;
+    }
+    
+    public void setSellDate(LocalDateTime sellDate) {
+        this.sellDate = sellDate;
     }
 }
 
