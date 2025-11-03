@@ -34,7 +34,7 @@
             </div>
 
             <!-- Curved Text for 2nd Place -->
-            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-65px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
+            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-56px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
               <path id="curve2" d="M10,40 Q50,30 90,40" fill="transparent"></path>
               <text text-anchor="middle">
                 <textPath href="#curve2" startOffset="50%" fill="white" :font-size="isMobile ? 14 : 18" font-weight="bold" stroke="black" stroke-width="2" paint-order="stroke fill">
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Curved Text for 1st Place -->
-            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-65px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
+            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-57px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
               <path id="curve1" d="M10,40 Q50,30 90,40" fill="transparent"></path>
               <text text-anchor="middle">
                 <textPath href="#curve1" startOffset="50%" fill="white" :font-size="isMobile ? 14 : 18" font-weight="bold" stroke="black" stroke-width="2" paint-order="stroke fill">
@@ -78,7 +78,7 @@
             </div>
 
             <!-- Curved Text for 3rd Place -->
-            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-65px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
+            <svg class="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[200px] h-[80px] max-[1024px]:top-[-90px] max-[1024px]:w-[200px] max-[1024px]:h-[75px] max-[768px]:top-[-80px] max-[768px]:w-[175px] max-[768px]:h-[60px] max-[480px]:top-[-70px] max-[480px]:w-[100px] max-[480px]:h-[40px] max-[440px]:top-[-56px] max-[440px]:w-[80px] max-[440px]:h-[35px] max-[375px]:top-[-60px] max-[375px]:w-[70px] max-[375px]:h-[30px]" viewBox="0 15 100 50">
               <path id="curve3" d="M10,40 Q50,30 90,40" fill="transparent"></path>
               <text text-anchor="middle">
                 <textPath href="#curve3" startOffset="50%" fill="white" :font-size="isMobile ? 14 : 18" font-weight="bold" stroke="black" stroke-width="2" paint-order="stroke fill">
