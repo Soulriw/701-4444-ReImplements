@@ -1,20 +1,25 @@
 <template>
-  <div class="book-item-container">
-    <router-link :to="`/productDetail/${book.bookID}`" @click="handleClick" style="text-decoration: none; color: inherit;">
-      <div class="search-card">
-        <div v-if="hasDiscount(book)" class="search-discount-label">
+  <!-- Book item card container -->
+  <div class="w-full">
+    <router-link :to="`/productDetail/${book.bookID}`" @click="handleClick" class="no-underline text-inherit">
+      <div class="bg-white rounded-[20px] p-[12.8px] shadow-[0_4px_8px_rgba(0,0,0,0.2)] transition-all duration-300 relative flex flex-col h-full z-[500] max-w-[280px] mx-auto cursor-pointer hover:-translate-y-[10px] hover:shadow-[0_10px_20px_rgba(0,0,0,0.2)] max-[1024px]:max-w-[250px] max-md:max-w-[220px] max-md:p-[11.2px] max-[440px]:max-w-[180px] max-[440px]:p-[9.6px] max-[375px]:max-w-[160px] max-[375px]:p-[8px]">
+        <!-- Discount label badge -->
+        <div v-if="hasDiscount(book)" class="absolute -top-[8px] -right-[8px] bg-[#ff0000] text-white py-[6.4px] px-[12.8px] rounded-[15px] font-bold text-[19.2px] z-[1] shadow-[0_2px_4px_rgba(0,0,0,0.2)] max-[1024px]:text-[17.6px] max-md:text-base max-md:py-[4.8px] max-md:px-[9.6px] max-[440px]:text-[14.4px] max-[440px]:py-[4.8px] max-[440px]:px-[8px] max-[440px]:-top-[5px] max-[440px]:-right-[5px] max-[375px]:text-[14.4px]" style="font-family: 'Irish Grover', cursive;">
           {{ getDiscountPercentage(book) }}%
         </div>
         <img 
           :src="`/src/model/image/books/${book.bookID}.jpg`" 
           :alt="book.bookName" 
+          class="w-full h-[180px] object-cover rounded-[10px] mb-0 max-[1024px]:h-[160px] max-md:h-[140px] max-[440px]:h-[120px] max-[375px]:h-[110px]"
           @error="$event.target.src='/src/model/image/books/default.jpg'"
         />
-        <h2>{{ book.bookName }}</h2>
-        <p>{{ book.bookDescription || 'No description available.' }}</p>
-        <div class="search-price-tag">
-          <span v-if="hasDiscount(book)" class="search-original-price">{{ book.price }}</span>
-          <span class="search-promo-price">{{ getDisplayPrice(book) }} G</span>
+        <h2 class="text-[#2a1b3d] mt-[12.8px] mb-[12.8px] text-base leading-[1.2] h-[2.4em] overflow-hidden max-[1024px]:text-[15.2px] max-md:text-[14.4px] max-md:mt-[9.6px] max-md:mb-[9.6px] max-[440px]:text-[13.6px] max-[440px]:mt-[8px] max-[440px]:mb-[8px] max-[440px]:h-[2.2em] max-[375px]:text-[12.8px] max-[375px]:h-[2em]">{{ book.bookName }}</h2>
+        <p class="text-[#666] text-[13.6px] mb-[12.8px] line-clamp-3 h-[4.0em] overflow-hidden max-md:text-[12.8px] max-[440px]:text-[12px] max-[440px]:h-[3.6em] max-[375px]:text-[11.2px] max-[375px]:h-[3.2em]" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+          {{ book.bookDescription || 'No description available.' }}
+        </p>
+        <div class="flex gap-[12.8px] items-center justify-end mt-auto pt-[8px] max-[440px]:gap-2 max-[440px]:pt-[4.8px] max-[375px]:pt-[4.8px]">
+          <span v-if="hasDiscount(book)" class="text-[#999] line-through text-[14.4px] max-[440px]:text-[12.8px] max-[375px]:text-[12px]">{{ book.price }}</span>
+          <span class="text-[#ff4444] text-[17.6px] font-bold max-[440px]:text-[14.4px] max-[375px]:text-[13.6px]">{{ getDisplayPrice(book) }} G</span>
         </div>
       </div>
     </router-link>
@@ -68,87 +73,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.book-item-container {
-  width: 100%;
-}
-
-.search-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.search-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(254, 197, 100, 0.3);
-  border-color: #FEC564;
-}
-
-.search-card img {
-  width: 100%;
-  height: auto;
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-
-.search-card h2 {
-  color: #FEC564;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
-}
-
-.search-card p {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  flex-grow: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.search-discount-label {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  background: #FEC564;
-  color: #000;
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: bold;
-  font-size: 1.2rem;
-  z-index: 10;
-}
-
-.search-price-tag {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-top: auto;
-}
-
-.search-original-price {
-  color: #999;
-  text-decoration: line-through;
-  font-size: 1rem;
-}
-
-.search-promo-price {
-  color: #FEC564;
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-</style>
-

@@ -1,71 +1,97 @@
 <template>
-  <div class="cart-page">
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Shopping Cart</h1>
-        </div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] min-h-[80vh]">
+    <div class="max-w-[1200px] pt-20 mx-auto px-[20px] lg:max-w-[900px] md:max-w-[700px] max-[440px]:px-[10px] max-[440px]:my-[20px]">
+      <h1 class="text-[#FEC564] text-center text-[48px] mb-[20px] lg:text-[40px] md:text-[36px] max-[440px]:text-[28px] max-[440px]:mb-[10px] max-[375px]:text-[24px]">Shopping Cart</h1>
+
+      <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
+        <h2 class="text-[#FEC564]">Loading cart...</h2>
       </div>
 
-      <div v-if="loading" class="loading-container">
-        <h2 style="color: #FEC564;">Loading cart...</h2>
+      <div v-else-if="cartItems.length === 0" class="text-center py-[50px]">
+        <h2 class="text-[#FEC564] text-[32px] mb-[20px]">Your cart is empty</h2>
+        <p class="text-white text-[18px] mb-[30px]">Add some magical books to get started!</p>
+        <router-link 
+          to="/allProduct" 
+          id="continue-shopping"
+          class="bg-[#432667] text-white border-none py-[10px] px-[20px] rounded-[20px] cursor-pointer text-[18px] font-['Irish Grover'] transition-colors hover:bg-[#693467]"
+        >
+          Browse Books
+        </router-link>
       </div>
 
-      <div v-else-if="cartItems.length === 0" class="empty-cart">
-        <div class="empty-cart-content">
-          <i class="fas fa-shopping-cart fa-3x"></i>
-          <h2>Your cart is empty</h2>
-          <p>Add some magical books to get started!</p>
-          <router-link to="/allProduct" class="btn btn-primary">
-            Browse Books
+      <div v-else>
+        <!-- Cart Actions -->
+        <div class="flex justify-between items-center mt-[20px] mb-[40px] max-[440px]:mt-[10px] max-[440px]:mb-[20px]">
+          <div class="flex items-center gap-[10px] text-[#FEC564] text-[18px] max-[440px]:text-[16px] max-[375px]:text-[14px]">
+            <input 
+              type="checkbox" 
+              id="select-all"
+              :checked="selectedItems.length === cartItems.length && cartItems.length > 0"
+              @change="toggleSelectAll"
+              class="w-[20px] h-[20px] cursor-pointer"
+            />
+            <label for="select-all" class="cursor-pointer">Select All</label>
+          </div>
+          <router-link 
+            to="/allProduct"
+            id="continue-shopping"
+            class="bg-[#432667] text-white border-none py-[10px] px-[20px] rounded-[20px] cursor-pointer text-[18px] font-['Irish Grover'] transition-colors hover:bg-[#693467] max-[440px]:py-[8px] max-[440px]:px-[15px] max-[440px]:text-[16px] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[14px]"
+          >
+            Continue Shopping
           </router-link>
         </div>
-      </div>
 
-      <div v-else class="cart-content">
+        <!-- Divider -->
+        <div class="w-full h-[2px] bg-[#fec564] my-[20px] max-[440px]:my-[10px]"></div>
+
         <!-- Cart Items -->
-        <div class="row">
-          <div class="col-lg-8">
-            <div class="cart-items">
-              <div 
-                v-for="item in cartItems" 
-                :key="item.cartID" 
-                class="cart-item"
-              >
-                <div class="item-checkbox">
-                  <input 
-                    type="checkbox" 
-                    :id="`item-${item.cartID}`"
-                    v-model="selectedItems"
-                    :value="item.cartID"
-                    class="item-check"
-                  />
-                  <label :for="`item-${item.cartID}`"></label>
-                </div>
+        <div class="space-y-0">
+          <div 
+            v-for="item in cartItems" 
+            :key="item.cartID" 
+            class="flex items-center py-[20px] relative max-[440px]:py-[10px]"
+          >
+            <div class="flex-[0_0_50px] flex justify-center max-[440px]:flex-[0_0_30px]">
+              <input 
+                type="checkbox" 
+                :id="`item-${item.cartID}`"
+                v-model="selectedItems"
+                :value="item.cartID"
+                class="w-[20px] h-[20px] cursor-pointer"
+              />
+              <label :for="`item-${item.cartID}`" class="sr-only"></label>
+            </div>
 
-                <div class="item-image">
-                  <img 
-                    :src="`/src/model/image/books/${item.cartBookID}.jpg`" 
-                    :alt="item.bookName"
-                    @error="$event.target.src='/src/model/image/books/default.jpg'"
-                  />
-                </div>
-
-                <div class="item-details">
-                  <h3>{{ item.bookName }}</h3>
-                  <p class="item-category">{{ item.categoryName }}</p>
-                  <p class="item-description">{{ item.bookDescription }}</p>
-                  
-                  <div v-if="item.enchantment" class="item-enchantment">
-                    <span class="enchantment-label">Enchantment:</span>
-                    <span class="enchantment-value">{{ item.enchantment }}</span>
-                  </div>
-
-                  <div class="item-quantity">
-                    <span class="quantity-label">Quantity:</span>
-                    <span class="quantity-value">{{ item.quantity }}</span>
-                  </div>
-                </div>
+            <div class="flex-1 flex items-center">
+              <div class="w-[120px] h-[150px] mr-[20px] lg:w-[120px] lg:h-[150px] md:w-[100px] md:h-[120px] max-md:w-[80px] max-md:h-[100px] max-[440px]:w-[60px] max-[440px]:h-[80px] max-[440px]:mr-[10px] max-[375px]:w-[50px] max-[375px]:h-[70px]">
+                <img 
+                  :src="`/src/model/image/books/${item.cartBookID}.jpg`" 
+                  :alt="item.bookName"
+                  class="w-full h-full object-cover rounded-[8px]"
+                  @error="$event.target.src='/src/model/image/books/default.jpg'"
+                />
+              </div>
 
                 <div class="item-price">
                   <div v-if="item.isPromotionBook && item.hasDiscount" class="price-container">
@@ -82,50 +108,73 @@
                   </div>
                 </div>
 
-                <div class="item-actions">
-                  <button 
-                    @click="removeItem(item.cartID)" 
-                    class="remove-btn"
-                    :disabled="removing"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
+                <div v-if="item.enchantment" class="text-white text-[14px] mb-[10px]">
+                  Enchantment: {{ item.enchantment }}
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Cart Summary -->
-          <div class="col-lg-4">
-            <div class="cart-summary">
-              <h3>Order Summary</h3>
-              
-              <div class="summary-item">
-                <span>Items ({{ selectedItemsCount }}):</span>
-                <span>{{ selectedTotalPrice }} G</span>
-              </div>
-              
-              <div class="summary-total">
-                <span>Total:</span>
-                <span>{{ selectedTotalPrice }} G</span>
-              </div>
+            <div class="flex-[0_0_80px] flex justify-center text-[#FEC564] text-[20px] font-bold lg:text-[20px] md:text-[20px] max-md:text-[20px] max-[440px]:text-[16px] max-[440px]:mr-[10px] max-[375px]:text-[14px]">
+              {{ item.quantity }}
+            </div>
 
+            <div class="flex-[0_0_100px] flex justify-center">
               <button 
-                @click="checkout" 
-                :disabled="selectedItemsCount === 0 || checkingOut"
-                class="checkout-btn"
+                @click="removeItem(item.cartID)" 
+                class="bg-[#8B4365] text-white border-none py-[8px] px-[16px] rounded-[20px] cursor-pointer font-['Irish Grover'] transition-colors hover:bg-[#B65C56] disabled:opacity-60 disabled:cursor-not-allowed lg:py-[8px] lg:px-[16px] md:py-[7px] md:px-[14px] max-md:py-[6px] max-md:px-[12px] max-md:text-[14px] max-[440px]:py-[5px] max-[440px]:px-[10px] max-[440px]:text-[12px] max-[375px]:py-[4px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
+                :disabled="removing"
               >
-                <span v-if="checkingOut">Processing...</span>
-                <span v-else>Checkout</span>
+                <i class="fas fa-trash"></i>
               </button>
-
-              <div v-if="checkoutMessage" class="checkout-message" :class="checkoutMessageType">
-                {{ checkoutMessage }}
-              </div>
             </div>
           </div>
         </div>
+
+        <!-- Divider -->
+        <div class="w-full h-[2px] bg-[#fec564] my-[20px]"></div>
+
+        <!-- Cart Summary -->
+        <div class="bg-white rounded-[20px] p-[30px] flex flex-col items-center mt-[20px] max-md:p-[20px] max-md:rounded-[0] max-md:rounded-t-[20px] max-md:w-full max-[440px]:p-[15px] max-[440px]:mt-[10px]">
+          <div class="w-full text-center mb-[20px]">
+            <h2 class="text-[#2D1A47] text-[32px] flex justify-between gap-[20px] lg:text-[32px] md:text-[32px] max-md:text-[24px] max-[440px]:text-[18px] max-[375px]:text-[16px]">
+              <span>Total:</span>
+              <span id="total-amount" class="font-bold">{{ selectedTotalPrice }} G</span>
+            </h2>
+          </div>
+
+          <button 
+            @click="checkout" 
+            id="purchase-btn"
+            :disabled="selectedItemsCount === 0 || checkingOut"
+            class="bg-[#FEC564] text-[#2D1A47] border-none py-[15px] px-[60px] rounded-[30px] cursor-pointer font-['Irish Grover'] text-[24px] font-bold transition-colors hover:bg-[#ffb63a] disabled:opacity-60 disabled:cursor-not-allowed lg:py-[15px] lg:px-[60px] lg:text-[24px] md:py-[12px] md:px-[50px] md:text-[22px] max-md:py-[12px] max-md:px-[40px] max-md:text-[20px] max-[440px]:py-[10px] max-[440px]:px-[30px] max-[440px]:text-[16px] max-[375px]:py-[8px] max-[375px]:px-[25px] max-[375px]:text-[14px]"
+          >
+            <span v-if="checkingOut">Processing...</span>
+            <span v-else>Checkout</span>
+          </button>
+        </div>
       </div>
+    </div>
+
+    <!-- Alert Notification Popup -->
+    <teleport to="body">
+      <transition name="alert-slide">
+        <div 
+          v-if="checkoutMessage" 
+          class="fixed top-[20px] left-1/2 -translate-x-1/2 z-[9999] min-w-[300px] max-w-[500px] p-[20px] rounded-[15px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-center font-bold text-[18px] backdrop-blur-sm max-[440px]:min-w-[280px] max-[440px]:p-[15px] max-[440px]:text-[16px] max-[440px]:top-[10px]"
+          :class="{
+            'bg-green-500/90 text-white border-2 border-green-600': checkoutMessageType === 'success',
+            'bg-red-500/90 text-white border-2 border-red-600': checkoutMessageType === 'error'
+          }"
+        >
+          <div class="flex items-center justify-center gap-[10px]">
+            <i 
+              :class="checkoutMessageType === 'success' ? 'fas fa-check-circle text-[24px]' : 'fas fa-exclamation-circle text-[24px]'"
+            ></i>
+            <span>{{ checkoutMessage }}</span>
+          </div>
+        </div>
+      </transition>
+    </teleport>
     </div>
   </div>
 </template>
@@ -146,6 +195,26 @@ export default {
     const checkingOut = ref(false)
     const checkoutMessage = ref('')
     const checkoutMessageType = ref('')
+    
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const selectedItemsCount = computed(() => {
       return selectedItems.value.length
@@ -206,6 +275,14 @@ export default {
       }
     }
 
+    const toggleSelectAll = (event) => {
+      if (event.target.checked) {
+        selectedItems.value = cartItems.value.map(item => item.cartID)
+      } else {
+        selectedItems.value = []
+      }
+    }
+
     const checkout = async () => {
       if (selectedItems.value.length === 0) return
       
@@ -251,306 +328,63 @@ export default {
       selectedItemsCount,
       selectedTotalPrice,
       removeItem,
-      checkout
+      toggleSelectAll,
+      checkout,
+      confettiDots
     }
   }
 }
 </script>
 
 <style scoped>
-.cart-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.empty-cart {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.empty-cart-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.empty-cart-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.empty-cart-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.empty-cart-content p {
-  margin-bottom: 2rem;
-}
-
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 1rem;
-}
-
-.item-checkbox {
-  flex-shrink: 0;
-}
-
-.item-check {
-  width: 20px;
-  height: 20px;
-  accent-color: #FEC564;
-}
-
-.item-image {
-  flex-shrink: 0;
-}
-
-.item-image img {
-  width: 80px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 5px;
-}
-
-.item-details {
-  flex: 1;
-  min-width: 0;
-}
-
-.item-details h3 {
-  color: #FEC564;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.item-category {
-  color: #888;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-}
-
-.item-description {
-  color: #ccc;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.item-enchantment {
-  margin-bottom: 0.5rem;
-}
-
-.enchantment-label {
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.enchantment-value {
-  color: #FEC564;
-  font-weight: bold;
-  margin-left: 0.5rem;
-}
-
-.item-quantity {
-  margin-bottom: 0.5rem;
-}
-
-.quantity-label {
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.quantity-value {
-  color: white;
-  font-weight: bold;
-  margin-left: 0.5rem;
-}
-
-.item-price {
-  text-align: right;
-  flex-shrink: 0;
-}
-
-.price-container {
-  margin-bottom: 0.5rem;
-}
-
-.original-price {
-  color: #888;
-  text-decoration: line-through;
-  font-size: 0.9rem;
-  display: block;
-}
-
-.promo-price {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.regular-price {
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.1rem;
-}
-
-.discount-badge {
-  background: #ff4444;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-top: 0.25rem;
-}
-
-.total-price {
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.item-actions {
-  flex-shrink: 0;
-}
-
-.remove-btn {
-  background: #ff4444;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.remove-btn:hover:not(:disabled) {
-  background: #ff6666;
-  transform: scale(1.1);
-}
-
-.remove-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.cart-summary {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  position: sticky;
-  top: 2rem;
-}
-
-.cart-summary h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.summary-item {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-  color: #ccc;
-}
-
-.summary-total {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 2rem;
-  color: #FEC564;
-  font-weight: bold;
-  font-size: 1.2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 1rem;
-}
-
-.checkout-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
-}
-
-.checkout-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.checkout-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.checkout-message {
-  padding: 1rem;
-  border-radius: 5px;
-  text-align: center;
-  font-weight: bold;
-}
-
-.checkout-message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.checkout-message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-@media (max-width: 768px) {
-  .cart-item {
-    flex-direction: column;
-    text-align: center;
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
   }
-  
-  .item-image img {
-    width: 120px;
-    height: 180px;
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
   }
-  
-  .item-price {
-    text-align: center;
+}
+
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
+  z-index: 0;
+}
+
+.alert-slide-enter-active {
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-slide-leave-active {
+  animation: slideUp 0.3s ease-in;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
   }
 }
 </style>
-

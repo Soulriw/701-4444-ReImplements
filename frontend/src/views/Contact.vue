@@ -1,117 +1,99 @@
 <template>
-  <div class="contact-page">
-    <div class="stars"></div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Contact Us</h1>
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] font-['Arial',sans-serif] max-w-[1200px] mx-auto my-[80px_auto_50px] max-[1024px]:max-w-[90%] max-[1024px]:my-[60px_auto_40px] max-[440px]:my-[40px_auto_30px]">
+    <h1 class="pt-[20px] font-['Irish_Grover'] text-center text-[#FEC564] text-[2.5rem] mb-5 mt-[30px] max-[1024px]:text-[2.2rem] max-md:text-[2rem] max-md:mt-5 max-[440px]:text-[1.8rem] max-[375px]:text-[1.6rem]">Contact Us</h1>
+    
+    <div class="flex bg-white rounded-[30px] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.1)] w-full max-md:flex-col max-[440px]:rounded-[20px]">
+      <!-- Map Container -->
+      <div class="w-[70%] relative p-5 flex flex-col max-md:w-full max-[440px]:p-[15px]">
+        <div id="map" class="w-full h-[700px] rounded-[8px] bg-[#f0f0f0] max-[1024px]:h-[600px] max-md:h-[400px] max-[375px]:h-[300px]"></div>
+        <div class="mt-[30px] mb-[15px] max-md:mt-5">
+          <p class="text-black font-bold">Address</p>
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-lg-8">
-          <div class="contact-form">
-            <h3>Send us a Message</h3>
-            <form @submit.prevent="handleSubmit">
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  v-model="form.name" 
-                  class="form-control"
-                  required
-                />
-              </div>
-              
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  v-model="form.email" 
-                  class="form-control"
-                  required
-                />
-              </div>
-              
-              <div class="form-group">
-                <label for="subject">Subject</label>
-                <input 
-                  type="text" 
-                  id="subject" 
-                  v-model="form.subject" 
-                  class="form-control"
-                  required
-                />
-              </div>
-              
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea 
-                  id="message" 
-                  v-model="form.message" 
-                  class="form-control"
-                  rows="5"
-                  required
-                ></textarea>
-              </div>
-              
-              <div v-if="message" class="message" :class="messageType">
-                {{ message }}
-              </div>
-              
-              <button 
-                type="submit" 
-                class="submit-btn"
-                :disabled="loading"
-              >
-                <span v-if="loading">Sending...</span>
-                <span v-else>Send Message</span>
-              </button>
-            </form>
+      <!-- Contact Form -->
+      <div class="mt-10 w-[30%] pt-5 pr-5 flex flex-col gap-[15px] max-md:w-full max-md:mt-0 max-[1024px]:mt-10 max-[440px]:p-[15px]">
+        <h3 class="font-['Arial',sans-serif] pt-[10px] flex justify-center text-black text-2xl font-bold">Send Email</h3>
+        
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-[15px]">
+          
+          <div class="relative mb-[15px] text-black">
+            <img src="/src/model/image/contact/mail.png" alt="Email" class="absolute top-1/2 left-[10px] -translate-y-1/2 w-5 h-5 max-[375px]:w-4 max-[375px]:h-4" />
+            <input 
+              type="email" 
+              id="email" 
+              v-model="form.email" 
+              placeholder="Email"
+              class="w-full py-[12px] pl-[40px] pr-[12px] border border-[#ddd] rounded-[5px] text-base max-[440px]:text-[0.9rem] max-[375px]:py-[10px] max-[375px]:pl-[35px] max-[375px]:pr-[10px]"
+              required
+            />
           </div>
-        </div>
+          
+          <div class="relative mb-[15px] text-black">
+            <img src="/src/model/image/contact/subject.png" alt="Subject" class="absolute top-1/2 left-[10px] -translate-y-1/2 w-5 h-5 max-[375px]:w-4 max-[375px]:h-4" />
+            <input 
+              type="text" 
+              id="subject" 
+              v-model="form.subject" 
+              placeholder="Subject"
+              class="w-full py-[12px] pl-[40px] pr-[12px] border border-[#ddd] rounded-[5px] text-base max-[440px]:text-[0.9rem] max-[375px]:py-[10px] max-[375px]:pl-[35px] max-[375px]:pr-[10px]"
+              required
+            />
+          </div>
+          
+          <div class="relative mb-[15px] h-[120px] text-black">
+            <textarea 
+              id="message" 
+              v-model="form.message" 
+              placeholder="Message"
+              class="w-full h-full py-[12px] px-[12px] border border-[#ddd] rounded-[5px] resize-none text-base max-[440px]:text-[0.9rem]"
+              required
+            ></textarea>
+          </div>
+          
+          <div 
+            v-if="message" 
+            class="p-4 rounded-md mb-4 text-center font-bold text-black"
+            :class="{
+              'bg-green/20 text-green border border-green/30': messageType === 'success',
+              'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+            }"
+          >
+            {{ message }}
+          </div>
+          
+          <div class="flex justify-center items-center w-full mt-[10px]">
+            <button 
+              type="submit" 
+              class="bg-[#333] text-white border-none rounded-[25px] py-3 cursor-pointer text-base transition-[background-color] duration-300 ease-in-out w-[120px] hover:bg-[#555] disabled:opacity-60 disabled:cursor-not-allowed max-[440px]:w-full max-[375px]:py-[10px] max-[375px]:px-[15px] max-[375px]:text-[0.9rem] mx-auto"
+              :disabled="loading"
+            >
+              <span v-if="loading">Sending...</span>
+              <span v-else>Submit</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
 
-        <div class="col-lg-4">
-          <div class="contact-info">
-            <h3>Get in Touch</h3>
-            
-            <div class="contact-item">
-              <img src="/src/model/image/contact/mail.png" alt="Email" class="contact-icon" />
-              <div>
-                <h4>Email</h4>
-                <p>info@quadgrimoire.com</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="contact-icon" />
-              <div>
-                <h4>Facebook</h4>
-                <p>@QuadGrimoire</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="contact-icon" />
-              <div>
-                <h4>Twitter</h4>
-                <p>@QuadGrimoire</p>
-              </div>
-            </div>
-            
-            <div class="contact-item">
-              <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="contact-icon" />
-              <div>
-                <h4>Instagram</h4>
-                <p>@QuadGrimoire</p>
-              </div>
-            </div>
-          </div>
+    <!-- Footer with Social Icons -->
+    <footer class="mb-5">
+      <div class="flex justify-center gap-[15px] mt-[15px] max-[440px]:gap-[10px]">
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
+        </div>
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
+        </div>
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
         </div>
       </div>
+    </footer>
     </div>
   </div>
 </template>
@@ -171,148 +153,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.contact-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.contact-form {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.contact-form h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  color: #FEC564;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  display: block;
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
-  color: white;
-  font-size: 1rem;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #FEC564;
-  box-shadow: 0 0 0 2px rgba(254, 197, 100, 0.2);
-}
-
-.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 1rem 2rem;
-  background: #FEC564;
-  color: #000;
-  border: none;
-  border-radius: 10px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.submit-btn:hover:not(:disabled) {
-  background: #ffd700;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(254, 197, 100, 0.3);
-}
-
-.submit-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.message {
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  text-align: center;
-  font-weight: bold;
-}
-
-.message.success {
-  background: rgba(0, 255, 0, 0.2);
-  color: #00ff00;
-  border: 1px solid rgba(0, 255, 0, 0.3);
-}
-
-.message.error {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
-  border: 1px solid rgba(255, 0, 0, 0.3);
-}
-
-.contact-info {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 2rem;
-}
-
-.contact-info h3 {
-  color: #FEC564;
-  margin-bottom: 1.5rem;
-}
-
-.contact-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.contact-icon {
-  width: 40px;
-  height: 40px;
-  margin-right: 1rem;
-}
-
-.contact-item h4 {
-  color: #FEC564;
-  margin-bottom: 0.25rem;
-  font-size: 1.1rem;
-}
-
-.contact-item p {
-  color: #ccc;
-  margin: 0;
-}
-
-@media (max-width: 768px) {
-  .contact-form,
-  .contact-info {
-    padding: 1.5rem;
-  }
-}
-</style>
-

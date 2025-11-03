@@ -1,109 +1,118 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-black fixed-top">
+  <nav class="flex items-center justify-between bg-black w-full p-[5px] border-b-[3px] border-white flex-nowrap z-[1000]">
     <!-- Left Side: Logo and Search -->
-    <div class="navcon">
+    <div class="flex items-center bg-black p-[10px] text-white">
       <!-- Logo with Toggle Navigation Function -->
-      <div class="navbar-brand" @click="toggleNav">
-        <img src="/src/model/image/navImg/logo.png" alt="Logo" />
+      <div class="cursor-pointer mt-[5px] ml-[15px] mr-[15px]" @click="toggleNav">
+        <img src="/src/model/image/navImg/logo.png" alt="Logo" class="h-[50px] w-auto" />
       </div>
 
       <!-- Search Form -->
-      <form class="search" @submit.prevent="handleSearch">
+      <form class="flex items-center" @submit.prevent="handleSearch" v-if="!isLoginOrRegister">
         <input 
           type="text" 
-          class="search-bar" 
+          class="bg-[#929292] border-none rounded-[22px] w-[900px] h-[50px] ml-[20px] pl-[20px] text-[20px] text-white max-[1024px]:w-[400px] max-[1024px]:h-[40px] max-[1024px]:rounded-[18px] max-md:w-[225px] max-md:mr-[10px] max-[440px]:w-[175px] max-[440px]:mr-[5px]" 
           v-model="searchTerm"
           placeholder="Search..." 
         />
-        <button type="submit">
-          <img src="/src/model/image/navImg/search.png" alt="" />
+        <button type="submit" class="bg-transparent pb-[11px] pt-[5px] text-white text-[25px] cursor-pointer absolute top-[22px] left-[965px] rounded-[50px] border-none h-[50px] max-[1024px]:left-[470px] max-[1024px]:text-[20px] max-md:left-[300px] max-[440px]:left-[250px]">
+          <img src="/src/model/image/navImg/search.png" alt="" class="h-[25px] max-[1024px]:h-[20px]" />
         </button>
       </form>
     </div>
 
     <!-- Cart Icon with Counter -->
-    <router-link to="/cart" class="cart">
-      <img src="/src/model/image/navImg/cart.png" alt="" />
-      <span class="cart-counter" v-if="cartCount > 0">{{ cartCount }}</span>
+    <router-link to="/cart" class="mr-[20px] relative" v-if="!isLoginOrRegister">
+      <img src="/src/model/image/navImg/cart.png" alt="" class="h-[50px] max-[1024px]:h-[30px]" />
+      <span v-if="cartCount > 0" class="absolute top-[-8px] right-[-8px] bg-[#FEC564] text-[#2D1A47] text-[14px] font-bold min-w-[20px] h-[20px] rounded-full flex items-center justify-center p-[2px] max-[1024px]:text-[12px] max-[1024px]:min-w-[18px] max-[1024px]:h-[18px] max-[1024px]:top-[-5px] max-[1024px]:right-[-5px] max-md:text-[11px] max-md:min-w-[16px] max-md:h-[16px] max-[440px]:text-[10px] max-[440px]:min-w-[14px] max-[440px]:h-[14px] max-[440px]:top-[-4px] max-[440px]:right-[-4px]">{{ cartCount }}</span>
     </router-link>
 
     <!-- Navigation Menu -->
-    <div class="nav" :class="{ hidden: !navOpen }" id="nav">
-      <ul>
+    <div 
+      class="fixed left-0 top-[95px] w-[225px] h-auto bg-black transition-transform duration-300 border-[3px] border-white z-[1000] max-[1024px]:w-[190px] max-md:w-[150px]"
+      :class="{ '-translate-x-[101%]': !navOpen || isLoginOrRegister }" 
+      id="nav" 
+      v-if="!isLoginOrRegister"
+    >
+      <ul class="list-none p-0 m-0">
         <template v-if="isAuthenticated">
           <!-- Authenticated User Navigation -->
           <!-- Username Display -->
-          <p class="usernameList">
-            <img src="/src/model/image/login/userwhite.png" alt="username" class="username-img-nav">
+          <p class="bg-[#FFB63A] text-white rounded-none h-[80px] w-[220px] mb-[7px] flex items-center text-[30px] border-b-[2px] border-white overflow-hidden whitespace-nowrap text-ellipsis pr-[15px] max-[1024px]:h-[70px] max-[1024px]:w-[185.5px] max-[1024px]:text-[25px] max-md:h-[60px] max-md:w-[145.5px] max-md:text-[20px] max-[440px]:h-[55px] max-[440px]:text-[16.5px] m-0 pl-[15px]">
+            <img src="/src/model/image/login/userwhite.png" alt="username" class="w-[35px] h-[35px] ml-[10px] max-md:w-[30px] max-md:h-[30px] max-[440px]:w-[25px] max-[440px]:h-[25px]">
             &nbsp;{{ truncateUsername(username) }}
           </p>
 
           <!-- Admin Links -->
           <template v-if="isAdmin">
-            <router-link to="/categoryManagement" class="nav-item admin">
-              <li>Category Management</li>
+            <router-link to="/categoryManagement" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Category Management</li>
             </router-link>
-            <router-link to="/productManagement" class="nav-item admin">
-              <li>Product Management</li>
+            <router-link to="/productManagement" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Product Management</li>
             </router-link>
-            <router-link to="/history" class="nav-item admin">
-              <li>Sales History</li>
+            <router-link to="/history" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">History</li>
             </router-link>
-            <a href="#" class="nav-item logout" @click.prevent="logout">
-              <li>Logout</li>
+            <a href="#" class="no-underline text-[#ff4444]" @click.prevent="logout">
+              <li class="p-[15px] text-[#ff4444] text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Logout</li>
             </a>
           </template>
           
           <!-- Regular User Links -->
           <template v-else>
-            <router-link to="/" class="nav-item home">
-              <li>Home</li>
+            <router-link to="/" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Home</li>
             </router-link>
-            <router-link to="/allProduct" class="nav-item home">
-              <li>All Product</li>
+            <router-link to="/allProduct" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">All Product</li>
             </router-link>
 
             <!-- Categories Dropdown Menu -->
-            <div class="dropdown-container">
-              <a href="#" class="nav-item dropdown-toggle" @click.prevent="toggleCategoriesDropdown">
-                <li>Categories <i class="fas fa-caret-down"></i></li>
+            <div class="relative w-full">
+              <a href="#" class="no-underline text-white cursor-pointer flex justify-between items-center w-full" @click.prevent="toggleCategoriesDropdown">
+                <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px] list-none m-0 w-full">Categories <i class="fas fa-caret-down text-[16px] ml-[5px]"></i></li>
               </a>
-              <div id="categoriesDropdown" class="categories-dropdown" :class="{ show: categoriesDropdownOpen }">
+              <div 
+                id="categoriesDropdown" 
+                class="w-full bg-black max-h-[230px] overflow-y-scroll max-[1024px]:max-h-[200px] max-md:max-h-[130px] max-md:w-[145px] max-[440px]:min-w-[100px] max-[440px]:max-h-[120px]"
+                :class="{ 'block': categoriesDropdownOpen, 'hidden': !categoriesDropdownOpen }"
+              >
                 <template v-if="categories.length > 0">
                   <router-link 
                     v-for="category in categories" 
                     :key="category.categoryID"
                     :to="`/category/${category.categoryID}`" 
-                    class="dropdown-item"
+                    class="block no-underline text-black w-full hover:bg-transparent"
                     @click="closeDropdowns"
                   >
-                    <li>{{ category.categoryName }}</li>
+                    <li class="text-white pt-[10px] pr-[15px] pb-[10px] pl-[25px] ml-[20px] w-[186px] rounded-[15px] text-black max-[1024px]:w-[155px] max-[1024px]:hover:w-[145px] max-md:pt-[10px] max-md:pr-[15px] max-md:pb-[10px] max-md:pl-[10px] max-md:ml-[10px] max-md:w-[115px] max-md:hover:w-[100px] max-[440px]:w-[100px] max-[440px]:hover:w-[100px]">{{ category.categoryName }}</li>
                   </router-link>
                 </template>
                 <template v-else>
-                  <a href="#" class="dropdown-item">
-                    <li>No categories found</li>
+                  <a href="#" class="block no-underline text-black w-full hover:bg-transparent">
+                    <li class="pt-[10px] pr-[15px] pb-[10px] pl-[25px] ml-[20px] w-[186px] rounded-[15px] text-black max-[1024px]:w-[155px] max-[1024px]:hover:w-[145px] max-md:pt-[10px] max-md:pr-[15px] max-md:pb-[10px] max-md:pl-[10px] max-md:ml-[10px] max-md:w-[115px] max-md:hover:w-[100px] max-[440px]:w-[100px] max-[440px]:hover:w-[100px]">No categories found</li>
                   </a>
                 </template>
               </div>
             </div>
 
             <!-- Additional Links -->
-            <router-link to="/contact" class="nav-item home">
-              <li>Contact</li>
+            <router-link to="/contact" class="no-underline text-white" @click="closeDropdowns">
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Contact</li>
             </router-link>
-            <a href="#" class="nav-item logout" @click.prevent="logout">
-              <li>Logout</li>
+            <a href="#" class="no-underline text-[#ff4444]" @click.prevent="logout">
+              <li class="p-[15px] text-[#ff4444] text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Logout</li>
             </a>
           </template>
         </template>
         <template v-else>
           <!-- Guest User Navigation -->
-          <router-link to="/login" class="nav-item login">
-            <li>Login</li>
+          <router-link to="/login" class="no-underline text-white" @click="closeDropdowns">
+            <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Login</li>
           </router-link>
-          <router-link to="/register" class="nav-item register">
-            <li>Register</li>
+          <router-link to="/register" class="no-underline text-white" @click="closeDropdowns">
+            <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Register</li>
           </router-link>
         </template>
       </ul>
@@ -112,7 +121,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore, useCartStore, useBooksStore } from '../stores'
 
@@ -127,34 +136,20 @@ export default {
     const navOpen = ref(false)
     const categoriesDropdownOpen = ref(false)
     const searchTerm = ref('')
-    const isAuthenticated = ref(false)
-    const username = ref('')
 
-    const isAdmin = ref(false)
-
-    const updateAuthState = () => {
-      try {
-        const userStr = localStorage.getItem('user')
-        if (userStr) {
-          const user = JSON.parse(userStr)
-          isAuthenticated.value = true
-          username.value = user?.username || ''
-          isAdmin.value = user?.isAdmin || false
-        } else {
-          isAuthenticated.value = false
-          username.value = ''
-          isAdmin.value = false
-        }
-      } catch (error) {
-        console.error('Error parsing user:', error)
-        isAuthenticated.value = false
-        username.value = ''
-        isAdmin.value = false
-      }
-    }
+    // Use computed values from authStore for reactivity
+    const isAuthenticated = computed(() => authStore.isAuthenticated)
+    const username = computed(() => authStore.username)
+    const isAdmin = computed(() => authStore.isAdmin)
 
     const categories = computed(() => booksStore.categories)
     const cartCount = computed(() => cartStore.count)
+    
+    // Check if current route is login or register page
+    const isLoginOrRegister = computed(() => {
+      const currentPath = router.currentRoute.value.path
+      return currentPath === '/login' || currentPath === '/register'
+    })
 
     const toggleNav = () => {
       navOpen.value = !navOpen.value
@@ -195,15 +190,9 @@ export default {
     onMounted(async () => {
       // Initialize auth
       authStore.initializeAuth()
-      updateAuthState()
       
       await booksStore.fetchCategories()
       await cartStore.getCartCount()
-      
-      // Watch for route changes to update auth state
-      watch(() => router.currentRoute.value.path, () => {
-        updateAuthState()
-      })
       
       // Set up polling to refresh cart count periodically
       setInterval(() => {
@@ -220,242 +209,14 @@ export default {
       username,
       categories,
       cartCount,
+      isLoginOrRegister,
       toggleNav,
       toggleCategoriesDropdown,
       closeDropdowns,
       handleSearch,
       logout,
-      truncateUsername,
-      updateAuthState
+      truncateUsername
     }
   }
 }
 </script>
-
-<style scoped>
-/* Navigation Bar Styles */
-.navbar {
-  height: 80px;
-  padding: 0 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 2px solid rgba(254, 197, 100, 0.3);
-  z-index: 1000;
-}
-
-.navcon {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-}
-
-.navbar-brand {
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.navbar-brand:hover {
-  transform: scale(1.05);
-}
-
-.navbar-brand img {
-  height: 50px;
-  width: auto;
-}
-
-/* Search Form */
-.search {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 25px;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-}
-
-.search:hover {
-  border-color: #FEC564;
-}
-
-.search-bar {
-  background: transparent;
-  border: none;
-  color: white;
-  padding: 0.5rem 1rem;
-  outline: none;
-  font-size: 1rem;
-  width: 250px;
-}
-
-.search-bar::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.search button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-}
-
-.search button img {
-  width: 20px;
-  height: 20px;
-}
-
-/* Cart Icon */
-.cart {
-  position: relative;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.cart:hover {
-  transform: scale(1.1);
-}
-
-.cart img {
-  width: 40px;
-  height: 40px;
-}
-
-.cart-counter {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #FEC564;
-  color: #000;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  font-weight: bold;
-}
-
-/* Navigation Menu */
-.nav {
-  position: fixed;
-  top: 80px;
-  left: 0;
-  width: 300px;
-  height: calc(100vh - 80px);
-  background: rgba(10, 10, 10, 0.98);
-  border-right: 2px solid rgba(254, 197, 100, 0.3);
-  transform: translateX(0);
-  transition: transform 0.3s ease;
-  z-index: 999;
-  overflow-y: auto;
-}
-
-.nav.hidden {
-  transform: translateX(-100%);
-}
-
-.nav ul {
-  list-style: none;
-  padding: 2rem 0;
-  margin: 0;
-}
-
-.nav-item {
-  display: block;
-  padding: 1rem 2rem;
-  color: white;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.nav-item:hover {
-  background: rgba(254, 197, 100, 0.1);
-  color: #FEC564;
-}
-
-.nav-item li {
-  list-style: none;
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.usernameList {
-  color: #FEC564;
-  padding: 1rem 2rem;
-  border-bottom: 2px solid rgba(254, 197, 100, 0.3);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-}
-
-.username-img-nav {
-  width: 24px;
-  height: 24px;
-  margin-right: 0.5rem;
-}
-
-/* Dropdown */
-.dropdown-container {
-  position: relative;
-}
-
-.dropdown-toggle {
-  cursor: pointer;
-}
-
-.categories-dropdown {
-  display: none;
-  background: rgba(254, 197, 100, 0.1);
-  padding-left: 2rem;
-}
-
-.categories-dropdown.show {
-  display: block;
-}
-
-.dropdown-item {
-  display: block;
-  padding: 0.75rem 1rem;
-  color: white;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.dropdown-item:hover {
-  background: rgba(254, 197, 100, 0.2);
-  color: #FEC564;
-}
-
-.logout {
-  color: #ff4444 !important;
-}
-
-.logout:hover {
-  background: rgba(255, 68, 68, 0.1) !important;
-}
-
-/* Admin Links */
-.admin {
-  color: #ffd700 !important;
-}
-
-.admin:hover {
-  background: rgba(255, 215, 0, 0.1) !important;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .search-bar {
-    width: 150px;
-  }
-  
-  .nav {
-    width: 100%;
-  }
-}
-</style>
-

@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="font-irish antialiased">
     <!-- Navigation Bar -->
     <NavBar />
     
@@ -23,19 +23,4 @@ export default {
   }
 }
 </script>
-
-<style>
-#app {
-  font-family: 'Irish Grover', cursive;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #0a0a0a;
-  color: #ffffff;
-}
-</style>
 

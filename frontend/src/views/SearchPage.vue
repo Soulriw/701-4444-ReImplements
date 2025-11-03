@@ -1,43 +1,65 @@
 <template>
-  <div class="search-page">
-    <div class="stars"></div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     
-    <div class="container">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="page-title">Search Results</h1>
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500]">
+    <!-- Search Container -->
+    <div class="p-4 mx-auto max-w-[1400px] max-[1024px]:p-[12.8px] max-md:p-[9.6px] max-[440px]:p-[8px] max-[375px]:p-[6.4px]">
+      <!-- Loading State -->
+      <div v-if="loading" class="text-[#FEC564] text-center py-8 w-full">
+        <h2 class="text-[#FEC564]">Searching...</h2>
+      </div>
+
+
+      <!-- Search Results Grid -->
+      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
+        <div 
+          v-for="book in paginatedResults" 
+          :key="book.bookID" 
+          class="w-full"
+        >
+          <BookItem :book="book" />
         </div>
       </div>
 
-      <div v-if="loading" class="loading-container">
-        <h2 style="color: #FEC564;">Searching...</h2>
-      </div>
-
-      <div v-else-if="searchResults.length === 0" class="no-results">
-        <div class="no-results-content">
-          <i class="fas fa-search fa-3x"></i>
-          <h2>No books found</h2>
-          <p>Try searching with different keywords</p>
-        </div>
-      </div>
-
-      <div v-else class="search-results">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 justify-content-center g-4">
-          <div 
-            v-for="book in searchResults" 
-            :key="book.bookID" 
-            class="col-6 col-lg"
+      <!-- Pagination -->
+      <div v-if="searchResults.length > 0 && totalPages > 1" class="flex justify-center items-center gap-4 my-8 max-[440px]:gap-2 max-[440px]:my-6 max-[375px]:gap-2 max-[375px]:my-[24px]">
+        <button 
+          @click="previousPage"
+          :disabled="currentPage === 1"
+          class="bg-[#FFB536] text-white border-none py-2 px-6 rounded-[25px] cursor-pointer font-['Irish_Grover'] text-[19.2px] transition-colors duration-300 ease-in-out disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[#ff9900c7] max-[1024px]:py-[6.4px] max-[1024px]:px-[19.2px] max-[1024px]:text-[17.6px] max-md:py-[4.8px] max-md:px-4 max-md:text-base max-[440px]:py-[4.8px] max-[440px]:px-[12.8px] max-[440px]:text-[14.4px] max-[375px]:py-[4px] max-[375px]:px-[11.2px] max-[375px]:text-[13.6px]"
+        >
+          Previous
+        </button>
+        <div class="flex gap-2 items-center max-[440px]:gap-2 max-[375px]:gap-2">
+          <button 
+            v-for="page in pageNumbers" 
+            :key="page"
+            @click="currentPage = page"
+            :class="[
+              'w-10 h-10 flex items-center justify-center rounded-full cursor-pointer font-[\'Irish_Grover\'] text-[19.2px] text-white bg-transparent border-[2px] border-transparent transition-all duration-300 ease-in-out hover:border-[#FFB536] max-[1024px]:w-[35px] max-[1024px]:h-[35px] max-[1024px]:text-[17.6px] max-md:w-[30px] max-md:h-[30px] max-md:text-base max-[440px]:w-[28px] max-[440px]:h-[28px] max-[440px]:text-[14.4px] max-[375px]:w-[25px] max-[375px]:h-[25px] max-[375px]:text-[13.6px]',
+              currentPage === page ? 'bg-[#FFB536] text-white border-transparent' : 'text-white bg-transparent'
+            ]"
           >
-            <BookItem :book="book" />
-          </div>
+            {{ page }}
+          </button>
         </div>
+        <button 
+          @click="nextPage"
+          :disabled="currentPage === totalPages"
+          class="bg-[#FFB536] text-white border-none py-2 px-6 rounded-[25px] cursor-pointer font-['Irish_Grover'] text-[19.2px] transition-colors duration-300 ease-in-out disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 hover:bg-[#ff9900c7] max-[1024px]:py-[6.4px] max-[1024px]:px-[19.2px] max-[1024px]:text-[17.6px] max-md:py-[4.8px] max-md:px-4 max-md:text-base max-[440px]:py-[4.8px] max-[440px]:px-[12.8px] max-[440px]:text-[14.4px] max-[375px]:py-[4px] max-[375px]:px-[11.2px] max-[375px]:text-[13.6px]"
+        >
+          Next
+        </button>
       </div>
+    </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBooksStore } from '../stores'
 import BookItem from '../components/BookItem.vue'
@@ -54,6 +76,22 @@ export default {
     const searchResults = ref([])
     const loading = ref(false)
     const searchTerm = ref('')
+    const currentPage = ref(1)
+    const itemsPerPage = 10
+
+    const totalPages = computed(() => {
+      return Math.ceil(searchResults.value.length / itemsPerPage)
+    })
+
+    const pageNumbers = computed(() => {
+      return Array.from({ length: totalPages.value }, (_, i) => i + 1)
+    })
+
+    const paginatedResults = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage
+      const end = start + itemsPerPage
+      return searchResults.value.slice(start, end)
+    })
 
     const performSearch = async () => {
       const query = route.query.q
@@ -64,6 +102,7 @@ export default {
 
       searchTerm.value = query
       loading.value = true
+      currentPage.value = 1
 
       try {
         const results = await booksStore.searchBooks(query)
@@ -73,6 +112,18 @@ export default {
         searchResults.value = []
       } finally {
         loading.value = false
+      }
+    }
+
+    const previousPage = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--
+      }
+    }
+
+    const nextPage = () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++
       }
     }
 
@@ -89,56 +140,14 @@ export default {
     return {
       searchResults,
       loading,
-      searchTerm
+      searchTerm,
+      currentPage,
+      totalPages,
+      pageNumbers,
+      paginatedResults,
+      previousPage,
+      nextPage
     }
   }
 }
 </script>
-
-<style scoped>
-.search-page {
-  padding: 2rem 0;
-  min-height: 80vh;
-}
-
-.page-title {
-  color: #FEC564;
-  font-size: 2.5rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-
-.loading-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-}
-
-.no-results-content {
-  text-align: center;
-  color: #ccc;
-}
-
-.no-results-content i {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content h2 {
-  color: #FEC564;
-  margin-bottom: 1rem;
-}
-
-.no-results-content p {
-  color: #888;
-}
-</style>
-
