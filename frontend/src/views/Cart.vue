@@ -112,7 +112,6 @@
                   Enchantment: {{ item.enchantment }}
                 </div>
               </div>
-            </div>
 
             <div class="flex-[0_0_80px] flex justify-center text-[#FEC564] text-[20px] font-bold lg:text-[20px] md:text-[20px] max-md:text-[20px] max-[440px]:text-[16px] max-[440px]:mr-[10px] max-[375px]:text-[14px]">
               {{ item.quantity }}
