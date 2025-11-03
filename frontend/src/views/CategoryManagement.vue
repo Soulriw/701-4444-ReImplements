@@ -2,7 +2,7 @@
   <!-- Home page with gradient background -->
   <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     <!-- Confetti dots background -->
-    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+    <div class="confetti-container fixed top-0 left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
       <div 
         v-for="(dot, index) in confettiDots" 
         :key="index"
@@ -20,9 +20,8 @@
     </div>
     
     <!-- Content with padding for navbar -->
-    <div class="relative z-[500]">
-    <div class="max-w-[900px] my-[15px] mx-auto px-[15px] lg:max-w-[90%] lg:my-[12px] md:max-w-[95%] md:my-[10px] md:px-[8px] max-[480px]:max-w-[95%] max-[375px]:max-w-[95%]">
-      <h1 class="pt-20 text-[#FEC564] text-center mb-8 text-4xl lg:pt-20 lg:text-3xl lg:mb-6 md:pt-16 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-14 max-[480px]:text-xl max-[480px]:mb-5 max-[480px]:p-[8px] max-[375px]:pt-12 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Category Management</h1>
+    <div class="relative z-[500] max-w-[900px] mx-auto px-[15px] pt-[10px] lg:max-w-[90%] lg:pt-[68px] md:max-w-[95%] md:pt-[64px] md:px-[8px] max-[480px]:max-w-[95%] max-[480px]:pt-[53px] max-[375px]:max-w-[95%] max-[375px]:pt-[45px]">
+      <h1 class="text-[#FEC564] text-center mb-8 text-4xl lg:pt-2 lg:text-3xl lg:mb-6 md:pt-2 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-2 max-[480px]:text-xl max-[480px]:mb-5 max-[375px]:pt-2 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Category Management</h1>
 
     <!-- Divider line -->
     <div class="w-4/5 h-0.5 bg-[#FEC564] my-10 mx-auto clear-both lg:my-8 md:my-7 max-[480px]:my-6 max-[480px]:w-[90%] max-[375px]:my-4 max-[375px]:w-[95%]"></div>
@@ -205,7 +204,6 @@
           ></div>
         </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
