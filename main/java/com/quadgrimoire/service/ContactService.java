@@ -1,5 +1,6 @@
 package com.quadgrimoire.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,9 @@ import java.util.Map;
 
 @Service
 public class ContactService {
+
+    @Autowired
+    private EmailService emailService;
 
     /**
      * Process contact form submission
@@ -23,13 +27,7 @@ public class ContactService {
         String subject = contactData.get("subject");
         String message = contactData.get("message");
         
-        // Validate required fields
-        if (name == null || name.trim().isEmpty()) {
-            response.put("success", false);
-            response.put("error", "Name is required");
-            return response;
-        }
-        
+        // Validate required fields (name is optional)
         if (email == null || email.trim().isEmpty()) {
             response.put("success", false);
             response.put("error", "Email is required");
@@ -58,19 +56,54 @@ public class ContactService {
         try {
             // Log contact form submission with timestamp
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String userName = (name != null && !name.trim().isEmpty()) ? name.trim() : "User";
+            
             System.out.println("=== CONTACT FORM SUBMISSION ===");
             System.out.println("Timestamp: " + timestamp);
-            System.out.println("Name: " + name.trim());
+            System.out.println("Name: " + userName);
             System.out.println("Email: " + email.trim());
             System.out.println("Subject: " + subject.trim());
             System.out.println("Message: " + message.trim());
             System.out.println("===============================");
             
-            // In a real application, you would:
-            // 1. Save to database
-            // 2. Send email notification
-            // 3. Send auto-reply to user
-            // 4. Store in CRM system
+            // Send email to admin
+            System.out.println("=== ATTEMPTING TO SEND EMAIL ===");
+            System.out.println("EmailService is available: " + (emailService != null ? "YES" : "NO"));
+            
+            try {
+                Map<String, Object> emailResult = emailService.sendContactEmail(
+                    email.trim(),
+                    userName,
+                    subject.trim(),
+                    message.trim()
+                );
+                
+                System.out.println("Email send result: " + emailResult);
+                
+                if (emailResult != null && emailResult.get("success") != null) {
+                    if (emailResult.get("success").equals(true)) {
+                        System.out.println("✓ Email sent successfully to admin!");
+                        System.out.println("✓ Please check Inbox at: " + emailResult.get("message"));
+                    } else {
+                        System.err.println("✗ ERROR: Failed to send email!");
+                        System.err.println("✗ Error message: " + emailResult.get("error"));
+                        System.err.println("✗ Please check App Password and Gmail settings");
+                    }
+                } else {
+                    System.err.println("✗ ERROR: Email result is null or invalid!");
+                }
+            } catch (Exception e) {
+                System.err.println("✗ EXCEPTION while sending email: " + e.getMessage());
+                e.printStackTrace();
+            }
+            
+            // Send auto-reply to user (optional)
+            try {
+                emailService.sendAutoReply(email.trim(), userName);
+            } catch (Exception e) {
+                // Auto-reply failure should not fail the whole process
+                System.out.println("Warning: Failed to send auto-reply: " + e.getMessage());
+            }
             
             response.put("success", true);
             response.put("message", "Thank you for your message! We will get back to you soon.");
