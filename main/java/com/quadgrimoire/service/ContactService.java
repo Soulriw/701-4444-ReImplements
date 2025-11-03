@@ -23,13 +23,7 @@ public class ContactService {
         String subject = contactData.get("subject");
         String message = contactData.get("message");
         
-        // Validate required fields
-        if (name == null || name.trim().isEmpty()) {
-            response.put("success", false);
-            response.put("error", "Name is required");
-            return response;
-        }
-        
+        // Validate required fields (name is optional)
         if (email == null || email.trim().isEmpty()) {
             response.put("success", false);
             response.put("error", "Email is required");
@@ -58,19 +52,16 @@ public class ContactService {
         try {
             // Log contact form submission with timestamp
             String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String userName = (name != null && !name.trim().isEmpty()) ? name.trim() : "User";
+            
             System.out.println("=== CONTACT FORM SUBMISSION ===");
             System.out.println("Timestamp: " + timestamp);
-            System.out.println("Name: " + name.trim());
+            System.out.println("Name: " + userName);
             System.out.println("Email: " + email.trim());
             System.out.println("Subject: " + subject.trim());
             System.out.println("Message: " + message.trim());
             System.out.println("===============================");
             
-            // In a real application, you would:
-            // 1. Save to database
-            // 2. Send email notification
-            // 3. Send auto-reply to user
-            // 4. Store in CRM system
             
             response.put("success", true);
             response.put("message", "Thank you for your message! We will get back to you soon.");
@@ -119,26 +110,4 @@ public class ContactService {
         }
     }
 
-    /**
-     * Send auto-reply email (placeholder)
-     * @param email The recipient email
-     * @param name The recipient name
-     * @return Map containing sending result
-     */
-    public Map<String, Object> sendAutoReply(String email, String name) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            // In a real application, this would send an actual email
-            System.out.println("Auto-reply would be sent to: " + email + " (Name: " + name + ")");
-            
-            response.put("success", true);
-            response.put("message", "Auto-reply sent successfully");
-            return response;
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("error", "Failed to send auto-reply: " + e.getMessage());
-            return response;
-        }
-    }
 }
