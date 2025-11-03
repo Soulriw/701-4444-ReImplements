@@ -9,9 +9,9 @@
     <div class="flex bg-white rounded-[30px] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.1)] w-full max-md:flex-col max-[440px]:rounded-[20px]">
       <!-- Map Container -->
       <div class="w-[70%] relative p-5 flex flex-col max-md:w-full max-[440px]:p-[15px]">
-        <div id="map" class="w-full h-[700px] rounded-[8px] bg-[#f0f0f0] max-[1024px]:h-[600px] max-md:h-[400px] max-[375px]:h-[300px]"></div>
+        <div id="map" class="w-full h-[700px] rounded-[8px] bg-[#f0f0f0] max-[1024px]:h-[600px] max-md:h-[400px] max-[375px]:h-[300px] z-0"></div>
         <div class="mt-[30px] mb-[15px] max-md:mt-5">
-          <p class="text-black font-bold">Address</p>
+          <p class="text-black font-bold">Address : College of Arts, Media, and Technology, Chiang Mai University 239 Huay Kaew Rd. Tambon Su Thep, Amphoe Mueang Chiang Mai, Chiang Mai 50200, Thailand</p>
         </div>
       </div>
 
@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import axios from 'axios'
 
 export default {
@@ -114,6 +114,95 @@ export default {
     const loading = ref(false)
     const message = ref('')
     const messageType = ref('')
+    let map = null
+    let marker = null
+
+    const initMap = () => {
+      // Check if Leaflet is loaded
+      if (typeof L === 'undefined') {
+        console.error('Leaflet is not loaded')
+        return
+      }
+
+      // CAMT College of Arts, Media and Technology, Chiang Mai University
+      const defaultLocation = [18.8021, 98.9523]
+      
+      // Initialize map
+      map = L.map('map').setView(defaultLocation, 15)
+
+      // Add OpenStreetMap tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }).addTo(map)
+
+      // Add marker
+      marker = L.marker(defaultLocation).addTo(map)
+
+      // Add popup
+      marker.bindPopup(`
+        <div style="padding: 5px;">
+          <h3 style="margin: 0 0 5px 0; font-weight: bold; font-size: 16px;">CAMT College of Arts, Media and Technology</h3>
+          <p style="margin: 0; font-size: 14px;">Chiang Mai University, Thailand</p>
+          <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">239 Huay Kaew Road, Suthep, Mueang Chiang Mai</p>
+        </div>
+      `).openPopup()
+    }
+
+    const loadLeafletScript = () => {
+      // Check if Leaflet CSS is already loaded
+      if (!document.querySelector('link[href*="leaflet.css"]')) {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+        link.integrity = 'sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY='
+        link.crossOrigin = ''
+        document.head.appendChild(link)
+      }
+
+      // Check if Leaflet JS is already loaded
+      if (document.querySelector('script[src*="leaflet"]')) {
+        // Script already loading, wait for it
+        const checkLeaflet = setInterval(() => {
+          if (typeof L !== 'undefined') {
+            clearInterval(checkLeaflet)
+            initMap()
+          }
+        }, 100)
+        return
+      }
+
+      // Load Leaflet JS
+      const script = document.createElement('script')
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+      script.integrity = 'sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo='
+      script.crossOrigin = ''
+      script.async = true
+      script.onload = () => {
+        initMap()
+      }
+      script.onerror = () => {
+        console.error('Failed to load Leaflet')
+      }
+      
+      document.head.appendChild(script)
+    }
+
+    onMounted(() => {
+      // Wait a bit for the DOM to be ready
+      setTimeout(() => {
+        loadLeafletScript()
+      }, 100)
+    })
+
+    onUnmounted(() => {
+      // Cleanup map
+      if (map) {
+        map.remove()
+        map = null
+        marker = null
+      }
+    })
 
     const handleSubmit = async () => {
       loading.value = true
