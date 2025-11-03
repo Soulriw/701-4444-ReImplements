@@ -80,9 +80,8 @@ public class AuthService {
         
         String username = userData.get("username");
         String password = userData.get("password");
-        String email = userData.get("email");
         
-        if (username == null || password == null || email == null) {
+        if (username == null || password == null) {
             response.put("success", false);
             response.put("error", "All fields are required");
             return response;
@@ -95,14 +94,10 @@ public class AuthService {
             return response;
         }
         
-        // Note: Email validation removed as User model doesn't have email field
-        // In a real application, you would add email field to User model and implement email validation
-        
         try {
             User newUser = new User();
             newUser.setUserName(username);
             newUser.setUserPassword(password);
-            // Note: Email field not available in User model
             
             userRepository.save(newUser);
             
