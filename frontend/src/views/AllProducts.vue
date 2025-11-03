@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen pt-20" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+  <div class="relative min-h-screen pt-20 pb-20 max-md:pb-16 max-[480px]:pb-12 max-[375px]:pb-10" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     <!-- Confetti dots background -->
     <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
       <div 
@@ -44,20 +44,20 @@
     </div>
 
     <!-- Pagination -->
-    <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 my-8 relative z-10">
+    <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 my-8 mb-16 max-md:mb-12 max-[480px]:mb-10 max-[375px]:mb-8 relative z-10 max-md:gap-3 max-md:my-6 max-[480px]:gap-2 max-[480px]:my-5 max-[375px]:gap-1.5 max-[375px]:my-4">
       <button 
-        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px]"
+        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px] max-md:px-4 max-md:py-1.5 max-md:text-[16px] max-md:rounded-[20px] max-[480px]:px-3 max-[480px]:py-1 max-[480px]:text-[14px] max-[480px]:rounded-[15px] max-[375px]:px-2.5 max-[375px]:py-0.5 max-[375px]:text-[12px] max-[375px]:rounded-[12px]"
         :disabled="currentPage === 1"
         @click="prevPage"
         style="font-family: 'Irish Grover', cursive;"
       >
         Prev
       </button>
-      <div class="flex gap-2">
+      <div class="flex gap-2 max-md:gap-1.5 max-[480px]:gap-1 max-[375px]:gap-0.5">
         <div 
           v-for="page in totalPages" 
           :key="page"
-          class="w-[40px] h-[40px] flex items-center justify-center rounded-full cursor-pointer text-white bg-transparent border-2 border-transparent transition-all duration-300 hover:border-[#FFB536] text-[19.2px]"
+          class="w-[40px] h-[40px] flex items-center justify-center rounded-full cursor-pointer text-white bg-transparent border-2 border-transparent transition-all duration-300 hover:border-[#FFB536] text-[19.2px] max-md:w-[35px] max-md:h-[35px] max-md:text-[16px] max-[480px]:w-[30px] max-[480px]:h-[30px] max-[480px]:text-[14px] max-[375px]:w-[28px] max-[375px]:h-[28px] max-[375px]:text-[12px]"
           :class="{ 'bg-[#FFB536] border-[#FFB536]': page === currentPage }"
           @click="goToPage(page)"
           style="font-family: 'Irish Grover', cursive;"
@@ -66,7 +66,7 @@
         </div>
       </div>
       <button 
-        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px]"
+        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px] max-md:px-4 max-md:py-1.5 max-md:text-[16px] max-md:rounded-[20px] max-[480px]:px-3 max-[480px]:py-1 max-[480px]:text-[14px] max-[480px]:rounded-[15px] max-[375px]:px-2.5 max-[375px]:py-0.5 max-[375px]:text-[12px] max-[375px]:rounded-[12px]"
         :disabled="currentPage === totalPages"
         @click="nextPage"
         style="font-family: 'Irish Grover', cursive;"
@@ -75,7 +75,7 @@
       </button>
     </div>
     
-    <div class="w-4/5 h-[2px] bg-[#fec564] mx-auto my-[40px] relative clear-both"></div>
+    <div class="w-4/5 h-[2px] bg-[#fec564] mx-auto my-[40px] mb-16 max-md:mb-12 max-[480px]:mb-10 max-[375px]:mb-8 relative clear-both"></div>
   </div>
 </template>
 
