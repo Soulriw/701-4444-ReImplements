@@ -21,7 +21,7 @@
     
     <!-- Content with padding for navbar -->
     <div class="relative z-[500] pt-[70px]">
-      <h1 class="text-[#FEC564] text-center mb-8 text-4xl lg:pt-6 lg:text-3xl lg:mb-6 md:pt-16 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-14 max-[480px]:text-xl max-[480px]:mb-5 max-[480px]:p-[8px] max-[375px]:pt-12 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Product Management</h1>
+      <h1 class="text-[#FEC564] text-center mb-8 text-4xl lg:pt-2 lg:text-3xl lg:mb-6 md:pt-2 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-2 max-[480px]:text-xl max-[480px]:mb-5 max-[375px]:pt-2 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Product Management</h1>
 
        <!-- Divider line -->
     <div class="w-4/5 h-0.5 bg-[#FEC564] my-10 mx-auto clear-both lg:my-8 md:my-7 max-[480px]:my-6 max-[480px]:w-[90%] max-[375px]:my-4 max-[375px]:w-[95%]"></div>
@@ -125,22 +125,23 @@
     </div>
 
     <!-- Product Pagination -->
-    <div v-if="totalPages > 1" class="flex justify-center items-center my-5 mx-auto gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[480px]:my-4 max-[375px]:gap-[4px] max-[375px]:my-3">
+    <div v-if="totalPages > 1" class="flex flex-wrap justify-center items-center my-5 mx-auto gap-[10px] max-md:gap-[6px] max-[480px]:gap-[4px] max-[480px]:my-4 max-[375px]:gap-[3px] max-[375px]:my-3 px-[10px] max-[480px]:px-[5px]">
       <button 
         @click="currentPage--"
         :disabled="currentPage === 1"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
+        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed disabled:opacity-50 max-md:py-[5px] max-md:px-3 max-md:text-[13px] max-md:rounded-[15px] max-[480px]:py-[4px] max-[480px]:px-2.5 max-[480px]:text-[11px] max-[480px]:rounded-[12px] max-[375px]:py-[3px] max-[375px]:px-2 max-[375px]:text-[10px] max-[375px]:rounded-[10px]"
       >
-        Previous
+        <span class="max-[480px]:hidden">Previous</span>
+        <span class="hidden max-[480px]:inline">Prev</span>
       </button>
-      <div class="flex gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
+      <div class="flex flex-wrap justify-center gap-[10px] max-md:gap-[5px] max-[480px]:gap-[3px] max-[375px]:gap-[2px]">
         <button 
           v-for="page in pageNumbers" 
           :key="page"
           @click="currentPage = page"
           :class="[
-            'w-[35px] h-[35px] flex justify-center items-center bg-transparent rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out max-md:w-[30px] max-md:h-[30px] max-md:text-[14px] max-[480px]:w-[28px] max-[480px]:h-[28px] max-[480px]:text-[12px] max-[375px]:w-[26px] max-[375px]:h-[26px] max-[375px]:text-[11px]',
-            currentPage === page ? 'bg-[#FEC564] text-white' : 'text-white'
+            'w-[35px] h-[35px] flex justify-center items-center bg-transparent rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out hover:bg-[#FEC564]/30 max-md:w-[28px] max-md:h-[28px] max-md:text-[13px] max-[480px]:w-[24px] max-[480px]:h-[24px] max-[480px]:text-[11px] max-[375px]:w-[22px] max-[375px]:h-[22px] max-[375px]:text-[10px]',
+            currentPage === page ? 'bg-[#FEC564] text-white font-bold' : 'text-white'
           ]"
         >
           {{ page }}
@@ -149,7 +150,7 @@
       <button 
         @click="currentPage++"
         :disabled="currentPage === totalPages"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
+        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed disabled:opacity-50 max-md:py-[5px] max-md:px-3 max-md:text-[13px] max-md:rounded-[15px] max-[480px]:py-[4px] max-[480px]:px-2.5 max-[480px]:text-[11px] max-[480px]:rounded-[12px] max-[375px]:py-[3px] max-[375px]:px-2 max-[375px]:text-[10px] max-[375px]:rounded-[10px]"
       >
         Next
       </button>
