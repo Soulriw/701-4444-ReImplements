@@ -1,18 +1,41 @@
 <template>
   <!-- Home page with gradient background -->
-  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+  <div class="relative pt-0 pb-32" style="min-height: 100vh; background: linear-gradient(180deg, #2D1A47 0%, #2D1A47 10%, #432667 30%, #693467 55%, #8B4365 70%, #B65C56 85%, #FEC564 100%); background-size: 100% 100%; background-attachment: fixed;">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
     
     <!-- Content with padding for navbar -->
-    <div class="relative z-[500]">
+    <div class="relative z-[500] pt-[70px]">
+      <h1 class="text-[#FEC564] text-center mb-8 text-4xl lg:pt-6 lg:text-3xl lg:mb-6 md:pt-16 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-14 max-[480px]:text-xl max-[480px]:mb-5 max-[480px]:p-[8px] max-[375px]:pt-12 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Product Management</h1>
+
+       <!-- Divider line -->
+    <div class="w-4/5 h-0.5 bg-[#FEC564] my-10 mx-auto clear-both lg:my-8 md:my-7 max-[480px]:my-6 max-[480px]:w-[90%] max-[375px]:my-4 max-[375px]:w-[95%]"></div>
+
+
     <!-- Category Container -->
-    <div class="max-w-[1200px] mx-auto my-5 px-[15px]">
-      <div class="flex overflow-x-auto gap-[15px] pb-[10px] justify-center scroll-snap-x">
+    <div class="max-w-[1200px] mx-auto my-5 px-[15px] max-md:px-[10px] max-[480px]:px-[8px]">
+      <div class="flex gap-[15px] pb-[10px] justify-center flex-wrap max-md:gap-[10px] max-[480px]:gap-[8px]">
         <div 
-          v-for="category in categories" 
+          v-for="category in paginatedCategories" 
           :key="category.categoryID"
           @click="selectCategory(category.categoryID)"
           :class="[
-            'flex-[0_0_auto] bg-white text-black py-[15px] px-[30px] rounded-[10px] cursor-pointer transition-all duration-300 ease-in-out font-[\'Irish_Grover\'] text-[18px] text-center min-w-[150px] scroll-snap-start max-md:py-[10px] max-md:px-5 max-md:min-w-[120px] max-md:text-base max-[480px]:min-w-[100px] max-[480px]:text-[14px]',
+            'bg-white text-black py-[12px] px-[20px] rounded-[10px] cursor-pointer transition-all duration-300 ease-in-out font-[\'Irish_Grover\'] text-[18px] text-center flex-1 min-w-[120px] max-md:py-[8px] max-md:px-4 max-md:min-w-[100px] max-md:text-base max-md:flex-[1_1_calc(50%-5px)] max-[480px]:min-w-[90px] max-[480px]:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:flex-[1_1_100%] max-[375px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2',
             selectedCategory === category.categoryID ? 'bg-[#FEC564] text-black' : 'hover:shadow-[0_5px_15px_rgba(0,0,0,0.3)]'
           ]"
         >
@@ -22,22 +45,22 @@
     </div>
 
     <!-- Category Pagination -->
-    <div v-if="totalCategoryPages > 1" class="flex justify-center items-center my-5 mx-auto gap-[10px]">
+    <div v-if="totalCategoryPages > 1" class="flex justify-center items-center my-5 mx-auto gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[480px]:my-4 max-[375px]:gap-[4px] max-[375px]:my-3">
       <button 
         @click="categoryPage--"
         :disabled="categoryPage === 1"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed"
+        class="bg-[#666] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed hover:bg-[#777] max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
       >
-        Previous
+        Prev
       </button>
-      <div class="flex gap-[10px]">
+      <div class="flex gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
         <button 
           v-for="page in categoryPageNumbers" 
           :key="page"
           @click="categoryPage = page"
           :class="[
-            'w-[35px] h-[35px] flex justify-center items-center bg-transparent rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out',
-            categoryPage === page ? 'bg-[#FEC564] text-white' : 'text-white'
+            'w-[35px] h-[35px] flex justify-center items-center rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out max-md:w-[30px] max-md:h-[30px] max-md:text-[14px] max-[480px]:w-[28px] max-[480px]:h-[28px] max-[480px]:text-[12px] max-[375px]:w-[26px] max-[375px]:h-[26px] max-[375px]:text-[11px]',
+            categoryPage === page ? 'bg-[#FEC564] text-white' : 'bg-[#2D1A47] text-white hover:bg-[#432667]'
           ]"
         >
           {{ page }}
@@ -46,11 +69,15 @@
       <button 
         @click="categoryPage++"
         :disabled="categoryPage === totalCategoryPages"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed"
+        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed hover:bg-[#FFD700] max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
       >
         Next
       </button>
     </div>
+
+    <!-- Divider line -->
+    <div class="w-4/5 h-0.5 bg-[#FEC564] my-10 mx-auto clear-both lg:my-8 md:my-7 max-[480px]:my-6 max-[480px]:w-[90%] max-[375px]:my-4 max-[375px]:w-[95%]"></div>
+
 
     <!-- Products Table Container -->
     <div class="max-w-[1200px] mx-auto my-5 px-[15px] overflow-x-auto">
@@ -58,43 +85,37 @@
         <h4 class="text-[#FEC564]">Loading books...</h4>
       </div>
       
-      <div v-else-if="filteredBooks.length === 0" class="text-center py-8 text-gray-300">
-        <h4>No books found</h4>
-      </div>
-      
-      <table v-else class="w-full border-collapse bg-white rounded-[10px] overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.2)] relative max-[480px]:text-[14px]">
+      <table v-else-if="filteredBooks.length > 0" class="text-black w-full border-collapse bg-white rounded-[10px] overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.2)] relative max-[480px]:text-[14px] max-[375px]:text-[12px]">
         <thead>
           <tr>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">ID</th>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">Name</th>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">Category</th>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">Price</th>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">Promo Price</th>
-            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px]">Actions</th>
+            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px] max-md:text-[16px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]">Name</th>
+            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px] max-md:text-[16px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px] max-[375px]:hidden">Category</th>
+            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px] max-md:text-[16px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]">Price</th>
+            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px] max-md:text-[16px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:hidden">Promo Price</th>
+            <th class="bg-[#FEC564] text-[#2D1A47] p-[15px] text-left font-['Irish_Grover'] text-[20px] max-md:p-[10px] max-md:text-[16px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(book, index) in paginatedBooks" :key="book.bookID">
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.bookID }}</td>
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.bookName }}</td>
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.categoryName }}</td>
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.price }} G</td>
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.proPrice || '-' }} G</td>
-            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">
-              <div class="flex gap-[15px] max-[480px]:gap-[10px]">
+            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.bookName }}</td>
+            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:hidden" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.categoryName }}</td>
+            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.price }} G</td>
+            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:hidden" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">{{ book.proPrice || '-' }} G</td>
+            <td class="p-[15px] border-b border-[#eee] font-['Irish_Grover'] max-md:p-[10px] max-[480px]:p-[8px] max-[480px]:text-[14px] max-[375px]:p-[6px] max-[375px]:text-[12px]" :class="{ 'border-b-0': index === paginatedBooks.length - 1 }">
+              <div class="flex gap-[15px] max-md:gap-[10px] max-[480px]:gap-[8px] max-[375px]:gap-[6px] max-[375px]:flex-col">
                 <button 
                   @click="showDescription(book)" 
-                  class="bg-[#FEC564] text-[#2D1A47] border-none py-[5px] px-[15px] rounded-[5px] cursor-pointer font-['Irish_Grover']"
+                  class="bg-[#FEC564] text-[#2D1A47] border-none py-[5px] px-[15px] rounded-[5px] cursor-pointer font-['Irish_Grover'] max-md:py-[4px] max-md:px-[12px] max-md:text-[14px] max-[480px]:py-[3px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[3px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
                 >
                   Show
                 </button>
                 <i 
                   @click="editBook(book)" 
-                  class="fas fa-edit cursor-pointer text-[20px] text-[#2D1A47]"
+                  class="fas fa-edit cursor-pointer text-[20px] text-[#2D1A47] max-md:text-[18px] max-[480px]:text-[16px] max-[375px]:text-[14px]"
                 ></i>
                 <i 
                   @click="confirmDelete(book.bookID)" 
-                  class="fas fa-trash cursor-pointer text-[20px] text-[#ff4444]"
+                  class="fas fa-trash cursor-pointer text-[20px] text-[#ff4444] max-md:text-[18px] max-[480px]:text-[16px] max-[375px]:text-[14px]"
                 ></i>
               </div>
             </td>
@@ -104,21 +125,21 @@
     </div>
 
     <!-- Product Pagination -->
-    <div v-if="totalPages > 1" class="flex justify-center items-center my-5 mx-auto gap-[10px]">
+    <div v-if="totalPages > 1" class="flex justify-center items-center my-5 mx-auto gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[480px]:my-4 max-[375px]:gap-[4px] max-[375px]:my-3">
       <button 
         @click="currentPage--"
         :disabled="currentPage === 1"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed"
+        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
       >
         Previous
       </button>
-      <div class="flex gap-[10px]">
+      <div class="flex gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
         <button 
           v-for="page in pageNumbers" 
           :key="page"
           @click="currentPage = page"
           :class="[
-            'w-[35px] h-[35px] flex justify-center items-center bg-transparent rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out',
+            'w-[35px] h-[35px] flex justify-center items-center bg-transparent rounded-full cursor-pointer font-[\'Irish_Grover\'] text-white transition-all duration-300 ease-in-out max-md:w-[30px] max-md:h-[30px] max-md:text-[14px] max-[480px]:w-[28px] max-[480px]:h-[28px] max-[480px]:text-[12px] max-[375px]:w-[26px] max-[375px]:h-[26px] max-[375px]:text-[11px]',
             currentPage === page ? 'bg-[#FEC564] text-white' : 'text-white'
           ]"
         >
@@ -128,17 +149,17 @@
       <button 
         @click="currentPage++"
         :disabled="currentPage === totalPages"
-        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed"
+        class="bg-[#FEC564] text-white border-none py-2 px-5 rounded-[20px] cursor-pointer font-['Irish_Grover'] transition-all duration-300 ease-in-out disabled:bg-[#666] disabled:cursor-not-allowed max-md:py-[6px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[5px] max-[480px]:px-3 max-[480px]:text-[12px] max-[480px]:rounded-[15px] max-[375px]:py-[4px] max-[375px]:px-2 max-[375px]:text-[11px]"
       >
         Next
       </button>
     </div>
 
     <!-- Add Product Button (Fixed) -->
-    <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100]">
+    <div class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[100] max-md:bottom-4 max-[480px]:bottom-3 max-[375px]:bottom-2">
       <button 
         @click="showAddModal = true"
-        class="bg-[#FEC564] text-[#2D1A47] border-none py-3 px-[25px] rounded-[30px] cursor-pointer font-['Irish_Grover'] text-[18px] shadow-[0_4px_10px_rgba(0,0,0,0.3)] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] max-md:py-[10px] max-md:px-5 max-md:text-base"
+        class="bg-[#FEC564] text-[#2D1A47] border-none py-3 px-[25px] rounded-[30px] cursor-pointer font-['Irish_Grover'] text-[18px] shadow-[0_4px_10px_rgba(0,0,0,0.3)] transition-all duration-300 ease-in-out hover:-translate-y-1 hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] max-md:py-[10px] max-md:px-5 max-md:text-base max-md:rounded-[25px] max-[480px]:py-[8px] max-[480px]:px-4 max-[480px]:text-[14px] max-[480px]:rounded-[20px] max-[375px]:py-[6px] max-[375px]:px-3 max-[375px]:text-[12px] max-[375px]:rounded-[15px]"
       >
         Add Product
       </button>
@@ -147,36 +168,36 @@
     <!-- Add/Edit Product Modal -->
     <div 
       v-if="showAddModal || editingBook" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000]"
+      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="closeModal"
     >
-      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative" @click.stop>
+      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
         <button 
           @click="closeModal" 
-          class="float-right text-[28px] cursor-pointer text-[#FEC564]"
+          class="float-right text-[28px] cursor-pointer text-[#FEC564] max-md:text-[24px] max-[480px]:text-[20px] max-[375px]:text-[18px]"
         >
           &times;
         </button>
-        <h3 class="mb-5">{{ editingBook ? 'Edit Book' : 'Add New Book' }}</h3>
+        <h3 class="mb-5 max-md:mb-4 max-md:text-[18px] max-[480px]:mb-3 max-[480px]:text-[16px] max-[375px]:mb-2 max-[375px]:text-[14px]">{{ editingBook ? 'Edit Book' : 'Add New Book' }}</h3>
         
         <form @submit.prevent="editingBook ? updateBook() : addBook()">
-          <div class="mb-5">
-            <label class="block mb-[5px] text-[#FEC564]">Book Name</label>
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <label class="block mb-[5px] text-[#FEC564] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Book Name</label>
             <input 
               type="text" 
               :value="editingBook ? editingBook.bookName : newBook.name"
               @input="editingBook ? editingBook.bookName = $event.target.value : newBook.name = $event.target.value"
-              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px]"
+              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px] max-md:p-[8px] max-md:text-[14px] max-[480px]:p-[6px] max-[480px]:text-[12px] max-[375px]:p-[5px] max-[375px]:text-[11px]"
               required
             />
           </div>
           
-          <div class="mb-5">
-            <label class="block mb-[5px] text-[#FEC564]">Category</label>
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <label class="block mb-[5px] text-[#FEC564] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Category</label>
             <select 
               :value="editingBook ? editingBook.categoryID : newBook.categoryID"
               @change="editingBook ? editingBook.categoryID = Number($event.target.value) : newBook.categoryID = $event.target.value"
-              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px]"
+              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px] max-md:p-[8px] max-md:text-[14px] max-[480px]:p-[6px] max-[480px]:text-[12px] max-[375px]:p-[5px] max-[375px]:text-[11px]"
               required
             >
               <option value="">Select Category</option>
@@ -190,45 +211,45 @@
             </select>
           </div>
           
-          <div class="mb-5">
-            <label class="block mb-[5px] text-[#FEC564]">Description</label>
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <label class="block mb-[5px] text-[#FEC564] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Description</label>
             <textarea 
               :value="editingBook ? editingBook.bookDescription : newBook.description"
               @input="editingBook ? editingBook.bookDescription = $event.target.value : newBook.description = $event.target.value"
-              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px]"
+              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px] max-md:p-[8px] max-md:text-[14px] max-[480px]:p-[6px] max-[480px]:text-[12px] max-[375px]:p-[5px] max-[375px]:text-[11px]"
               rows="3"
               required
             ></textarea>
           </div>
           
-          <div class="mb-5">
-            <label class="block mb-[5px] text-[#FEC564]">Price</label>
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <label class="block mb-[5px] text-[#FEC564] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Price</label>
             <input 
               type="number" 
               :value="editingBook ? editingBook.price : newBook.price"
               @input="editingBook ? editingBook.price = $event.target.value : newBook.price = $event.target.value"
-              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px]"
+              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px] max-md:p-[8px] max-md:text-[14px] max-[480px]:p-[6px] max-[480px]:text-[12px] max-[375px]:p-[5px] max-[375px]:text-[11px]"
               step="0.01"
               min="0"
               required
             />
           </div>
           
-          <div class="mb-5">
-            <label class="block mb-[5px] text-[#FEC564]">Promotion Price</label>
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <label class="block mb-[5px] text-[#FEC564] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Promotion Price</label>
             <input 
               type="number" 
               :value="editingBook ? editingBook.proPrice : newBook.proPrice"
               @input="editingBook ? editingBook.proPrice = $event.target.value : newBook.proPrice = $event.target.value"
-              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px]"
+              class="w-full p-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[5px] max-md:p-[8px] max-md:text-[14px] max-[480px]:p-[6px] max-[480px]:text-[12px] max-[375px]:p-[5px] max-[375px]:text-[11px]"
               step="0.01"
               min="0"
             />
           </div>
           
-          <div class="mb-5">
-            <div class="flex items-center gap-[10px]">
-              <label class="relative inline-block w-[50px] h-[28px] bg-[#2D1A47] rounded-[34px] transition-colors duration-300">
+          <div class="mb-5 max-md:mb-4 max-[480px]:mb-3 max-[375px]:mb-2">
+            <div class="flex items-center gap-[10px] max-md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
+              <label class="relative inline-block w-[50px] h-[28px] bg-[#2D1A47] rounded-[34px] transition-colors duration-300 max-md:w-[45px] max-md:h-[25px] max-[480px]:w-[40px] max-[480px]:h-[22px] max-[375px]:w-[35px] max-[375px]:h-[20px]">
                 <input 
                   type="checkbox" 
                   :checked="editingBook ? editingBook.isPromotionBook === 'true' : newBook.isPromotionBook === 'true'"
@@ -240,20 +261,20 @@
                   (editingBook ? editingBook.isPromotionBook === 'true' : newBook.isPromotionBook === 'true') ? 'bg-[#FEC564]' : 'bg-[#452667]'
                 ]">
                   <span :class="[
-                    'absolute h-5 w-5 left-1 bottom-1 bg-[#FEC564] rounded-full transition-transform duration-300 flex items-center justify-center',
-                    (editingBook ? editingBook.isPromotionBook === 'true' : newBook.isPromotionBook === 'true') ? 'translate-x-[22px] bg-[#2D1A47]' : ''
+                    'absolute h-5 w-5 left-1 bottom-1 bg-[#FEC564] rounded-full transition-transform duration-300 flex items-center justify-center max-md:h-4 max-md:w-4 max-[480px]:h-[18px] max-[480px]:w-[18px] max-[375px]:h-3 max-[375px]:w-3',
+                    (editingBook ? editingBook.isPromotionBook === 'true' : newBook.isPromotionBook === 'true') ? 'translate-x-[22px] bg-[#2D1A47] max-md:translate-x-[21px] max-[480px]:translate-x-[18px] max-[375px]:translate-x-[15px]' : ''
                   ]">
                     {{ (editingBook ? editingBook.isPromotionBook === 'true' : newBook.isPromotionBook === 'true') ? '🔮' : '✨' }}
                   </span>
                 </span>
               </label>
-              <span class="text-[#FEC564] font-['Irish_Grover'] text-[18px]">Is Promotion Book</span>
+              <span class="text-[#FEC564] font-['Irish_Grover'] text-[18px] max-md:text-[16px] max-[480px]:text-[14px] max-[375px]:text-[12px]">Is Promotion Book</span>
             </div>
           </div>
           
           <div 
             v-if="message" 
-            class="p-4 rounded mb-4 text-center font-bold"
+            class="p-4 rounded mb-4 text-center font-bold max-md:p-3 max-md:text-[14px] max-[480px]:p-2 max-[480px]:text-[12px] max-[375px]:p-1.5 max-[375px]:text-[11px]"
             :class="{
               'bg-green/20 text-green border border-green/30': messageType === 'success',
               'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
@@ -262,17 +283,17 @@
             {{ message }}
           </div>
           
-          <div class="flex justify-end gap-[15px] mt-5">
+          <div class="flex justify-end gap-[15px] mt-5 max-md:gap-[12px] max-md:mt-4 max-[480px]:gap-[10px] max-[480px]:mt-3 max-[375px]:gap-[8px] max-[375px]:mt-2">
             <button 
               type="button" 
               @click="closeModal" 
-              class="bg-[#777] text-white border-none py-[10px] px-5 rounded-[5px] cursor-pointer"
+              class="bg-[#777] text-white border-none py-[10px] px-5 rounded-[5px] cursor-pointer max-md:py-[8px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2 max-[375px]:text-[11px]"
             >
               Cancel
             </button>
             <button 
               type="submit" 
-              class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer relative"
+              class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer relative max-md:py-[8px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2 max-[375px]:text-[11px]"
               :class="{ 'loading': editingBook ? saving : loading }"
               :disabled="editingBook ? saving : loading"
             >
@@ -287,28 +308,28 @@
     <!-- Delete Confirmation Modal -->
     <div 
       v-if="showDeleteModal" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000]"
+      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="showDeleteModal = false"
     >
-      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative" @click.stop>
+      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
         <button 
           @click="showDeleteModal = false" 
-          class="float-right text-[28px] cursor-pointer text-[#FEC564]"
+          class="float-right text-[28px] cursor-pointer text-[#FEC564] max-md:text-[24px] max-[480px]:text-[20px] max-[375px]:text-[18px]"
         >
           &times;
         </button>
-        <h3 class="mb-5">Confirm Delete</h3>
-        <p class="text-white mb-5">Are you sure you want to delete this book?</p>
-        <div class="flex justify-end gap-[15px] mt-5">
+        <h3 class="mb-5 max-md:mb-4 max-md:text-[18px] max-[480px]:mb-3 max-[480px]:text-[16px] max-[375px]:mb-2 max-[375px]:text-[14px]">Confirm Delete</h3>
+        <p class="text-white mb-5 max-md:mb-4 max-md:text-[14px] max-[480px]:mb-3 max-[480px]:text-[12px] max-[375px]:mb-2 max-[375px]:text-[11px]">Are you sure you want to delete this book?</p>
+        <div class="flex justify-end gap-[15px] mt-5 max-md:gap-[12px] max-md:mt-4 max-[480px]:gap-[10px] max-[480px]:mt-3 max-[375px]:gap-[8px] max-[375px]:mt-2">
           <button 
             @click="showDeleteModal = false" 
-            class="bg-[#777] text-white border-none py-[10px] px-5 rounded-[5px] cursor-pointer"
+            class="bg-[#777] text-white border-none py-[10px] px-5 rounded-[5px] cursor-pointer max-md:py-[8px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2 max-[375px]:text-[11px]"
           >
             Cancel
           </button>
           <button 
             @click="deleteBook(bookToDelete)"
-            class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer relative"
+            class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer relative max-md:py-[8px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2 max-[375px]:text-[11px]"
             :class="{ 'loading': deleting }"
             :disabled="deleting"
           >
@@ -322,18 +343,18 @@
     <!-- Description Modal -->
     <div 
       v-if="showDescriptionModal && selectedBook" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000]"
+      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="showDescriptionModal = false"
     >
-      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[80vh] overflow-y-auto font-['Irish_Grover']" @click.stop>
-        <h3 class="mb-5">{{ selectedBook?.bookName }}</h3>
-        <div class="my-5 text-white leading-[1.6] text-base">
+      <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[80vh] overflow-y-auto font-['Irish_Grover'] max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
+        <h3 class="mb-5 max-md:mb-4 max-md:text-[18px] max-[480px]:mb-3 max-[480px]:text-[16px] max-[375px]:mb-2 max-[375px]:text-[14px]">{{ selectedBook?.bookName }}</h3>
+        <div class="my-5 text-white leading-[1.6] text-base max-md:text-[14px] max-[480px]:text-[12px] max-[375px]:text-[11px]">
           {{ selectedBook?.bookDescription || 'No description available.' }}
         </div>
-        <div class="flex justify-end mt-5">
+        <div class="flex justify-end mt-5 max-md:mt-4 max-[480px]:mt-3 max-[375px]:mt-2">
           <button 
             @click="showDescriptionModal = false"
-            class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer font-['Irish_Grover'] font-bold"
+            class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-5 rounded-[5px] cursor-pointer font-['Irish_Grover'] font-bold max-md:py-[8px] max-md:px-4 max-md:text-[14px] max-[480px]:py-[6px] max-[480px]:px-3 max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-2 max-[375px]:text-[11px]"
           >
             Close
           </button>
@@ -369,7 +390,27 @@ export default {
     const categoryPage = ref(1)
     const currentPage = ref(1)
     const itemsPerPage = 10
-    const categoriesPerPage = 10
+    const categoriesPerPage = 3
+
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
     
     const newBook = ref({
       name: '',
@@ -405,6 +446,12 @@ export default {
 
     const categoryPageNumbers = computed(() => {
       return Array.from({ length: totalCategoryPages.value }, (_, i) => i + 1)
+    })
+
+    const paginatedCategories = computed(() => {
+      const start = (categoryPage.value - 1) * categoriesPerPage
+      const end = start + categoriesPerPage
+      return categories.value.slice(start, end)
     })
 
     const fetchBooks = async () => {
@@ -633,6 +680,7 @@ export default {
       pageNumbers,
       totalCategoryPages,
       categoryPageNumbers,
+      paginatedCategories,
       addBook,
       editBook,
       closeModal,
@@ -641,7 +689,8 @@ export default {
       handlePromotionToggle,
       showDescription,
       confirmDelete,
-      selectCategory
+      selectCategory,
+      confettiDots
     }
   }
 }
@@ -682,5 +731,26 @@ button.loading {
 button.loading.bg-\[#FEC564\]::after {
   border: 3px solid rgba(45, 26, 71, 0.3);
   border-top-color: #2D1A47;
+}
+
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
+  z-index: 0;
 }
 </style>

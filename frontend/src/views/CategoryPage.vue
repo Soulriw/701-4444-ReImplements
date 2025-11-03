@@ -36,14 +36,6 @@
         <h2 class="text-[#FEC564]">Loading books...</h2>
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="categoryBooks.length === 0" class="flex justify-center items-center min-h-[50vh]">
-        <div class="text-center text-white">
-          <i class="fas fa-book fa-3x mb-4 text-[#FEC564]"></i>
-          <h2 class="mb-4 text-[#FEC564]">No books found</h2>
-          <p class="text-white">No books available in this category</p>
-        </div>
-      </div>
 
       <!-- Books Grid Container - matching all-products-container styling from searchPage.css -->
       <div v-else>

@@ -52,7 +52,7 @@
               <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Product Management</li>
             </router-link>
             <router-link to="/history" class="no-underline text-white" @click="closeDropdowns">
-              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Sales History</li>
+              <li class="p-[15px] text-white text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">History</li>
             </router-link>
             <a href="#" class="no-underline text-[#ff4444]" @click.prevent="logout">
               <li class="p-[15px] text-[#ff4444] text-[25px] cursor-pointer transition-colors duration-200 rounded-[15px] hover:bg-[#FFB63A] hover:w-[220px] max-[1024px]:text-[20px] max-[1024px]:hover:w-[186px] max-md:text-[15px] max-md:hover:w-[146px] max-md:active:w-[145px]">Logout</li>

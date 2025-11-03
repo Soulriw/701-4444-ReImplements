@@ -1,11 +1,32 @@
 <template>
   <!-- Home page with gradient background -->
   <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
     
     <!-- Content with padding for navbar -->
     <div class="relative z-[500]">
     <div class="max-w-[900px] my-[15px] mx-auto px-[15px] lg:max-w-[90%] lg:my-[12px] md:max-w-[95%] md:my-[10px] md:px-[8px] max-[480px]:max-w-[95%] max-[375px]:max-w-[95%]">
-      <h1 class="text-[#FEC564] text-center mb-8 lg:text-[24px] md:text-[24px] max-[480px]:text-[22px] max-[480px]:p-[8px] max-[375px]:text-[20px] max-[375px]:p-[6px]">Category Management</h1>
+      <h1 class="pt-20 text-[#FEC564] text-center mb-8 text-4xl lg:pt-20 lg:text-3xl lg:mb-6 md:pt-16 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-14 max-[480px]:text-xl max-[480px]:mb-5 max-[480px]:p-[8px] max-[375px]:pt-12 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Category Management</h1>
+
+    <!-- Divider line -->
+    <div class="w-4/5 h-0.5 bg-[#FEC564] my-10 mx-auto clear-both lg:my-8 md:my-7 max-[480px]:my-6 max-[480px]:w-[90%] max-[375px]:my-4 max-[375px]:w-[95%]"></div>
+
 
       <!-- Categories Table -->
       <div v-if="categoriesLoading" class="text-center py-8 text-gray-300">
@@ -16,14 +37,13 @@
         <h4>No categories found</h4>
       </div>
       
-      <div v-else class="relative w-full mt-[10px] rounded-[20px] overflow-hidden">
-        <div class="table-scroll-container max-h-[350px] overflow-y-auto overflow-x-hidden relative lg:max-h-[320px] md:max-h-[300px]" style="scrollbar-width: thin; scrollbar-color: #888 #f1f1f1;">
-          <table class="w-full border-collapse bg-white relative table-fixed shadow-[0_4px_10px_rgba(0,0,0,0.2)]">
+      <div v-else class="mx-auto relative w-[1000px] max-w-[1000px] mt-[10px] rounded-[20px] overflow-hidden lg:max-w-full md:max-w-full sm:max-w-full max-[480px]:max-w-full">
+        <div class="table-scroll-container max-h-[350px] overflow-y-auto overflow-x-auto relative lg:max-h-[320px] md:max-h-[300px] max-[480px]:max-h-[280px] max-[375px]:max-h-[250px]" style="scrollbar-width: thin; scrollbar-color: #888 #f1f1f1;">
+          <table class="w-full min-w-[600px] border-collapse bg-white relative table-auto shadow-[0_4px_10px_rgba(0,0,0,0.2)] md:min-w-[500px] max-[480px]:min-w-[400px] max-[375px]:min-w-[350px]">
             <thead class="sticky top-0 z-[10] bg-[#FEC564]">
               <tr>
-                <th class="bg-[#FEC564] text-[#2D1A47] py-[12px] px-[15px] font-['Irish Grover'] text-[18px] text-center lg:py-[10px] lg:px-[12px] md:py-[8px] md:px-[10px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[375px]:py-[6px] max-[375px]:px-[4px] rounded-tl-[20px]">ID</th>
-                <th class="bg-[#FEC564] text-[#2D1A47] py-[12px] px-[15px] font-['Irish Grover'] text-[18px] text-center w-[60%] lg:py-[10px] lg:px-[12px] md:py-[8px] md:px-[10px] md:w-[55%] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:w-[50%] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:w-[50%]">Category Name</th>
-                <th class="bg-[#FEC564] text-[#2D1A47] py-[12px] px-[15px] font-['Irish Grover'] text-[18px] text-center w-[40%] pr-[25px] lg:py-[10px] lg:px-[12px] lg:pr-[25px] md:py-[8px] md:px-[10px] md:w-[45%] md:pr-[25px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:w-[50%] max-[480px]:pr-[20px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:w-[50%] max-[375px]:pr-[18px] rounded-tr-[20px]">Actions</th>
+                <th class="bg-[#FEC564] text-[#2D1A47] py-[12px] px-[15px] font-['Irish Grover'] text-[18px] text-center w-[60%] lg:py-[10px] lg:px-[12px] lg:text-[16px] md:py-[8px] md:px-[10px] md:text-[15px] md:w-[55%] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[14px] max-[480px]:w-[50%] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px] max-[375px]:w-[50%] rounded-tl-[20px]">Category Name</th>
+                <th class="bg-[#FEC564] text-[#2D1A47] py-[12px] px-[15px] font-['Irish Grover'] text-[18px] text-center w-[40%] pr-[25px] lg:py-[10px] lg:px-[12px] lg:text-[16px] lg:pr-[25px] md:py-[8px] md:px-[10px] md:text-[15px] md:w-[45%] md:pr-[25px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[14px] max-[480px]:w-[50%] max-[480px]:pr-[20px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px] max-[375px]:w-[50%] max-[375px]:pr-[18px] rounded-tr-[20px]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -36,42 +56,39 @@
                   'hover:bg-[#f0f0f0]': true
                 }"
               >
-                <td class="py-[12px] px-[15px] border-b border-[#eee] font-['Irish Grover'] text-[16px] text-center pl-0 lg:py-[10px] lg:px-[12px] md:py-[8px] md:px-[10px] md:text-[14px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[13px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px]" :class="{ 'rounded-bl-[20px] border-b-0': index === categories.length - 1 }">
-                  {{ category.categoryID }}
-                </td>
-                <td class="py-[12px] px-[15px] border-b border-[#eee] font-['Irish Grover'] text-[16px] text-center lg:py-[10px] lg:px-[12px] md:py-[8px] md:px-[10px] md:text-[14px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[13px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px]" :class="{ 'border-b-0': index === categories.length - 1 }">
+                <td class="text-black py-[12px] px-[15px] border-b border-[#eee] font-['Irish Grover'] text-[16px] text-center lg:py-[10px] lg:px-[12px] lg:text-[15px] md:py-[8px] md:px-[10px] md:text-[14px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[13px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px] rounded-bl-[20px]" :class="{ 'border-b-0': index === categories.length - 1 }">
                   <span v-if="!category.editing">{{ category.categoryName }}</span>
                   <input 
                     v-else
                     v-model="category.editName"
-                    class="w-full px-[10px] py-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[10px] focus:outline-none"
+                    class="w-full px-[10px] py-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[10px] focus:outline-none text-base lg:text-sm md:text-sm max-[480px]:text-sm max-[375px]:text-xs lg:py-[8px] md:py-[8px] max-[480px]:py-[7px] max-[375px]:py-[6px]"
                     @keyup.enter="saveCategory(category)"
                     @keyup.escape="cancelEdit(category)"
                   />
                 </td>
-                <td class="py-[12px] px-[15px] border-b border-[#eee] font-['Irish Grover'] text-[16px] text-center pr-[25px] lg:py-[10px] lg:px-[12px] lg:pr-[25px] md:py-[8px] md:px-[10px] md:pr-[25px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:pr-[20px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:pr-[18px]" :class="{ 'rounded-br-[20px] border-b-0': index === categories.length - 1 }">
-                  <div v-if="!category.editing" class="flex justify-center items-center gap-[12px] max-[480px]:gap-[10px] max-[375px]:gap-[8px]">
+                <td class="py-[12px] px-[15px] border-b border-[#eee] font-['Irish Grover'] text-[16px] text-center pr-[25px] lg:py-[10px] lg:px-[12px] lg:text-[15px] lg:pr-[25px] md:py-[8px] md:px-[10px] md:text-[14px] md:pr-[25px] max-[480px]:py-[8px] max-[480px]:px-[6px] max-[480px]:text-[13px] max-[480px]:pr-[20px] max-[375px]:py-[6px] max-[375px]:px-[4px] max-[375px]:text-[12px] max-[375px]:pr-[18px]" :class="{ 'rounded-br-[20px] border-b-0': index === categories.length - 1 }">
+                  <div v-if="!category.editing" class="flex justify-center items-center gap-[12px] lg:gap-[10px] md:gap-[10px] max-[480px]:gap-[8px] max-[375px]:gap-[6px]">
                     <i 
                       @click="startEdit(category)" 
-                      class="fas fa-edit cursor-pointer text-[18px] min-w-[20px] transition-transform hover:scale-125 text-[#2D1A47] md:text-[16px] max-[480px]:text-[16px] max-[375px]:text-[15px]"
+                      class="fas fa-edit cursor-pointer text-[18px] min-w-[20px] transition-transform hover:scale-125 text-[#2D1A47] lg:text-[17px] md:text-[16px] max-[480px]:text-[15px] max-[375px]:text-[14px]"
                     ></i>
                     <i 
                       @click="showDeleteModalFunc(category.categoryID)" 
-                      class="fas fa-trash cursor-pointer text-[18px] min-w-[20px] transition-transform hover:scale-125 text-[#ff4444] md:text-[16px] max-[480px]:text-[16px] max-[375px]:text-[15px]"
+                      class="fas fa-trash cursor-pointer text-[18px] min-w-[20px] transition-transform hover:scale-125 text-[#ff4444] lg:text-[17px] md:text-[16px] max-[480px]:text-[15px] max-[375px]:text-[14px]"
                     ></i>
                   </div>
-                  <div v-else class="flex justify-center items-center gap-[12px]">
+                  <div v-else class="flex justify-center items-center gap-[12px] lg:gap-[10px] md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
                     <button 
                       @click="saveCategory(category)" 
                       :class="{ 'loading': saving }"
-                      class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] transition-colors disabled:opacity-60 disabled:cursor-not-allowed max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+                      class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
                       :disabled="saving"
                     >
                       <span v-if="!saving">Save</span>
                     </button>
                     <button 
                       @click="cancelEdit(category)" 
-                      class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+                      class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
                     >
                       Cancel
                     </button>
@@ -84,10 +101,10 @@
       </div>
 
       <!-- Add Category Floating Button -->
-      <div class="fixed bottom-[20px] left-1/2 -translate-x-1/2 z-[100]">
+      <div class="fixed bottom-[20px] left-1/2 -translate-x-1/2 z-[100] lg:bottom-[18px] md:bottom-[16px] max-[480px]:bottom-[14px] max-[375px]:bottom-[12px]">
         <button 
           @click="showCategoryModal = true"
-          class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-[20px] rounded-[25px] cursor-pointer font-['Irish Grover'] text-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.3)] transition-all hover:-translate-y-[3px] hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] md:py-[8px] md:px-[16px] md:text-[15px] max-[480px]:py-[7px] max-[480px]:px-[14px] max-[480px]:text-[14px] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+          class="bg-[#FEC564] text-[#2D1A47] border-none py-[10px] px-[20px] rounded-[25px] cursor-pointer font-['Irish Grover'] text-[16px] shadow-[0_4px_10px_rgba(0,0,0,0.3)] transition-all hover:-translate-y-[3px] hover:shadow-[0_6px_15px_rgba(0,0,0,0.4)] lg:py-[9px] lg:px-[18px] lg:text-[15px] md:py-[8px] md:px-[16px] md:text-[14px] max-[480px]:py-[7px] max-[480px]:px-[14px] max-[480px]:text-[13px] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[12px] max-[375px]:rounded-[20px]"
         >
           Add Category
         </button>
@@ -99,26 +116,26 @@
         class="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-[1000] flex justify-center items-center"
         @click.self="showCategoryModal = false"
       >
-        <div class="bg-[#2D1A47] text-[#FEC564] p-[25px] rounded-[20px] max-w-[450px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish Grover'] relative max-[480px]:p-[20px] max-[480px]:max-w-[320px]">
-          <div class="absolute top-[10px] right-[10px] text-[24px] cursor-pointer text-[#FEC564]" @click="showCategoryModal = false">
+        <div class="bg-[#2D1A47] text-[#FEC564] p-[25px] rounded-[20px] max-w-[450px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish Grover'] relative lg:p-[22px] lg:max-w-[400px] md:p-[20px] md:max-w-[350px] max-[480px]:p-[18px] max-[480px]:max-w-[320px] max-[375px]:p-[15px] max-[375px]:max-w-[280px]">
+          <div class="absolute top-[10px] right-[10px] text-[24px] cursor-pointer text-[#FEC564] lg:text-[22px] md:text-[20px] max-[480px]:text-[18px] max-[375px]:text-[16px]" @click="showCategoryModal = false">
             &times;
           </div>
           
-          <h2 class="mb-6 text-xl">Add New Category</h2>
+          <h2 class="mb-6 text-xl lg:text-lg md:text-lg max-[480px]:text-base max-[375px]:text-sm">Add New Category</h2>
           
           <div class="mb-[15px]">
-            <label class="block mb-[5px] text-[#FEC564]">Category Name</label>
+            <label class="block mb-[5px] text-[#FEC564] text-base lg:text-sm md:text-sm max-[480px]:text-sm max-[375px]:text-xs">Category Name</label>
               <input 
                 type="text" 
                 v-model="newCategory.name" 
-              class="w-full py-[10px] px-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[10px] focus:outline-none"
+              class="w-full py-[10px] px-[10px] border border-[#452667] bg-[#3D2657] text-white rounded-[10px] focus:outline-none text-base lg:text-sm md:text-sm max-[480px]:text-sm max-[375px]:text-xs lg:py-[8px] md:py-[8px] max-[480px]:py-[7px] max-[375px]:py-[6px]"
               placeholder="Enter category name"
               />
             </div>
             
             <div 
               v-if="message" 
-              class="p-4 rounded mb-4 text-center font-bold"
+              class="p-4 rounded mb-4 text-center font-bold text-base lg:text-sm md:text-sm max-[480px]:text-sm max-[375px]:text-xs lg:p-3 md:p-3 max-[480px]:p-2.5 max-[375px]:p-2"
               :class="{
                 'bg-green/20 text-green border border-green/30': messageType === 'success',
                 'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
@@ -127,17 +144,17 @@
               {{ message }}
             </div>
             
-          <div class="flex justify-end gap-[12px] mt-[15px]">
+          <div class="flex justify-end gap-[12px] mt-[15px] lg:gap-[10px] md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
             <button 
               @click="showCategoryModal = false"
-              class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+              class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
             >
               Cancel
             </button>
             <button 
               @click="addCategory"
               :class="{ 'loading': loading }"
-              class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] transition-colors disabled:opacity-60 disabled:cursor-not-allowed max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+              class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
               :disabled="loading"
             >
               <span v-if="!loading">Save</span>
@@ -157,25 +174,25 @@
         class="fixed top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] z-[1000] flex justify-center items-center"
         @click.self="showDeleteModal = false"
       >
-        <div class="bg-[#2D1A47] text-[#FEC564] p-[25px] rounded-[20px] max-w-[450px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish Grover'] relative max-[480px]:p-[20px] max-[480px]:max-w-[320px]">
-          <div class="absolute top-[10px] right-[10px] text-[24px] cursor-pointer text-[#FEC564]" @click="showDeleteModal = false">
+        <div class="bg-[#2D1A47] text-[#FEC564] p-[25px] rounded-[20px] max-w-[450px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish Grover'] relative lg:p-[22px] lg:max-w-[400px] md:p-[20px] md:max-w-[350px] max-[480px]:p-[18px] max-[480px]:max-w-[320px] max-[375px]:p-[15px] max-[375px]:max-w-[280px]">
+          <div class="absolute top-[10px] right-[10px] text-[24px] cursor-pointer text-[#FEC564] lg:text-[22px] md:text-[20px] max-[480px]:text-[18px] max-[375px]:text-[16px]" @click="showDeleteModal = false">
             &times;
           </div>
           
-          <h2 class="mb-6 text-xl">Confirm Delete</h2>
-          <p class="mb-6">Are you sure you want to delete this category?</p>
+          <h2 class="mb-6 text-xl lg:text-lg md:text-lg max-[480px]:text-base max-[375px]:text-sm">Confirm Delete</h2>
+          <p class="mb-6 text-base lg:text-sm md:text-sm max-[480px]:text-sm max-[375px]:text-xs">Are you sure you want to delete this category?</p>
 
-          <div class="flex justify-end gap-[12px] mt-[15px]">
+          <div class="flex justify-end gap-[12px] mt-[15px] lg:gap-[10px] md:gap-[8px] max-[480px]:gap-[6px] max-[375px]:gap-[4px]">
                       <button 
               @click="showDeleteModal = false"
-              class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+              class="bg-[#777] text-white border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
                       >
               Cancel
                       </button>
                       <button 
               @click="confirmDelete"
               :class="{ 'loading': deleting }"
-              class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] transition-colors disabled:opacity-60 disabled:cursor-not-allowed max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[13px]"
+              class="bg-[#FEC564] text-[#2D1A47] border-none py-[8px] px-[16px] rounded-[10px] cursor-pointer font-['Irish Grover'] text-[14px] transition-colors disabled:opacity-60 disabled:cursor-not-allowed lg:py-[7px] lg:px-[14px] lg:text-[13px] md:py-[6px] md:px-[12px] md:text-[12px] max-[480px]:py-[6px] max-[480px]:px-[10px] max-[480px]:text-[12px] max-[375px]:py-[5px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
                         :disabled="deleting"
                       >
               <span v-if="!deleting">Confirm</span>
@@ -214,6 +231,26 @@ export default {
     const newCategory = ref({
       name: ''
     })
+
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const fetchCategories = async () => {
       categoriesLoading.value = true
@@ -385,7 +422,8 @@ export default {
       cancelEdit,
       saveCategory,
       showDeleteModalFunc,
-      confirmDelete
+      confirmDelete,
+      confettiDots
     }
   }
 }
@@ -447,5 +485,26 @@ export default {
   .table-scroll-container::-webkit-scrollbar {
     width: 6px;
   }
+}
+
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
+  z-index: 0;
 }
 </style>

@@ -20,41 +20,15 @@
 
     <!-- Page Header -->
     <div class="text-center relative z-10">
-      <h1 class="text-[#FEC564] text-4xl font-bold" style="font-family: 'Irish Grover', cursive;">All Magical Books</h1>
+      <h1 class="text-[#FEC564] text-4xl font-bold mb-5" style="font-family: 'Irish Grover', cursive;">All Magical Books</h1>
     </div>
-
-    <!-- Category Filters -->
-    <div class="relative z-10 my-8" v-if="categories.length > 0">
-      <div class="flex flex-wrap justify-center gap-2 px-4">
-        <div 
-          v-for="category in categories" 
-          :key="category.categoryID"
-        >
-          <div 
-            class="px-4 py-4 bg-white/10 border-2 border-transparent rounded-[15px] cursor-pointer transition-all duration-300 text-white text-center text-[19.2px]"
-            :class="{ 
-              'bg-[rgba(254,197,100,0.2)] border-[#FEC564] shadow-[0_0_15px_rgba(254,197,100,0.5)]': currentCategory === category.categoryID, 
-              'hover:bg-white/20 hover:-translate-y-[5px] hover:border-[#FEC564]': currentCategory !== category.categoryID 
-            }"
-            @click="filterByCategory(category.categoryID)"
-          >
-            {{ category.categoryName }}
-          </div>
-        </div>
-      </div>
-    </div>
-
+    
     <!-- Products Grid Section -->
     <div class="relative z-10 px-4 max-w-[1400px] mx-auto">
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center" id="allProductsGrid">
         <!-- Loading State -->
         <div v-if="loading" class="col-span-full text-center">
           <h2 class="text-[#FEC564] text-2xl font-bold" style="font-family: 'Irish Grover', cursive;">Loading magical collection...</h2>
-        </div>
-        
-        <!-- No Results -->
-        <div v-else-if="filteredBooks.length === 0" class="col-span-full text-center">
-          <h2 class="text-[#FEC564] text-2xl font-bold" style="font-family: 'Irish Grover', cursive;">No books found in this category.</h2>
         </div>
         
         <!-- Books Grid -->

@@ -11,12 +11,6 @@
         <h2 class="text-[#FEC564]">Searching...</h2>
       </div>
 
-      <!-- Empty State -->
-      <div v-else-if="searchResults.length === 0" class="text-[#FEC564] text-center py-8 w-full">
-        <i class="fas fa-search fa-3x text-[#FEC564] mb-4"></i>
-        <h2 class="text-[#FEC564] mb-4">No books found</h2>
-        <p class="text-gray-400">Try searching with different keywords</p>
-      </div>
 
       <!-- Search Results Grid -->
       <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">

@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen pt-10 pb-8" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+  <div class="relative min-h-screen pt-0 pb-8" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     <!-- Confetti dots background -->
     <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
       <div 
@@ -30,7 +30,7 @@
 
     <div v-else class="relative z-10">
       <!-- Product Container -->
-      <div class="max-w-[900px] mx-auto max-[1024px]:max-w-[90%] max-md:my-20 max-md:p-[15px] max-[440px]:my-5 max-[440px]:p-[10px]">
+      <div class="max-w-[900px] mx-auto mt-[70px] max-[1024px]:max-w-[90%] max-md:my-20 max-md:p-[15px] max-[440px]:my-5 max-[440px]:p-[10px]">
         <!-- Product Detail Section -->
         <div class="flex gap-10 mb-[30px] max-md:flex-col max-md:items-center max-md:gap-[30px] max-[440px]:gap-[15px] max-[440px]:mb-[15px]">
           <!-- Product Image -->
@@ -51,7 +51,7 @@
             </h1>
 
             <!-- Product Info Column (Price/Quantity and Features) -->
-            <div class="flex gap-10 mb-5 max-md:flex-row max-md:justify-between max-md:items-center max-md:gap-[70px] max-md:mb-[15px] max-[440px]:gap-[50px] max-[440px]:mb-[5px]">
+            <div class="flex gap-10 max-md:flex-row max-md:justify-between max-md:items-center max-md:gap-[70px] max-md:mb-[15px] max-[440px]:gap-[50px]">
               <!-- Left Column (Price and Quantity) -->
               <div class="flex flex-col max-[440px]:flex-col">
                 <!-- Product Price -->
@@ -122,7 +122,7 @@
             <!-- Add to Cart Button -->
             <button 
               @click="addToCart" 
-              class="bg-[#FEC564] text-black border-none text-[32px] font-bold font-['Irish_Grover'] cursor-pointer rounded-[20px] text-center justify-center h-[55px] w-full max-w-[350px] ml-20 transition-colors duration-300 hover:bg-[#fa9e00] disabled:bg-[#cccccc] disabled:cursor-not-allowed disabled:text-[#666666] max-[1024px]:ml-10 max-md:ml-0 max-[440px]:text-[18px] max-[440px]:h-10 max-[440px]:max-w-[50%] max-[440px]:mt-[10px]"
+              class="bg-[#FEC564] text-black border-none text-[32px] font-bold font-['Irish_Grover'] cursor-pointer rounded-[20px] text-center justify-center h-[55px] w-full max-w-[350px] ml-20 transition-colors duration-300 hover:bg-[#fa9e00] disabled:bg-[#cccccc] disabled:cursor-not-allowed disabled:text-[#666666] max-[1024px]:ml-10 max-md:ml-0 max-[440px]:text-[18px] max-[440px]:h-10 max-[440px]:max-w-[50%]"
               :disabled="addingToCart"
             >
               <span v-if="addingToCart">Adding to Cart...</span>
@@ -135,28 +135,14 @@
         <div class="max-w-[2000px] h-[3px] bg-[#FEC564] mt-10 relative -left-[15%] w-[130%] max-[1024px]:-left-[10%] max-[1024px]:w-[120%] max-md:left-0 max-md:w-full max-md:mt-5 max-md:mb-5 max-[440px]:left-0 max-[440px]:w-full max-[440px]:mt-5 max-[440px]:mb-5"></div>
 
         <!-- Product Description Container -->
-        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 text-white max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
-          <h2 class="text-[2.5rem] -mt-[10px] mb-5 max-md:text-[2rem] max-[440px]:text-[20px] max-[440px]:mb-[10px]">Description</h2>
-          <p class="text-[1.8rem] leading-[1.6] m-0 max-md:text-[1.5rem] max-[440px]:text-base max-[440px]:leading-[1.4] max-[440px]:text-justify">
+        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
+          <h2 class="text-[#FEC564] text-[2.5rem] -mt-[10px] mb-5 max-md:text-[2rem] max-[440px]:text-[20px] max-[440px]:mb-[10px]">Description</h2>
+          <p class="text-white text-[1.8rem] leading-[1.6] m-0 max-md:text-[1.5rem] max-[440px]:text-base max-[440px]:leading-[1.4] max-[440px]:text-justify">
             {{ book.bookDescription || 'No description available for this magical tome.' }}
           </p>
         </div>
       </div>
 
-      <!-- Related Books Section -->
-      <div v-if="relatedBooks.length > 0" class="mt-16">
-        <div class="h-0.5 bg-gradient-to-r from-transparent via-gold to-transparent my-8"></div>
-        <h2 class="text-gold text-3xl text-center mb-8">Related Books</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
-          <div 
-            v-for="relatedBook in relatedBooks.slice(0, 5)" 
-            :key="relatedBook.bookID" 
-            class="w-full"
-          >
-            <BookItem :book="relatedBook" />
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Back Button -->
