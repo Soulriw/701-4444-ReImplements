@@ -2,7 +2,7 @@
   <!-- Home page with gradient background -->
   <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     <!-- Confetti dots background -->
-    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+    <div class="confetti-container fixed top-0 left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
       <div 
         v-for="(dot, index) in confettiDots" 
         :key="index"
@@ -20,7 +20,7 @@
     </div>
     
     <!-- Content with padding for navbar -->
-    <div class="relative z-[500]">
+    <div class="relative z-[500] pb-20 max-md:pb-16 max-[480px]:pb-12 max-[375px]:pb-10">
       <h1 class="text-[#FEC564] text-center mb-8 text-4xl lg:pt-20 lg:text-3xl lg:mb-6 md:pt-16 md:text-2xl md:mb-6 sm:text-2xl max-[480px]:pt-14 max-[480px]:text-xl max-[480px]:mb-5 max-[480px]:p-[8px] max-[375px]:pt-12 max-[375px]:text-lg max-[375px]:mb-4 max-[375px]:p-[6px]">Purchase History</h1>
 
        <!-- Divider line -->
@@ -207,21 +207,10 @@ export default {
       loading.value = true
       try {
         const response = await axios.get('/api/history')
-        console.log('History API response:', response.data)
-        if (Array.isArray(response.data)) {
-          history.value = response.data
-          filteredHistory.value = [...history.value]
-          console.log('History items loaded:', history.value.length)
-        } else {
-          console.error('Invalid response format:', response.data)
-          history.value = []
-          filteredHistory.value = []
-        }
+        history.value = response.data
+        filteredHistory.value = [...history.value]
       } catch (error) {
         console.error('Error fetching history:', error)
-        console.error('Error details:', error.response?.data || error.message)
-        history.value = []
-        filteredHistory.value = []
       } finally {
         loading.value = false
       }
