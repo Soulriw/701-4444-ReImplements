@@ -69,7 +69,11 @@ public class BookController {
                 ResponseEntity.ok(response) : 
                 ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to add book: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(errorResponse);
         }
     }
     

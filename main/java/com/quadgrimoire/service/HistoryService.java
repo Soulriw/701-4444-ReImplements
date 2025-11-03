@@ -23,7 +23,15 @@ public class HistoryService {
      * @return List of all sales history entries
      */
     public List<History> getAllHistory() {
-        return historyRepository.findAll();
+        try {
+            List<History> history = historyRepository.findAll();
+            System.out.println("Fetched " + history.size() + " history entries");
+            return history;
+        } catch (Exception e) {
+            System.err.println("Error fetching history: " + e.getMessage());
+            e.printStackTrace();
+            return List.of();
+        }
     }
 
     /**
@@ -87,8 +95,7 @@ public class HistoryService {
                 history.setEnchantment((String) historyData.get("enchantment"));
             }
             
-            // Set timestamp
-            history.setSellDate(LocalDateTime.now());
+            // Note: sellDate is not stored in database as the column doesn't exist
             
             historyRepository.save(history);
             
@@ -145,24 +152,14 @@ public class HistoryService {
 
     /**
      * Get sales history for a specific date range
-     * @param startDate Start date (optional)
-     * @param endDate End date (optional)
-     * @return List of history entries in the date range
+     * Note: Date filtering is not available as sellDate column doesn't exist in database
+     * @param startDate Start date (optional, currently ignored)
+     * @param endDate End date (optional, currently ignored)
+     * @return List of all history entries (date filtering disabled)
      */
     public List<History> getHistoryByDateRange(LocalDateTime startDate, LocalDateTime endDate) {
-        if (startDate == null && endDate == null) {
-            return historyRepository.findAll();
-        }
-        
-        if (startDate == null) {
-            return historyRepository.findBySellDateBefore(endDate);
-        }
-        
-        if (endDate == null) {
-            return historyRepository.findBySellDateAfter(startDate);
-        }
-        
-        return historyRepository.findBySellDateBetween(startDate, endDate);
+        // Return all history since date filtering requires sellDate column which doesn't exist
+        return historyRepository.findAll();
     }
 
     /**

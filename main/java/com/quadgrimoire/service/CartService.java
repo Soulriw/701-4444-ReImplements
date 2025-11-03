@@ -229,76 +229,71 @@ public class CartService {
     public Map<String, Object> checkout(List<Integer> cartIds) {
         Map<String, Object> response = new HashMap<>();
 
-        try {
-            if (cartIds == null || cartIds.isEmpty()) {
-                response.put("success", false);
-                response.put("error", "No items selected for checkout");
-                return response;
-            }
-
-            List<Cart> cartItems = cartRepository.findAllById(cartIds);
-
-            if (cartItems.isEmpty()) {
-                response.put("success", false);
-                response.put("error", "No cart items found");
-                return response;
-            }
-
-            // Convert cart items to history entries
-            List<History> historyEntries = new ArrayList<>();
-            BigDecimal totalAmount = BigDecimal.ZERO;
-            BigDecimal totalNormalAmount = BigDecimal.ZERO;
-            BigDecimal totalPromotionAmount = BigDecimal.ZERO;
-
-            for (Cart cartItem : cartItems) {
-                History history = new History();
-                history.setBookID(cartItem.getCartBookID());
-                history.setBookName(cartItem.getBookName());
-                history.setCategoryID(cartItem.getCategoryID());
-                history.setCategoryName(cartItem.getCategoryName());
-                history.setQuantity(cartItem.getQuantity());
-
-                // Use promotion price if available, otherwise use regular price
-                BigDecimal sellPrice = cartItem.getProPrice() != null ?
-                        cartItem.getProPrice() : cartItem.getPrice();
-                history.setSellPrice(sellPrice);
-                history.setEnchantment(cartItem.getEnchantment());
-
-                historyEntries.add(history);
-
-                // Calculate totals
-                BigDecimal normalPrice = cartItem.getPrice();
-                BigDecimal itemTotal = sellPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-                BigDecimal normalTotal = normalPrice.multiply(BigDecimal.valueOf(cartItem.getQuantity()));
-                
-                totalAmount = totalAmount.add(itemTotal);
-                totalNormalAmount = totalNormalAmount.add(normalTotal);
-                
-                if (cartItem.getProPrice() != null) {
-                    totalPromotionAmount = totalPromotionAmount.add(itemTotal);
-                }
-            }
-
-            // Save all history entries
-            historyRepository.saveAll(historyEntries);
-
-            // Remove from cart
-            cartRepository.deleteAllById(cartIds);
-
-            response.put("success", true);
-            response.put("message", "Checkout completed successfully");
-            response.put("totalAmount", totalAmount);
-            response.put("totalNormalAmount", totalNormalAmount);
-            response.put("totalPromotionAmount", totalPromotionAmount);
-            response.put("totalSavings", totalNormalAmount.subtract(totalAmount));
-            response.put("itemCount", cartItems.size());
-            return response;
-        } catch (Exception e) {
+        if (cartIds == null || cartIds.isEmpty()) {
             response.put("success", false);
-            response.put("error", "Failed to complete checkout: " + e.getMessage());
-            e.printStackTrace();
+            response.put("error", "No items selected for checkout");
             return response;
         }
+
+        List<Cart> cartItems = cartRepository.findAllById(cartIds);
+
+        if (cartItems.isEmpty()) {
+            response.put("success", false);
+            response.put("error", "No cart items found");
+            return response;
+        }
+
+        // Convert cart items to history entries
+        List<History> historyEntries = new ArrayList<>();
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalNormalAmount = BigDecimal.ZERO;
+        BigDecimal totalPromotionAmount = BigDecimal.ZERO;
+
+        for (Cart cartItem : cartItems) {
+            History history = new History();
+            history.setBookID(cartItem.getCartBookID());
+            history.setBookName(cartItem.getBookName());
+            history.setCategoryID(cartItem.getCategoryID());
+            history.setCategoryName(cartItem.getCategoryName());
+            history.setQuantity(cartItem.getQuantity() != null ? cartItem.getQuantity() : 1);
+
+            // Use promotion price if available, otherwise use regular price
+            BigDecimal sellPrice = cartItem.getProPrice() != null ?
+                    cartItem.getProPrice() : cartItem.getPrice();
+            history.setSellPrice(sellPrice);
+            history.setEnchantment(cartItem.getEnchantment() != null ? cartItem.getEnchantment() : "");
+            // Note: sellDate is not set as the database table doesn't have this column
+
+            historyEntries.add(history);
+
+            // Calculate totals
+            BigDecimal normalPrice = cartItem.getPrice();
+            Integer quantity = cartItem.getQuantity() != null ? cartItem.getQuantity() : 1;
+            BigDecimal itemTotal = sellPrice.multiply(BigDecimal.valueOf(quantity));
+            BigDecimal normalTotal = normalPrice.multiply(BigDecimal.valueOf(quantity));
+            
+            totalAmount = totalAmount.add(itemTotal);
+            totalNormalAmount = totalNormalAmount.add(normalTotal);
+            
+            if (cartItem.getProPrice() != null) {
+                totalPromotionAmount = totalPromotionAmount.add(itemTotal);
+            }
+        }
+
+        // Save all history entries
+        historyRepository.saveAll(historyEntries);
+
+        // Remove from cart - delete by ID using standard JPA method
+        cartRepository.deleteAllById(cartIds);
+
+        response.put("success", true);
+        response.put("message", "Checkout completed successfully");
+        response.put("totalAmount", totalAmount);
+        response.put("totalNormalAmount", totalNormalAmount);
+        response.put("totalPromotionAmount", totalPromotionAmount);
+        response.put("totalSavings", totalNormalAmount.subtract(totalAmount));
+        response.put("itemCount", cartItems.size());
+        return response;
     }
 
     /**

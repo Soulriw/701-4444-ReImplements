@@ -32,7 +32,8 @@ public class History {
     @Column(columnDefinition = "TEXT")
     private String enchantment;
     
-    @Column
+    @jakarta.persistence.Transient
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private LocalDateTime sellDate;
     
     // Default constructor for JPA

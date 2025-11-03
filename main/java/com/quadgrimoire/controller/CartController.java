@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +48,29 @@ public class CartController {
     }
     
     @PostMapping("/checkout")
-    public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, List<Integer>> checkoutData) {
-        List<Integer> cartIds = checkoutData.get("cartIds");
-        Map<String, Object> response = cartService.checkout(cartIds);
-        return response.get("success").equals(true) ? 
-            ResponseEntity.ok(response) : 
-            ResponseEntity.badRequest().body(response);
+    public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, Object> checkoutData) {
+        try {
+            @SuppressWarnings("unchecked")
+            List<Integer> cartIds = (List<Integer>) checkoutData.get("cartIds");
+            
+            if (cartIds == null || cartIds.isEmpty()) {
+                Map<String, Object> errorResponse = new HashMap<>();
+                errorResponse.put("success", false);
+                errorResponse.put("error", "No items selected for checkout");
+                return ResponseEntity.badRequest().body(errorResponse);
+            }
+            
+            Map<String, Object> response = cartService.checkout(cartIds);
+            return response.get("success").equals(true) ? 
+                ResponseEntity.ok(response) : 
+                ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("success", false);
+            errorResponse.put("error", "Failed to process checkout: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(errorResponse);
+        }
     }
     
     @GetMapping("/cart/summary")

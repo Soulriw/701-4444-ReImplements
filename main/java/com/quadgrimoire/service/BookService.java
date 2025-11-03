@@ -102,42 +102,122 @@ public class BookService {
 
             Book book = new Book();
 
-            // Set bookID if provided
+            // Generate bookID if not provided
+            Integer bookID = null;
             if (bookData.containsKey("bookID") && bookData.get("bookID") != null) {
-                book.setBookID((Integer) bookData.get("bookID"));
+                Object bookIDObj = bookData.get("bookID");
+                if (bookIDObj instanceof Integer) {
+                    bookID = (Integer) bookIDObj;
+                } else if (bookIDObj instanceof Number) {
+                    bookID = ((Number) bookIDObj).intValue();
+                }
             }
+            
+            // If bookID is not provided or invalid, find the max bookID and add 1
+            if (bookID == null || bookID <= 0) {
+                List<Book> allBooks = bookRepository.findAll();
+                if (allBooks.isEmpty()) {
+                    bookID = 1;
+                } else {
+                    int maxID = 0;
+                    for (Book b : allBooks) {
+                        Integer id = b.getBookID();
+                        if (id != null && id > maxID) {
+                            maxID = id;
+                        }
+                    }
+                    bookID = maxID + 1;
+                }
+            }
+            book.setBookID(bookID);
 
             book.setBookName((String) bookData.get("bookName"));
             book.setCategoryID((Integer) bookData.get("categoryID"));
-            book.setCategoryName((String) bookData.get("categoryName"));
-            book.setBookDescription((String) bookData.get("bookDescription"));
+            
+            // Handle categoryName - ensure it's not null
+            String categoryName = (String) bookData.get("categoryName");
+            if (categoryName == null || categoryName.trim().isEmpty()) {
+                categoryName = "Unknown";
+            }
+            book.setCategoryName(categoryName);
+            
+            // Handle bookDescription - can be null
+            String bookDescription = (String) bookData.get("bookDescription");
+            book.setBookDescription(bookDescription != null ? bookDescription : "");
 
             // Handle price conversion
             Object priceObj = bookData.get("price");
-            if (priceObj instanceof BigDecimal) {
-                book.setPrice((BigDecimal) priceObj);
-            } else if (priceObj instanceof Double) {
-                book.setPrice(BigDecimal.valueOf((Double) priceObj));
-            } else if (priceObj instanceof Integer) {
-                book.setPrice(BigDecimal.valueOf((Integer) priceObj));
+            if (priceObj == null) {
+                response.put("success", false);
+                response.put("error", "Price is required");
+                return response;
             }
+            
+            BigDecimal price;
+            if (priceObj instanceof BigDecimal) {
+                price = (BigDecimal) priceObj;
+            } else if (priceObj instanceof Double) {
+                Double doubleValue = (Double) priceObj;
+                if (doubleValue.isNaN() || doubleValue.isInfinite()) {
+                    response.put("success", false);
+                    response.put("error", "Invalid price value");
+                    return response;
+                }
+                price = BigDecimal.valueOf(doubleValue);
+            } else if (priceObj instanceof Integer) {
+                price = BigDecimal.valueOf((Integer) priceObj);
+            } else if (priceObj instanceof Number) {
+                price = BigDecimal.valueOf(((Number) priceObj).doubleValue());
+            } else {
+                try {
+                    price = new BigDecimal(priceObj.toString());
+                } catch (NumberFormatException e) {
+                    response.put("success", false);
+                    response.put("error", "Invalid price format");
+                    return response;
+                }
+            }
+            book.setPrice(price);
 
             // Handle proPrice if provided
             if (bookData.containsKey("proPrice") && bookData.get("proPrice") != null) {
                 Object proPriceObj = bookData.get("proPrice");
+                BigDecimal proPrice;
                 if (proPriceObj instanceof BigDecimal) {
-                    book.setProPrice((BigDecimal) proPriceObj);
+                    proPrice = (BigDecimal) proPriceObj;
                 } else if (proPriceObj instanceof Double) {
-                    book.setProPrice(BigDecimal.valueOf((Double) proPriceObj));
+                    Double doubleValue = (Double) proPriceObj;
+                    if (doubleValue.isNaN() || doubleValue.isInfinite()) {
+                        proPrice = null;
+                    } else {
+                        proPrice = BigDecimal.valueOf(doubleValue);
+                    }
                 } else if (proPriceObj instanceof Integer) {
-                    book.setProPrice(BigDecimal.valueOf((Integer) proPriceObj));
+                    proPrice = BigDecimal.valueOf((Integer) proPriceObj);
+                } else if (proPriceObj instanceof Number) {
+                    proPrice = BigDecimal.valueOf(((Number) proPriceObj).doubleValue());
+                } else {
+                    try {
+                        proPrice = new BigDecimal(proPriceObj.toString());
+                    } catch (NumberFormatException e) {
+                        proPrice = null;
+                    }
                 }
+                book.setProPrice(proPrice);
             }
 
             bookRepository.save(book);
 
-            // Handle promotion book
-            Boolean isPromotionBook = (Boolean) bookData.get("isPromotionBook");
+            // Handle promotion book - convert string to boolean if needed
+            Object isPromotionBookObj = bookData.get("isPromotionBook");
+            Boolean isPromotionBook = false;
+            if (isPromotionBookObj != null) {
+                if (isPromotionBookObj instanceof Boolean) {
+                    isPromotionBook = (Boolean) isPromotionBookObj;
+                } else if (isPromotionBookObj instanceof String) {
+                    isPromotionBook = "true".equalsIgnoreCase((String) isPromotionBookObj);
+                }
+            }
             if (Boolean.TRUE.equals(isPromotionBook) && book.getProPrice() != null) {
                 createPromotionBook(book);
             }
@@ -209,9 +289,17 @@ public class BookService {
 
             bookRepository.save(book);
 
-            // Handle promotion book
+            // Handle promotion book - convert string to boolean if needed
             PromotionBook promotionBook = promotionBookRepository.findByBookID(bookId);
-            Boolean isPromotionBook = (Boolean) bookData.get("isPromotionBook");
+            Object isPromotionBookObj = bookData.get("isPromotionBook");
+            Boolean isPromotionBook = false;
+            if (isPromotionBookObj != null) {
+                if (isPromotionBookObj instanceof Boolean) {
+                    isPromotionBook = (Boolean) isPromotionBookObj;
+                } else if (isPromotionBookObj instanceof String) {
+                    isPromotionBook = "true".equalsIgnoreCase((String) isPromotionBookObj);
+                }
+            }
 
             if (Boolean.TRUE.equals(isPromotionBook) && book.getProPrice() != null) {
                 if (promotionBook == null) {

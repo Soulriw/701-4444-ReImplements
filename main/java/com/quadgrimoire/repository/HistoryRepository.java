@@ -11,8 +11,7 @@ public interface HistoryRepository extends JpaRepository<History, Integer> {
     List<History> findAllByOrderByHistoryIDDesc();
     List<History> findByBookID(Integer bookID);
     List<History> findByCategoryID(Integer categoryID);
-    List<History> findBySellDateBefore(LocalDateTime date);
-    List<History> findBySellDateAfter(LocalDateTime date);
-    List<History> findBySellDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    // Note: sellDate queries removed as the column doesn't exist in the database
+    // If date filtering is needed, implement in service layer using historyID or other available fields
 }
 

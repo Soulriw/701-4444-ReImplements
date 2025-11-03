@@ -207,10 +207,21 @@ export default {
       loading.value = true
       try {
         const response = await axios.get('/api/history')
-        history.value = response.data
-        filteredHistory.value = [...history.value]
+        console.log('History API response:', response.data)
+        if (Array.isArray(response.data)) {
+          history.value = response.data
+          filteredHistory.value = [...history.value]
+          console.log('History items loaded:', history.value.length)
+        } else {
+          console.error('Invalid response format:', response.data)
+          history.value = []
+          filteredHistory.value = []
+        }
       } catch (error) {
         console.error('Error fetching history:', error)
+        console.error('Error details:', error.response?.data || error.message)
+        history.value = []
+        filteredHistory.value = []
       } finally {
         loading.value = false
       }

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,9 +19,19 @@ public class HistoryController {
     private HistoryService historyService;
     
     @GetMapping("/history")
-    public ResponseEntity<List<History>> getHistory() {
-        List<History> history = historyService.getAllHistory();
-        return ResponseEntity.ok(history);
+    public ResponseEntity<?> getHistory() {
+        try {
+            List<History> history = historyService.getAllHistory();
+            System.out.println("Controller: Returning " + (history != null ? history.size() : 0) + " history entries");
+            if (history == null) {
+                history = List.of();
+            }
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            System.err.println("Controller error fetching history: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Failed to fetch history: " + e.getMessage()));
+        }
     }
     
     @GetMapping("/history/{id}")
