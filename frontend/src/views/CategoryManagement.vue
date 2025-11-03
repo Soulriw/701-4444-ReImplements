@@ -1,5 +1,9 @@
 <template>
-  <div class="min-h-[80vh]">
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500]">
     <div class="max-w-[900px] my-[15px] mx-auto px-[15px] lg:max-w-[90%] lg:my-[12px] md:max-w-[95%] md:my-[10px] md:px-[8px] max-[480px]:max-w-[95%] max-[375px]:max-w-[95%]">
       <h1 class="text-[#FEC564] text-center mb-8 lg:text-[24px] md:text-[24px] max-[480px]:text-[22px] max-[480px]:p-[8px] max-[375px]:text-[20px] max-[375px]:p-[6px]">Category Management</h1>
 
@@ -184,6 +188,7 @@
           ></div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>

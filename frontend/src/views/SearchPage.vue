@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500]">
     <!-- Search Container -->
     <div class="p-4 mx-auto max-w-[1400px] max-[1024px]:p-[12.8px] max-md:p-[9.6px] max-[440px]:p-[8px] max-[375px]:p-[6.4px]">
       <!-- Loading State -->
@@ -55,6 +59,7 @@
           Next
         </button>
       </div>
+    </div>
     </div>
   </div>
 </template>

@@ -1,8 +1,22 @@
 <template>
-  <div class="relative min-h-screen pt-10 pb-8" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
-    <!-- Stars background animation layer -->
-    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+  <div class="relative min-h-screen pt-10 pb-8" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
     
     <div v-if="loading" class="flex justify-center items-center min-h-[80vh] relative z-10">
       <h2 class="text-gold">Loading book details...</h2>
@@ -121,7 +135,7 @@
         <div class="max-w-[2000px] h-[3px] bg-[#FEC564] mt-10 relative -left-[15%] w-[130%] max-[1024px]:-left-[10%] max-[1024px]:w-[120%] max-md:left-0 max-md:w-full max-md:mt-5 max-md:mb-5 max-[440px]:left-0 max-[440px]:w-full max-[440px]:mt-5 max-[440px]:mb-5"></div>
 
         <!-- Product Description Container -->
-        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 text-[#FEC564] max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
+        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 text-white max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
           <h2 class="text-[2.5rem] -mt-[10px] mb-5 max-md:text-[2rem] max-[440px]:text-[20px] max-[440px]:mb-[10px]">Description</h2>
           <p class="text-[1.8rem] leading-[1.6] m-0 max-md:text-[1.5rem] max-[440px]:text-base max-[440px]:leading-[1.4] max-[440px]:text-justify">
             {{ book.bookDescription || 'No description available for this magical tome.' }}
@@ -175,6 +189,26 @@ export default {
     const message = ref('')
     const messageType = ref('')
     const selectedFeatures = ref([])
+    
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const promotionBooks = computed(() => booksStore.promotionBooks)
     const books = computed(() => booksStore.books)
@@ -361,14 +395,34 @@ export default {
       addToCart,
       features,
       selectedFeatures,
-      handleFeatureChange
+      handleFeatureChange,
+      confettiDots
     }
   }
 }
 </script>
 
 <style scoped>
-/* Stars animation is now handled in template */
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
+  z-index: 0;
+}
 
 /* Checkbox checked state styling */
 input[type="checkbox"]:checked::after {

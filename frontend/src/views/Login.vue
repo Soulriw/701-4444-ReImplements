@@ -1,10 +1,6 @@
 <template>
-  <!-- Home page with gradient background -->
-  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
-    
-    <!-- Stars background animation layer -->
-    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+  <!-- Home page with solid background -->
+  <div class="min-h-screen relative" style="background: #2D1A47;">
     
     <!-- Content with padding for navbar -->
     <div class="relative z-[500] flex justify-center items-start pt-20 min-h-screen">

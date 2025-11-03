@@ -1,9 +1,22 @@
 <template>
-  <div class="relative min-h-screen pt-20" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
-   
-    <!-- Stars background animation layer -->
-    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+  <div class="relative min-h-screen pt-20" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Confetti dots background -->
+    <div class="confetti-container fixed top-[70px] left-0 right-0 bottom-0 pointer-events-none z-0 overflow-hidden">
+      <div 
+        v-for="(dot, index) in confettiDots" 
+        :key="index"
+        class="confetti-dot absolute rounded-full"
+        :style="{
+          left: dot.x + '%',
+          top: dot.y + '%',
+          width: dot.size + 'px',
+          height: dot.size + 'px',
+          backgroundColor: '#FEC564',
+          opacity: dot.opacity,
+          animationDelay: dot.delay + 's'
+        }"
+      ></div>
+    </div>
 
     <!-- Page Header -->
     <div class="text-center relative z-10">
@@ -109,6 +122,26 @@ export default {
     const itemsPerPage = 10
     const currentCategory = ref(null)
     const loading = ref(false)
+    
+    // Generate random confetti dots
+    const generateConfettiDots = () => {
+      const dots = []
+      const dotCount = 80 // Number of confetti dots
+      
+      for (let i = 0; i < dotCount; i++) {
+        dots.push({
+          x: Math.random() * 100, // Random X position (0-100%)
+          y: Math.random() * 100, // Random Y position (0-100%)
+          size: Math.random() * 4 + 2, // Random size between 2-6px
+          opacity: Math.random() * 0.6 + 0.3, // Random opacity between 0.3-0.9
+          delay: Math.random() * 3 // Random animation delay
+        })
+      }
+      
+      return dots
+    }
+    
+    const confettiDots = ref(generateConfettiDots())
 
     const books = computed(() => booksStore.books)
     const categories = computed(() => booksStore.categories)
@@ -196,9 +229,33 @@ export default {
       prevPage,
       nextPage,
       goToPage,
-      scrollToTop
+      scrollToTop,
+      confettiDots
     }
   }
 }
 </script>
+
+<style scoped>
+/* Confetti dots animation */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.2);
+  }
+}
+
+.confetti-dot {
+  animation: twinkle 3s ease-in-out infinite;
+  box-shadow: 0 0 4px rgba(254, 197, 100, 0.5);
+}
+
+.confetti-container {
+  z-index: 0;
+}
+</style>
 
