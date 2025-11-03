@@ -1,15 +1,13 @@
 <template>
-  <div class="relative min-h-screen pt-[120px] bg-dark text-white">
-    <!-- Divider -->
-    <div class="w-4/5 h-0.5 bg-gold mx-auto my-10"></div>
-
-    <!-- Stars Background -->
-    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px;"></div>
+  <div class="relative min-h-screen pt-20" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+   
+    <!-- Stars background animation layer -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
 
     <!-- Page Header -->
-    <div class="text-center py-8 relative z-10">
-      <h1 class="text-gold text-4xl font-bold">All Magical Books</h1>
+    <div class="text-center relative z-10">
+      <h1 class="text-[#FEC564] text-4xl font-bold" style="font-family: 'Irish Grover', cursive;">All Magical Books</h1>
     </div>
 
     <!-- Category Filters -->
@@ -20,8 +18,11 @@
           :key="category.categoryID"
         >
           <div 
-            class="px-4 py-2 bg-white/10 border border-white/20 rounded-[20px] cursor-pointer transition-all duration-300 text-white text-center"
-            :class="{ 'bg-gold text-black border-gold': currentCategory === category.categoryID, 'hover:bg-white/20 hover:-translate-y-0.5': currentCategory !== category.categoryID }"
+            class="px-4 py-4 bg-white/10 border-2 border-transparent rounded-[15px] cursor-pointer transition-all duration-300 text-white text-center text-[19.2px]"
+            :class="{ 
+              'bg-[rgba(254,197,100,0.2)] border-[#FEC564] shadow-[0_0_15px_rgba(254,197,100,0.5)]': currentCategory === category.categoryID, 
+              'hover:bg-white/20 hover:-translate-y-[5px] hover:border-[#FEC564]': currentCategory !== category.categoryID 
+            }"
             @click="filterByCategory(category.categoryID)"
           >
             {{ category.categoryName }}
@@ -31,16 +32,16 @@
     </div>
 
     <!-- Products Grid Section -->
-    <div class="relative z-10 px-8">
+    <div class="relative z-10 px-4 max-w-[1400px] mx-auto">
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center" id="allProductsGrid">
         <!-- Loading State -->
         <div v-if="loading" class="col-span-full text-center">
-          <h2 class="text-gold">Loading magical collection...</h2>
+          <h2 class="text-[#FEC564] text-2xl font-bold" style="font-family: 'Irish Grover', cursive;">Loading magical collection...</h2>
         </div>
         
         <!-- No Results -->
         <div v-else-if="filteredBooks.length === 0" class="col-span-full text-center">
-          <h2 class="text-gold">No books found in this category.</h2>
+          <h2 class="text-[#FEC564] text-2xl font-bold" style="font-family: 'Irish Grover', cursive;">No books found in this category.</h2>
         </div>
         
         <!-- Books Grid -->
@@ -58,9 +59,10 @@
     <!-- Pagination -->
     <div v-if="totalPages > 1" class="flex justify-center items-center gap-4 my-8 relative z-10">
       <button 
-        class="px-4 py-2 bg-white/10 border border-white/20 rounded text-white cursor-pointer transition-all duration-300 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px]"
         :disabled="currentPage === 1"
         @click="prevPage"
+        style="font-family: 'Irish Grover', cursive;"
       >
         Prev
       </button>
@@ -68,23 +70,25 @@
         <div 
           v-for="page in totalPages" 
           :key="page"
-          class="px-3 py-2 bg-white/10 border border-white/20 rounded text-white cursor-pointer transition-all duration-300 hover:bg-white/20"
-          :class="{ 'bg-gold text-black border-gold': page === currentPage }"
+          class="w-[40px] h-[40px] flex items-center justify-center rounded-full cursor-pointer text-white bg-transparent border-2 border-transparent transition-all duration-300 hover:border-[#FFB536] text-[19.2px]"
+          :class="{ 'bg-[#FFB536] border-[#FFB536]': page === currentPage }"
           @click="goToPage(page)"
+          style="font-family: 'Irish Grover', cursive;"
         >
           {{ page }}
         </div>
       </div>
       <button 
-        class="px-4 py-2 bg-white/10 border border-white/20 rounded text-white cursor-pointer transition-all duration-300 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="px-6 py-2 bg-[#FFB536] text-white border-none rounded-[25px] cursor-pointer transition-all duration-300 hover:bg-[#ff9900c7] disabled:bg-[#ccc] disabled:cursor-not-allowed disabled:opacity-70 text-[19.2px]"
         :disabled="currentPage === totalPages"
         @click="nextPage"
+        style="font-family: 'Irish Grover', cursive;"
       >
         Next
       </button>
     </div>
     
-    <div class="w-4/5 h-0.5 bg-gold mx-auto my-10"></div>
+    <div class="w-4/5 h-[2px] bg-[#fec564] mx-auto my-[40px] relative clear-both"></div>
   </div>
 </template>
 
@@ -197,3 +201,4 @@ export default {
   }
 }
 </script>
+

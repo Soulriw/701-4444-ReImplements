@@ -1,72 +1,90 @@
 <template>
-  <div class="min-h-[calc(100vh-80px)] flex items-center justify-center bg-gradient-to-br from-dark to-[#1a1a1a] relative pt-20">
-    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" :style="starsStyle"></div>
-    <div class="w-full max-w-[400px] p-8 relative z-10">
-      <div class="bg-white/5 border border-white/10 rounded-[20px] p-12 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.3)] max-md:p-8">
-        <div class="text-center mb-8">
-          <img src="/src/model/image/login/logofull.png" alt="Logo" class="max-w-[200px] h-auto mx-auto" />
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    
+    <!-- Stars background animation layer -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] flex justify-center items-start pt-20 min-h-screen">
+    <div class="flex flex-col items-center w-[99%] h-full">
+      <h1 class="text-[#FEC564] text-[2.5rem] tracking-[2px] mb-[10px] pt-[35px] max-[440px]:text-[2rem] text-center" style="font-family: 'Irish Grover', sans-serif;">
+        CREATE AN ACCOUNT
+      </h1>
+      <div class="w-[80%] h-[1.5px] bg-[#FEC564] my-[10px] mb-[30px] max-[440px]:w-[80%]"></div>
+      
+      <div class="flex w-full max-w-[670px] h-[460px] rounded-[25px] border-[3px] border-white overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.3)] mt-[15px] max-[440px]:flex-col max-[440px]:h-[500px] max-[440px]:w-[85%] max-[440px]:bg-white max-[440px]:rounded-[30px]">
+        <!-- Logo Section -->
+        <div class="bg-[#000000] w-[45%] flex flex-col justify-center items-center shrink-0 max-[440px]:w-0 max-[440px]:h-0 max-[440px]:hidden">
+          <div class="w-[400px] h-[420px] mt-[10px] bg-black rounded-[20px] overflow-hidden flex items-center justify-center">
+            <img src="/src/Model/image/login/logofull.png" alt="Logo" class="w-full h-full object-contain rounded-[20px]" />
+          </div>
         </div>
         
-        <h2 class="text-gold text-center mb-8 text-3xl font-bold max-md:text-2xl">Join the Magic</h2>
-        
-        <form @submit.prevent="handleRegister" class="space-y-6">
-          <div>
-            <div class="relative flex items-center">
-              <img src="/src/model/image/login/username.png" alt="Username" class="absolute left-4 w-5 h-5 z-10" />
+        <!-- Form Section -->
+        <div class="bg-white w-[55%] h-[480px] px-[30px] py-[40px] flex flex-col justify-center shrink-0 max-[440px]:w-[88%] max-[440px]:h-[350px] max-[440px]:px-0 max-[440px]:py-0 max-[440px]:mt-[60px] max-[440px]:ml-[20px]">
+          <!-- Error Message -->
+          <div v-if="errorMessage" class="bg-[#ffdddd] text-[#ff0000] p-[10px] mb-[15px] rounded-[5px] text-center">
+            {{ errorMessage }}
+          </div>
+          
+          <form @submit.prevent="handleRegister" class="flex flex-col">
+            <!-- Username Input -->
+            <div class="relative mb-[65px] flex items-center border-b border-[#ddd] pb-[5px] max-[440px]:w-[80%] max-[440px]:ml-[30px] max-[440px]:mb-[60px]">
+              <img src="/src/Model/image/login/username.png" alt="Username" class="w-[35px] h-[35px] shrink-0" />
               <input 
                 type="text" 
                 v-model="form.username" 
                 placeholder="Username" 
-                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
+                class="w-full border-none outline-none py-[8px] text-base ml-[10px] bg-transparent text-black"
                 required
               />
             </div>
-          </div>
-          
-          <div>
-            <div class="relative flex items-center">
-              <img src="/src/model/image/login/password.png" alt="Password" class="absolute left-4 w-5 h-5 z-10" />
+            
+            <!-- Password Input -->
+            <div class="relative mb-[20px] -mt-[25px] flex items-center border-b border-[#ddd] pb-[5px] max-[440px]:w-[80%] max-[440px]:ml-[30px]">
+              <img src="/src/Model/image/login/password.png" alt="Password" class="w-[35px] h-[35px] shrink-0" />
               <input 
                 type="password" 
                 v-model="form.password" 
                 placeholder="Password" 
-                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
+                class="w-full border-none outline-none py-[8px] text-base ml-[10px] bg-transparent text-black"
                 required
               />
             </div>
-          </div>
-          
-          <div>
-            <div class="relative flex items-center">
-              <img src="/src/model/image/login/password.png" alt="Confirm Password" class="absolute left-4 w-5 h-5 z-10" />
+            
+            <!-- Confirm Password Input -->
+            <div class="relative mb-[20px] flex items-center border-b border-[#ddd] pb-[5px] max-[440px]:w-[80%] max-[440px]:ml-[30px]">
+              <img src="/src/Model/image/login/password.png" alt="Confirm Password" class="w-[35px] h-[35px] shrink-0" />
               <input 
                 type="password" 
                 v-model="form.confirmPassword" 
                 placeholder="Confirm Password" 
-                class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-[10px] text-white text-base transition-all duration-300 focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)] placeholder-white/60"
+                class="w-full border-none outline-none py-[8px] text-base ml-[10px] bg-transparent text-black"
                 required
               />
             </div>
-          </div>
+            
+            <!-- Register Button -->
+            <button 
+              type="submit" 
+              class="bg-[#e3e3e3] text-[#333] border-none rounded-[25px] py-[12px] px-0 w-[55%] text-base font-[900] cursor-pointer mt-[40px] transition-[background-color] duration-300 mx-auto block hover:bg-[#d4d4d4] disabled:opacity-60 disabled:cursor-not-allowed max-[440px]:text-[1.25rem] max-[440px]:w-[56%] max-[440px]:mb-[20px] max-[440px]:flex max-[440px]:flex-col max-[440px]:justify-center max-[440px]:items-center max-[440px]:py-[10px]"
+              :disabled="loading"
+            >
+              <span v-if="loading">Creating Account...</span>
+              <span v-else>REGISTER</span>
+            </button>
+          </form>
           
-          <div v-if="errorMessage" class="bg-red/20 text-[#ff4444] p-4 rounded-md text-center border border-red/30">
-            {{ errorMessage }}
+          <!-- Register Link -->
+          <div class="text-center mt-[30px] max-[440px]:mt-[20px] max-[440px]:-ml-[5px]">
+            <p class="text-[#777] text-base mb-[5px] max-[440px]:text-[1.5rem]">already have an account?</p>
+            <router-link to="/login" class="text-[#ffb347] text-base font-bold hover:underline max-[440px]:text-[1.5rem]">Log in</router-link>
           </div>
-          
-          <button 
-            type="submit" 
-            class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-lg font-bold cursor-pointer transition-all duration-300 mb-4 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
-            :disabled="loading"
-          >
-            <span v-if="loading">Creating Account...</span>
-            <span v-else>Register</span>
-          </button>
-        </form>
-        
-        <div class="text-center mt-8 text-gray-300">
-          <p>Already have an account? <router-link to="/login" class="text-gold font-bold hover:underline">Login here</router-link></p>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -89,19 +107,6 @@ export default {
     })
     const loading = ref(false)
     const errorMessage = ref('')
-
-    const starsStyle = {
-      backgroundImage: `
-        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-        radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-        radial-gradient(1px 1px at 130px 80px, #fff, transparent),
-        radial-gradient(2px 2px at 160px 30px, #fff, transparent)
-      `,
-      backgroundRepeat: 'repeat',
-      backgroundSize: '200px 100px',
-      animation: 'sparkle 20s linear infinite'
-    }
 
     const handleRegister = async () => {
       // Validate form
@@ -145,9 +150,12 @@ export default {
       form,
       loading,
       errorMessage,
-      handleRegister,
-      starsStyle
+      handleRegister
     }
   }
 }
 </script>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css?family=Irish Grover');
+</style>

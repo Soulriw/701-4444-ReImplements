@@ -1,123 +1,99 @@
 <template>
-  <div class="py-8 min-h-[80vh] pt-[120px] relative">
-    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px;"></div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 20%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     
-    <div class="container mx-auto px-4 relative z-10">
-      <div class="w-full">
-        <h1 class="text-gold text-4xl mb-8 text-center">Contact Us</h1>
-      </div>
-
-      <div class="flex flex-col lg:flex-row gap-8">
-        <div class="lg:w-2/3">
-          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 mb-8">
-            <h3 class="text-gold mb-6 text-xl">Send us a Message</h3>
-            <form @submit.prevent="handleSubmit">
-              <div class="mb-6">
-                <label for="name" class="text-gold font-bold mb-2 block">Name</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  v-model="form.name" 
-                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
-                  required
-                />
-              </div>
-              
-              <div class="mb-6">
-                <label for="email" class="text-gold font-bold mb-2 block">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  v-model="form.email" 
-                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
-                  required
-                />
-              </div>
-              
-              <div class="mb-6">
-                <label for="subject" class="text-gold font-bold mb-2 block">Subject</label>
-                <input 
-                  type="text" 
-                  id="subject" 
-                  v-model="form.subject" 
-                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
-                  required
-                />
-              </div>
-              
-              <div class="mb-6">
-                <label for="message" class="text-gold font-bold mb-2 block">Message</label>
-                <textarea 
-                  id="message" 
-                  v-model="form.message" 
-                  class="w-full px-3 py-3 bg-white/10 border border-white/20 rounded text-white text-base focus:outline-none focus:border-gold focus:shadow-[0_0_0_2px_rgba(254,197,100,0.2)]"
-                  rows="5"
-                  required
-                ></textarea>
-              </div>
-              
-              <div 
-                v-if="message" 
-                class="p-4 rounded-md mb-4 text-center font-bold"
-                :class="{
-                  'bg-green/20 text-green border border-green/30': messageType === 'success',
-                  'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
-                }"
-              >
-                {{ message }}
-              </div>
-              
-              <button 
-                type="submit" 
-                class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-lg font-bold cursor-pointer transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
-                :disabled="loading"
-              >
-                <span v-if="loading">Sending...</span>
-                <span v-else>Send Message</span>
-              </button>
-            </form>
-          </div>
-        </div>
-
-        <div class="lg:w-1/3">
-          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8">
-            <h3 class="text-gold mb-6 text-xl">Get in Touch</h3>
-            
-            <div class="flex items-center mb-6">
-              <img src="/src/model/image/contact/mail.png" alt="Email" class="w-10 h-10 mr-4" />
-              <div>
-                <h4 class="text-gold mb-1 text-lg">Email</h4>
-                <p class="text-gray-300 m-0">info@quadgrimoire.com</p>
-              </div>
-            </div>
-            
-            <div class="flex items-center mb-6">
-              <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="w-10 h-10 mr-4" />
-              <div>
-                <h4 class="text-gold mb-1 text-lg">Facebook</h4>
-                <p class="text-gray-300 m-0">@QuadGrimoire</p>
-              </div>
-            </div>
-            
-            <div class="flex items-center mb-6">
-              <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="w-10 h-10 mr-4" />
-              <div>
-                <h4 class="text-gold mb-1 text-lg">Twitter</h4>
-                <p class="text-gray-300 m-0">@QuadGrimoire</p>
-              </div>
-            </div>
-            
-            <div class="flex items-center mb-6">
-              <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="w-10 h-10 mr-4" />
-              <div>
-                <h4 class="text-gold mb-1 text-lg">Instagram</h4>
-                <p class="text-gray-300 m-0">@QuadGrimoire</p>
-              </div>
-            </div>
-          </div>
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] font-['Arial',sans-serif] max-w-[1200px] mx-auto my-[80px_auto_50px] max-[1024px]:max-w-[90%] max-[1024px]:my-[60px_auto_40px] max-[440px]:my-[40px_auto_30px]">
+    <h1 class="pt-[20px] font-['Irish_Grover'] text-center text-[#FEC564] text-[2.5rem] mb-5 mt-[30px] max-[1024px]:text-[2.2rem] max-md:text-[2rem] max-md:mt-5 max-[440px]:text-[1.8rem] max-[375px]:text-[1.6rem]">Contact Us</h1>
+    
+    <div class="flex bg-white rounded-[30px] overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.1)] w-full max-md:flex-col max-[440px]:rounded-[20px]">
+      <!-- Map Container -->
+      <div class="w-[70%] relative p-5 flex flex-col max-md:w-full max-[440px]:p-[15px]">
+        <div id="map" class="w-full h-[700px] rounded-[8px] bg-[#f0f0f0] max-[1024px]:h-[600px] max-md:h-[400px] max-[375px]:h-[300px]"></div>
+        <div class="mt-[30px] mb-[15px] max-md:mt-5">
+          <p class="text-black font-bold">Address</p>
         </div>
       </div>
+
+      <!-- Contact Form -->
+      <div class="mt-10 w-[30%] pt-5 pr-5 flex flex-col gap-[15px] max-md:w-full max-md:mt-0 max-[1024px]:mt-10 max-[440px]:p-[15px]">
+        <h3 class="font-['Arial',sans-serif] pt-[10px] flex justify-center text-black text-2xl font-bold">Send Email</h3>
+        
+        <form @submit.prevent="handleSubmit" class="flex flex-col gap-[15px]">
+          
+          <div class="relative mb-[15px] text-black">
+            <img src="/src/model/image/contact/mail.png" alt="Email" class="absolute top-1/2 left-[10px] -translate-y-1/2 w-5 h-5 max-[375px]:w-4 max-[375px]:h-4" />
+            <input 
+              type="email" 
+              id="email" 
+              v-model="form.email" 
+              placeholder="Email"
+              class="w-full py-[12px] pl-[40px] pr-[12px] border border-[#ddd] rounded-[5px] text-base max-[440px]:text-[0.9rem] max-[375px]:py-[10px] max-[375px]:pl-[35px] max-[375px]:pr-[10px]"
+              required
+            />
+          </div>
+          
+          <div class="relative mb-[15px] text-black">
+            <img src="/src/model/image/contact/subject.png" alt="Subject" class="absolute top-1/2 left-[10px] -translate-y-1/2 w-5 h-5 max-[375px]:w-4 max-[375px]:h-4" />
+            <input 
+              type="text" 
+              id="subject" 
+              v-model="form.subject" 
+              placeholder="Subject"
+              class="w-full py-[12px] pl-[40px] pr-[12px] border border-[#ddd] rounded-[5px] text-base max-[440px]:text-[0.9rem] max-[375px]:py-[10px] max-[375px]:pl-[35px] max-[375px]:pr-[10px]"
+              required
+            />
+          </div>
+          
+          <div class="relative mb-[15px] h-[120px] text-black">
+            <textarea 
+              id="message" 
+              v-model="form.message" 
+              placeholder="Message"
+              class="w-full h-full py-[12px] px-[12px] border border-[#ddd] rounded-[5px] resize-none text-base max-[440px]:text-[0.9rem]"
+              required
+            ></textarea>
+          </div>
+          
+          <div 
+            v-if="message" 
+            class="p-4 rounded-md mb-4 text-center font-bold text-black"
+            :class="{
+              'bg-green/20 text-green border border-green/30': messageType === 'success',
+              'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+            }"
+          >
+            {{ message }}
+          </div>
+          
+          <div class="flex justify-center items-center w-full mt-[10px]">
+            <button 
+              type="submit" 
+              class="bg-[#333] text-white border-none rounded-[25px] py-3 cursor-pointer text-base transition-[background-color] duration-300 ease-in-out w-[120px] hover:bg-[#555] disabled:opacity-60 disabled:cursor-not-allowed max-[440px]:w-full max-[375px]:py-[10px] max-[375px]:px-[15px] max-[375px]:text-[0.9rem] mx-auto"
+              :disabled="loading"
+            >
+              <span v-if="loading">Sending...</span>
+              <span v-else>Submit</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer with Social Icons -->
+    <footer class="mb-5">
+      <div class="flex justify-center gap-[15px] mt-[15px] max-[440px]:gap-[10px]">
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/facebook.png" alt="Facebook" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
+        </div>
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/twitter.png" alt="Twitter" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
+        </div>
+        <div class="transition-transform duration-300 ease-in-out hover:scale-110">
+          <img src="/src/model/image/contact/Instagram.png" alt="Instagram" class="w-[60px] h-[60px] max-[440px]:w-[50px] max-[440px]:h-[50px] max-[375px]:w-[30px] max-[375px]:h-[30px]" />
+        </div>
+      </div>
+    </footer>
     </div>
   </div>
 </template>

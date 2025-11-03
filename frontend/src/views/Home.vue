@@ -7,10 +7,10 @@
          style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
     
     <!-- Content with padding for navbar -->
-    <div class="pt-[100px] relative z-[500]">
+    <div class="relative z-[500]">
       
       <!-- Best Seller Books Section -->
-      <div class="flex items-start justify-center gap-[200px] pt-[260px] mb-[50px] max-[1024px]:gap-12 max-[1024px]:pt-[230px] max-[768px]:gap-2.5 max-[768px]:pt-[210px] max-[440px]:gap-5 max-[440px]:pt-[190px] max-[375px]:gap-[15px] max-[375px]:pt-[180px]">
+      <div class="flex items-start justify-center gap-[200px] pt-[240px] mb-[50px] max-[1024px]:gap-12 max-[1024px]:pt-[230px] max-[768px]:gap-2.5 max-[768px]:pt-[210px] max-[440px]:gap-5 max-[440px]:pt-[190px] max-[375px]:gap-[15px] max-[375px]:pt-[180px]">
         
         <!-- 2nd Best Seller Book -->
         <div class="relative text-center z-[500] w-[250px] flex flex-col items-center max-[768px]:w-[190px] max-[440px]:w-[110px]">
@@ -86,7 +86,7 @@
       <template v-if="promotionBooks.length > 0">
         <!-- Section Header -->
         <div class="text-center z-[500]">
-          <h1 class="text-[#FEC564] mb-5 max-[768px]:mb-3">Promotion Books</h1>
+          <h1 class="text-[#FEC564] text-4xl pt-10 pb-10 max-[768px]:text-4xl max-[440px]:text-3xl">Promotion Books</h1>
         </div>
 
         <!-- Promotion Books Grid -->
@@ -106,7 +106,7 @@
       <div class="text-center z-[500]">
         <!-- Section Header -->
         <div class="mb-12">
-          <h1 class="text-[#FEC564] text-5xl max-[768px]:text-4xl max-[440px]:text-3xl">Recommend</h1>
+          <h1 class="text-[#FEC564] text-4xl pt-10 pb-10 max-[768px]:text-4xl max-[440px]:text-3xl">Recommend</h1>
         </div>
 
         <!-- First Recommended Book -->

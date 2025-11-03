@@ -1,135 +1,160 @@
 <template>
-  <div class="py-8 min-h-[80vh] pt-[120px]">
-    <div class="container mx-auto px-4">
-      <div class="w-full">
-        <h1 class="text-gold text-4xl mb-8 text-center">Shopping Cart</h1>
-      </div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    
+    <!-- Stars background animation layer -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] min-h-[80vh]">
+    <div class="max-w-[1200px] pt-20 mx-auto px-[20px] lg:max-w-[900px] md:max-w-[700px] max-[440px]:px-[10px] max-[440px]:my-[20px]">
+      <h1 class="text-[#FEC564] text-center text-[48px] mb-[20px] lg:text-[40px] md:text-[36px] max-[440px]:text-[28px] max-[440px]:mb-[10px] max-[375px]:text-[24px]">Shopping Cart</h1>
 
       <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
-        <h2 class="text-gold">Loading cart...</h2>
+        <h2 class="text-[#FEC564]">Loading cart...</h2>
       </div>
 
-      <div v-else-if="cartItems.length === 0" class="flex justify-center items-center min-h-[50vh]">
-        <div class="text-center text-gray-300">
-          <i class="fas fa-shopping-cart fa-3x text-gold mb-4"></i>
-          <h2 class="text-gold mb-4">Your cart is empty</h2>
-          <p class="mb-8">Add some magical books to get started!</p>
-          <router-link to="/allProduct" class="inline-block px-6 py-3 bg-gold text-black rounded-lg font-bold hover:bg-[#ffd700] transition-colors">
-            Browse Books
+      <div v-else-if="cartItems.length === 0" class="text-center py-[50px]">
+        <h2 class="text-[#FEC564] text-[32px] mb-[20px]">Your cart is empty</h2>
+        <p class="text-white text-[18px] mb-[30px]">Add some magical books to get started!</p>
+        <router-link 
+          to="/allProduct" 
+          id="continue-shopping"
+          class="bg-[#432667] text-white border-none py-[10px] px-[20px] rounded-[20px] cursor-pointer text-[18px] font-['Irish Grover'] transition-colors hover:bg-[#693467]"
+        >
+          Browse Books
+        </router-link>
+      </div>
+
+      <div v-else>
+        <!-- Cart Actions -->
+        <div class="flex justify-between items-center mt-[20px] mb-[40px] max-[440px]:mt-[10px] max-[440px]:mb-[20px]">
+          <div class="flex items-center gap-[10px] text-[#FEC564] text-[18px] max-[440px]:text-[16px] max-[375px]:text-[14px]">
+            <input 
+              type="checkbox" 
+              id="select-all"
+              :checked="selectedItems.length === cartItems.length && cartItems.length > 0"
+              @change="toggleSelectAll"
+              class="w-[20px] h-[20px] cursor-pointer"
+            />
+            <label for="select-all" class="cursor-pointer">Select All</label>
+          </div>
+          <router-link 
+            to="/allProduct"
+            id="continue-shopping"
+            class="bg-[#432667] text-white border-none py-[10px] px-[20px] rounded-[20px] cursor-pointer text-[18px] font-['Irish Grover'] transition-colors hover:bg-[#693467] max-[440px]:py-[8px] max-[440px]:px-[15px] max-[440px]:text-[16px] max-[375px]:py-[6px] max-[375px]:px-[12px] max-[375px]:text-[14px]"
+          >
+            Continue Shopping
           </router-link>
         </div>
-      </div>
 
-      <div v-else class="flex flex-col lg:flex-row gap-8">
+        <!-- Divider -->
+        <div class="w-full h-[2px] bg-[#fec564] my-[20px] max-[440px]:my-[10px]"></div>
+
         <!-- Cart Items -->
-        <div class="lg:w-2/3">
-          <div class="space-y-4">
-            <div 
-              v-for="item in cartItems" 
-              :key="item.cartID" 
-              class="flex items-center gap-4 p-6 bg-white/5 border border-white/10 rounded-[10px] max-md:flex-col max-md:text-center"
-            >
-              <div class="flex-shrink-0">
-                <input 
-                  type="checkbox" 
-                  :id="`item-${item.cartID}`"
-                  v-model="selectedItems"
-                  :value="item.cartID"
-                  class="w-5 h-5 accent-gold"
-                />
-                <label :for="`item-${item.cartID}`" class="sr-only"></label>
-              </div>
+        <div class="space-y-0">
+          <div 
+            v-for="item in cartItems" 
+            :key="item.cartID" 
+            class="flex items-center py-[20px] relative max-[440px]:py-[10px]"
+          >
+            <div class="flex-[0_0_50px] flex justify-center max-[440px]:flex-[0_0_30px]">
+              <input 
+                type="checkbox" 
+                :id="`item-${item.cartID}`"
+                v-model="selectedItems"
+                :value="item.cartID"
+                class="w-[20px] h-[20px] cursor-pointer"
+              />
+              <label :for="`item-${item.cartID}`" class="sr-only"></label>
+            </div>
 
-              <div class="flex-shrink-0">
+            <div class="flex-1 flex items-center">
+              <div class="w-[120px] h-[150px] mr-[20px] lg:w-[120px] lg:h-[150px] md:w-[100px] md:h-[120px] max-md:w-[80px] max-md:h-[100px] max-[440px]:w-[60px] max-[440px]:h-[80px] max-[440px]:mr-[10px] max-[375px]:w-[50px] max-[375px]:h-[70px]">
                 <img 
                   :src="`/src/model/image/books/${item.cartBookID}.jpg`" 
                   :alt="item.bookName"
-                  class="w-20 h-30 object-cover rounded max-md:w-[120px] max-md:h-[180px]"
+                  class="w-full h-full object-cover rounded-[8px]"
                   @error="$event.target.src='/src/model/image/books/default.jpg'"
                 />
               </div>
 
-              <div class="flex-1 min-w-0">
-                <h3 class="text-gold mb-2 text-xl font-bold">{{ item.bookName }}</h3>
-                <p class="text-gray-400 text-sm mb-2">{{ item.categoryName }}</p>
-                <p class="text-gray-300 text-sm mb-2 line-clamp-2">{{ item.bookDescription }}</p>
+              <div class="flex-1">
+                <h3 class="text-[#FEC564] text-[24px] mb-[10px] lg:text-[24px] md:text-[24px] max-md:text-[20px] max-[440px]:text-[16px] max-[440px]:mb-[5px] max-[375px]:text-[14px]">{{ item.bookName }}</h3>
                 
-                <div v-if="item.enchantment" class="mb-2">
-                  <span class="text-gray-400 text-xs">Enchantment:</span>
-                  <span class="text-gold font-bold ml-2">{{ item.enchantment }}</span>
+                <div class="flex items-center gap-[10px] mb-[10px] max-[440px]:mb-[5px]">
+                  <span v-if="item.isPromotionBook && item.hasDiscount" class="text-[#999] line-through">{{ item.price }} G</span>
+                  <span :class="item.isPromotionBook && item.hasDiscount ? 'text-[#FEC564] font-bold text-[18px] lg:text-[18px] md:text-[18px] max-md:text-[16px] max-[440px]:text-[14px] max-[375px]:text-[12px]' : 'text-[#FEC564] font-bold text-[18px]'">{{ item.isPromotionBook && item.hasDiscount ? item.proPrice : item.price }} G</span>
                 </div>
 
-                <div class="mb-2">
-                  <span class="text-gray-400 text-xs">Quantity:</span>
-                  <span class="text-white font-bold ml-2">{{ item.quantity }}</span>
+                <div v-if="item.enchantment" class="text-white text-[14px] mb-[10px]">
+                  Enchantment: {{ item.enchantment }}
                 </div>
               </div>
+            </div>
 
-              <div class="text-right flex-shrink-0 max-md:text-center">
-                <div v-if="item.isPromotionBook && item.hasDiscount" class="mb-2">
-                  <span class="text-gray-400 line-through text-sm block">{{ item.price }} G</span>
-                  <span class="text-gold font-bold text-lg">{{ item.proPrice }} G</span>
-                  <div class="bg-[#ff4444] text-white px-2 py-1 rounded-[10px] text-xs font-bold mt-1 inline-block">{{ item.discountPercentage }}% OFF</div>
-                </div>
-                <div v-else class="mb-2">
-                  <span class="text-gold font-bold text-lg">{{ item.price }} G</span>
-                </div>
-                
-                <div class="text-white font-bold">
-                  Total: {{ (item.isPromotionBook ? item.proPrice : item.price) * item.quantity }} G
-                </div>
-              </div>
+            <div class="flex-[0_0_80px] flex justify-center text-[#FEC564] text-[20px] font-bold lg:text-[20px] md:text-[20px] max-md:text-[20px] max-[440px]:text-[16px] max-[440px]:mr-[10px] max-[375px]:text-[14px]">
+              {{ item.quantity }}
+            </div>
 
-              <div class="flex-shrink-0">
-                <button 
-                  @click="removeItem(item.cartID)" 
-                  class="bg-[#ff4444] text-white border-none rounded px-2 py-2 cursor-pointer transition-all duration-300 hover:bg-[#ff6666] hover:scale-110 disabled:opacity-60 disabled:cursor-not-allowed"
-                  :disabled="removing"
-                >
-                  <i class="fas fa-trash"></i>
-                </button>
-              </div>
+            <div class="flex-[0_0_100px] flex justify-center">
+              <button 
+                @click="removeItem(item.cartID)" 
+                class="bg-[#8B4365] text-white border-none py-[8px] px-[16px] rounded-[20px] cursor-pointer font-['Irish Grover'] transition-colors hover:bg-[#B65C56] disabled:opacity-60 disabled:cursor-not-allowed lg:py-[8px] lg:px-[16px] md:py-[7px] md:px-[14px] max-md:py-[6px] max-md:px-[12px] max-md:text-[14px] max-[440px]:py-[5px] max-[440px]:px-[10px] max-[440px]:text-[12px] max-[375px]:py-[4px] max-[375px]:px-[8px] max-[375px]:text-[11px]"
+                :disabled="removing"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           </div>
         </div>
+
+        <!-- Divider -->
+        <div class="w-full h-[2px] bg-[#fec564] my-[20px]"></div>
 
         <!-- Cart Summary -->
-        <div class="lg:w-1/3">
-          <div class="bg-white/5 border border-white/10 rounded-[10px] p-8 sticky top-8">
-            <h3 class="text-gold mb-6 text-center text-xl">Order Summary</h3>
-            
-            <div class="flex justify-between mb-4 text-gray-300">
-              <span>Items ({{ selectedItemsCount }}):</span>
-              <span>{{ selectedTotalPrice }} G</span>
-            </div>
-            
-            <div class="flex justify-between mb-8 text-gold font-bold text-xl border-t border-white/10 pt-4">
+        <div class="bg-white rounded-[20px] p-[30px] flex flex-col items-center mt-[20px] max-md:p-[20px] max-md:rounded-[0] max-md:rounded-t-[20px] max-md:w-full max-[440px]:p-[15px] max-[440px]:mt-[10px]">
+          <div class="w-full text-center mb-[20px]">
+            <h2 class="text-[#2D1A47] text-[32px] flex justify-between gap-[20px] lg:text-[32px] md:text-[32px] max-md:text-[24px] max-[440px]:text-[18px] max-[375px]:text-[16px]">
               <span>Total:</span>
-              <span>{{ selectedTotalPrice }} G</span>
-            </div>
-
-            <button 
-              @click="checkout" 
-              :disabled="selectedItemsCount === 0 || checkingOut"
-              class="w-full px-8 py-4 bg-gold text-black border-none rounded-[10px] text-xl font-bold cursor-pointer transition-all duration-300 mb-4 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              <span v-if="checkingOut">Processing...</span>
-              <span v-else>Checkout</span>
-            </button>
-
-            <div 
-              v-if="checkoutMessage" 
-              class="p-4 rounded-md text-center font-bold"
-              :class="{
-                'bg-green/20 text-green border border-green/30': checkoutMessageType === 'success',
-                'bg-red/20 text-[#ff4444] border border-red/30': checkoutMessageType === 'error'
-              }"
-            >
-              {{ checkoutMessage }}
-            </div>
+              <span id="total-amount" class="font-bold">{{ selectedTotalPrice }} G</span>
+            </h2>
           </div>
+
+          <button 
+            @click="checkout" 
+            id="purchase-btn"
+            :disabled="selectedItemsCount === 0 || checkingOut"
+            class="bg-[#FEC564] text-[#2D1A47] border-none py-[15px] px-[60px] rounded-[30px] cursor-pointer font-['Irish Grover'] text-[24px] font-bold transition-colors hover:bg-[#ffb63a] disabled:opacity-60 disabled:cursor-not-allowed lg:py-[15px] lg:px-[60px] lg:text-[24px] md:py-[12px] md:px-[50px] md:text-[22px] max-md:py-[12px] max-md:px-[40px] max-md:text-[20px] max-[440px]:py-[10px] max-[440px]:px-[30px] max-[440px]:text-[16px] max-[375px]:py-[8px] max-[375px]:px-[25px] max-[375px]:text-[14px]"
+          >
+            <span v-if="checkingOut">Processing...</span>
+            <span v-else>Checkout</span>
+          </button>
         </div>
       </div>
+    </div>
+
+    <!-- Alert Notification Popup -->
+    <teleport to="body">
+      <transition name="alert-slide">
+        <div 
+          v-if="checkoutMessage" 
+          class="fixed top-[20px] left-1/2 -translate-x-1/2 z-[9999] min-w-[300px] max-w-[500px] p-[20px] rounded-[15px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] text-center font-bold text-[18px] backdrop-blur-sm max-[440px]:min-w-[280px] max-[440px]:p-[15px] max-[440px]:text-[16px] max-[440px]:top-[10px]"
+          :class="{
+            'bg-green-500/90 text-white border-2 border-green-600': checkoutMessageType === 'success',
+            'bg-red-500/90 text-white border-2 border-red-600': checkoutMessageType === 'error'
+          }"
+        >
+          <div class="flex items-center justify-center gap-[10px]">
+            <i 
+              :class="checkoutMessageType === 'success' ? 'fas fa-check-circle text-[24px]' : 'fas fa-exclamation-circle text-[24px]'"
+            ></i>
+            <span>{{ checkoutMessage }}</span>
+          </div>
+        </div>
+      </transition>
+    </teleport>
     </div>
   </div>
 </template>
@@ -215,6 +240,14 @@ export default {
       }
     }
 
+    const toggleSelectAll = (event) => {
+      if (event.target.checked) {
+        selectedItems.value = cartItems.value.map(item => item.cartID)
+      } else {
+        selectedItems.value = []
+      }
+    }
+
     const checkout = async () => {
       if (selectedItems.value.length === 0) return
       
@@ -260,8 +293,41 @@ export default {
       selectedItemsCount,
       selectedTotalPrice,
       removeItem,
+      toggleSelectAll,
       checkout
     }
   }
 }
 </script>
+
+<style scoped>
+.alert-slide-enter-active {
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-slide-leave-active {
+  animation: slideUp 0.3s ease-in;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+</style>

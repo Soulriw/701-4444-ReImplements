@@ -1,34 +1,50 @@
 <template>
-  <div class="py-8 min-h-[80vh] pt-[120px] relative">
-    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px;"></div>
+  <!-- Home page with gradient background -->
+  <div class="min-h-screen relative" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
     
-    <div class="container mx-auto px-4 relative z-10">
-      <div class="w-full">
-        <h1 class="text-gold text-4xl mb-8 text-center">{{ categoryName }}</h1>
+    <!-- Stars background animation layer -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
+    
+    <!-- Content with padding for navbar -->
+    <div class="relative z-[500] py-8 min-h-[80vh] pt-[20px]">
+    
+    <!-- Container - matching all-products-container from searchPage.css: padding 16px, max-width 1400px, margin auto -->
+    <div class="mx-auto relative z-[500] p-4 max-w-[1400px]">
+      <!-- Page Header - matching rec class styling from homePage.css: z-index 500, margin 20px -->
+      <div class="w-full text-center z-[500]">
+        <div class="mt-[20px] mb-[20px]">
+          <h1 class="text-4xl text-[#FEC564] m-[20px]">{{ categoryName }}</h1>
+        </div>
       </div>
 
+      <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center min-h-[50vh]">
-        <h2 class="text-gold">Loading books...</h2>
+        <h2 class="text-[#FEC564]">Loading books...</h2>
       </div>
 
+      <!-- Empty State -->
       <div v-else-if="categoryBooks.length === 0" class="flex justify-center items-center min-h-[50vh]">
-        <div class="text-center text-gray-300">
-          <i class="fas fa-book fa-3x text-gold mb-4"></i>
-          <h2 class="text-gold mb-4">No books found</h2>
-          <p class="text-gray-400">No books available in this category</p>
+        <div class="text-center text-white">
+          <i class="fas fa-book fa-3x mb-4 text-[#FEC564]"></i>
+          <h2 class="mb-4 text-[#FEC564]">No books found</h2>
+          <p class="text-white">No books available in this category</p>
         </div>
       </div>
 
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
-        <div 
-          v-for="book in categoryBooks" 
-          :key="book.bookID" 
-          class="w-full"
-        >
-          <BookItem :book="book" />
+      <!-- Books Grid Container - matching all-products-container styling from searchPage.css -->
+      <div v-else>
+        <div class="pt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-4 justify-center">
+          <div 
+            v-for="book in categoryBooks" 
+            :key="book.bookID" 
+            class="w-full"
+          >
+            <BookItem :book="book" />
+          </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </template>
@@ -95,3 +111,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+/* Background is now handled in template */
+</style>

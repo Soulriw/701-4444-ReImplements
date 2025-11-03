@@ -1,7 +1,8 @@
 <template>
-  <div class="relative min-h-screen pt-[120px] pb-8 bg-dark">
-    <div class="fixed inset-0 pointer-events-none z-0 bg-repeat opacity-100" 
-         style="background-image: radial-gradient(2px 2px at 20px 30px, #fff, transparent), radial-gradient(2px 2px at 40px 70px, #fff, transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent); background-repeat: repeat; background-size: 200px 100px; animation: sparkle 20s linear infinite;"></div>
+  <div class="relative min-h-screen pt-10 pb-8" style="background: linear-gradient(180deg, #2D1A47 0%, #432667 40%, #693467 65%, #8B4365 80%, #B65C56 90%, #FEC564 100%);">
+    <!-- Stars background animation layer -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] bg-repeat opacity-100" 
+         style="background-image: radial-gradient(2px 2px at 20px 30px, #FEC564, transparent), radial-gradient(2px 2px at 40px 70px, #FEC564, transparent), radial-gradient(1px 1px at 90px 40px, #FEC564, transparent), radial-gradient(1px 1px at 130px 80px, #FEC564, transparent), radial-gradient(2px 2px at 160px 30px, #FEC564, transparent); background-size: 200px 100px;"></div>
     
     <div v-if="loading" class="flex justify-center items-center min-h-[80vh] relative z-10">
       <h2 class="text-gold">Loading book details...</h2>
@@ -10,88 +11,121 @@
     <div v-else-if="!book" class="flex justify-center items-center min-h-[80vh] relative z-10">
       <div class="text-center text-gray-300">
         <i class="fas fa-book fa-3x text-gold mb-4"></i>
-        <h2 class="text-gold mb-4">Book not found</h2>
-        <p class="text-gray-400 mb-8">Sorry, this book is not available</p>
-        <router-link to="/allProduct" class="inline-block px-6 py-3 bg-gold text-black rounded font-bold transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5">
-          <i class="fas fa-arrow-left"></i> Back to All Products
-        </router-link>
       </div>
     </div>
 
-    <div v-else class="relative z-10 max-w-[1200px] mx-auto bg-dark px-4">
-      <div class="flex flex-col md:flex-row gap-8">
-        <!-- Book Image -->
-        <div class="w-full md:w-2/5 lg:w-1/3">
-          <div class="relative bg-white/5 border border-white/10 rounded-[15px] p-8 mb-8 text-center z-10">
-            <div v-if="hasDiscount(book)" class="absolute top-5 right-5 bg-gold text-black px-4 py-2 rounded-[20px] font-bold z-10">
-              {{ getDiscountPercentage(book) }}% OFF
-            </div>
+    <div v-else class="relative z-10">
+      <!-- Product Container -->
+      <div class="max-w-[900px] mx-auto max-[1024px]:max-w-[90%] max-md:my-20 max-md:p-[15px] max-[440px]:my-5 max-[440px]:p-[10px]">
+        <!-- Product Detail Section -->
+        <div class="flex gap-10 mb-[30px] max-md:flex-col max-md:items-center max-md:gap-[30px] max-[440px]:gap-[15px] max-[440px]:mb-[15px]">
+          <!-- Product Image -->
+          <div class="flex-1 w-full h-auto -ml-[50px] bg-transparent max-md:ml-0 max-md:mt-[100px] max-[440px]:max-w-[75%] max-[440px]:mt-0">
             <img 
               :src="`/src/model/image/books/${book.bookID}.jpg`" 
               :alt="book.bookName"
-              class="w-full max-w-[400px] h-auto rounded-[10px] shadow-[0_10px_30px_rgba(0,0,0,0.3)] mx-auto"
+              class="w-full h-auto block border-[4px] border-[#FFD700] max-[440px]:border-2"
               @error="$event.target.src='/src/model/image/books/default.jpg'"
             />
           </div>
+
+          <!-- Product Info -->
+          <div class="flex-1 flex flex-col justify-center gap-[10px] text-white max-md:w-full max-md:items-center">
+            <!-- Product Title -->
+            <h1 class="text-[50px] -mr-[200px] text-[#FEC564] max-[1024px]:text-[40px] max-[1024px]:-mr-[50px] max-md:text-[35px] max-md:mr-0 max-md:text-center max-[440px]:text-[22px] max-[440px]:mb-[5px]">
+              {{ book.bookName }}
+            </h1>
+
+            <!-- Product Info Column (Price/Quantity and Features) -->
+            <div class="flex gap-10 mb-5 max-md:flex-row max-md:justify-between max-md:items-center max-md:gap-[70px] max-md:mb-[15px] max-[440px]:gap-[50px] max-[440px]:mb-[5px]">
+              <!-- Left Column (Price and Quantity) -->
+              <div class="flex flex-col max-[440px]:flex-col">
+                <!-- Product Price -->
+                <div class="mb-[10px] max-md:text-center max-[440px]:mb-0">
+                  <div v-if="hasDiscount(book)" class="text-[25px] text-[#999] relative no-underline flex items-center justify-center mt-[25px] max-[440px]:text-[16px] max-[440px]:mt-0">
+                    <span class="line-through">{{ book.price }} G</span>
+                    <span class="bg-[#ff0000] text-white text-base py-[1px] px-[10px] rounded-[20px] ml-[10px] inline-block max-[440px]:text-xs max-[440px]:py-[1px] max-[440px]:px-2">{{ getDiscountPercentage(book) }}% OFF</span>
+                  </div>
+                  <div class="text-[30px] mb-[10px] text-[#FEC564] max-md:text-center max-[440px]:text-[22px] max-[440px]:-ml-5">
+                    <span class="text-[2.5rem] text-[#FEC564] max-[440px]:text-[22px]">{{ getDisplayPrice(book) }} G</span>
+                  </div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="text-black flex items-center justify-center mb-5 w-[150px] ml-12 max-md:ml-[35px] max-[440px]:m-0 max-[440px]:w-[90px]">
+                  <button 
+                    @click="decreaseQuantity" 
+                    :disabled="quantity === 1"
+                    class="w-10 h-10 bg-white border-none rounded-[2px] font-bold text-black text-[30px] cursor-pointer flex items-center justify-center max-[440px]:w-[25px] max-[440px]:h-[25px] max-[440px]:text-[18px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    -
+                  </button>
+                  <input 
+                    type="number" 
+                    id="quantity"
+                    v-model.number="quantity" 
+                    min="1"
+                    max="99"
+                    class="w-[50px] h-10 border-none border-l border-r border-[#eee] bg-white font-bold text-center text-[32px] max-[440px]:w-[30px] max-[440px]:h-[25px] max-[440px]:text-[18px]"
+                  />
+                  <button 
+                    @click="increaseQuantity" 
+                    :disabled="quantity === 99"
+                    class="w-10 h-10 bg-white border-none rounded-[2px] font-bold text-black text-[30px] cursor-pointer flex items-center justify-center max-[440px]:w-[25px] max-[440px]:h-[25px] max-[440px]:text-[18px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <!-- Right Column (Product Features) -->
+              <div class="flex flex-col gap-[30px] mb-5 -mr-[100px] mt-5 max-[1024px]:-mr-[50px] max-md:mr-0 max-[440px]:m-0 max-[440px]:gap-[10px]">
+                <div v-for="(feature, index) in features" :key="index" class="flex items-start gap-5 text-[23px] max-[440px]:text-base max-[440px]:gap-2">
+                  <input 
+                    type="checkbox" 
+                    :id="`feature-${index}`"
+                    :checked="selectedFeatures.includes(feature.value)"
+                    @change="handleFeatureChange(feature.value, $event)"
+                    class="w-[35px] h-[35px] appearance-none bg-white border-2 border-black relative cursor-pointer rounded-[5px] checked:bg-white checked:border-black max-[440px]:w-[18px] max-[440px]:h-[18px]"
+                  />
+                  <label :for="`feature-${index}`" class="cursor-pointer text-white">{{ feature.label }}</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message -->
+            <div 
+              v-if="message" 
+              class="p-4 rounded mb-4 text-center font-bold"
+              :class="{
+                'bg-green/20 text-green border border-green/30': messageType === 'success',
+                'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
+              }"
+            >
+              {{ message }}
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button 
+              @click="addToCart" 
+              class="bg-[#FEC564] text-black border-none text-[32px] font-bold font-['Irish_Grover'] cursor-pointer rounded-[20px] text-center justify-center h-[55px] w-full max-w-[350px] ml-20 transition-colors duration-300 hover:bg-[#fa9e00] disabled:bg-[#cccccc] disabled:cursor-not-allowed disabled:text-[#666666] max-[1024px]:ml-10 max-md:ml-0 max-[440px]:text-[18px] max-[440px]:h-10 max-[440px]:max-w-[50%] max-[440px]:mt-[10px]"
+              :disabled="addingToCart"
+            >
+              <span v-if="addingToCart">Adding to Cart...</span>
+              <span v-else>Add to Cart</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Book Details -->
-        <div class="w-full md:w-3/5 lg:w-2/3">
-          <div class="px-4 z-10 relative">
-            <h1 class="text-gold text-4xl mb-2 font-bold max-md:text-3xl">{{ book.bookName }}</h1>
-            <p class="text-gray-300 text-xl mb-8">{{ book.categoryName }}</p>
-            
-            <!-- Price Section -->
-            <div class="flex items-center gap-4 mb-8 py-4 border-t border-b border-white/10">
-              <span v-if="hasDiscount(book)" class="text-gray-400 line-through text-2xl">{{ book.price }} G</span>
-              <span class="text-gold text-4xl font-bold max-md:text-3xl">{{ getDisplayPrice(book) }} G</span>
-              <span v-if="hasDiscount(book)" class="bg-gold/20 text-gold px-4 py-2 rounded-[20px] text-sm">Save {{ getDiscountPercentage(book) }}%</span>
-            </div>
+        <!-- Divider -->
+        <div class="max-w-[2000px] h-[3px] bg-[#FEC564] mt-10 relative -left-[15%] w-[130%] max-[1024px]:-left-[10%] max-[1024px]:w-[120%] max-md:left-0 max-md:w-full max-md:mt-5 max-md:mb-5 max-[440px]:left-0 max-[440px]:w-full max-[440px]:mt-5 max-[440px]:mb-5"></div>
 
-            <!-- Description -->
-            <div class="mb-8">
-              <h3 class="text-gold mb-4 text-2xl">Description</h3>
-              <p class="text-gray-300 leading-relaxed text-lg">{{ book.bookDescription || 'No description available for this magical tome.' }}</p>
-            </div>
-
-            <!-- Add to Cart -->
-            <div class="mt-8">
-              <div class="flex items-center gap-4 mb-6">
-                <label for="quantity" class="text-gold font-bold text-lg">Quantity:</label>
-                <button @click="decreaseQuantity" :disabled="quantity === 1" class="w-10 h-10 bg-white/10 border border-white/20 rounded text-white cursor-pointer text-xl transition-all duration-300 hover:bg-white/20 hover:border-gold disabled:opacity-50 disabled:cursor-not-allowed">-</button>
-                <input 
-                  type="number" 
-                  id="quantity"
-                  v-model.number="quantity" 
-                  min="1"
-                  max="99"
-                  class="w-20 px-2 py-2 bg-white/10 border border-white/20 rounded text-white text-xl text-center font-bold focus:outline-none focus:border-gold"
-                />
-                <button @click="increaseQuantity" :disabled="quantity === 99" class="w-10 h-10 bg-white/10 border border-white/20 rounded text-white cursor-pointer text-xl transition-all duration-300 hover:bg-white/20 hover:border-gold disabled:opacity-50 disabled:cursor-not-allowed">+</button>
-              </div>
-              
-              <div 
-                v-if="message" 
-                class="p-4 rounded mb-4 text-center font-bold"
-                :class="{
-                  'bg-green/20 text-green border border-green/30': messageType === 'success',
-                  'bg-red/20 text-[#ff4444] border border-red/30': messageType === 'error'
-                }"
-              >
-                {{ message }}
-              </div>
-
-              <button 
-                @click="addToCart" 
-                class="w-full px-8 py-4 bg-gold text-black border-none rounded flex items-center justify-center gap-2 text-xl font-bold cursor-pointer transition-all duration-300 hover:bg-[#ffd700] hover:-translate-y-0.5 hover:shadow-[0_5px_15px_rgba(254,197,100,0.3)] disabled:opacity-60 disabled:cursor-not-allowed"
-                :disabled="addingToCart"
-              >
-                <i class="fas fa-shopping-cart"></i> 
-                <span v-if="addingToCart">Adding to Cart...</span>
-                <span v-else>Add to Cart</span>
-              </button>
-            </div>
-          </div>
+        <!-- Product Description Container -->
+        <div class="max-w-[1200px] -ml-[100px] -mr-[100px] p-5 text-[#FEC564] max-[1024px]:-ml-[50px] max-[1024px]:-mr-[50px] max-md:ml-0 max-md:mr-0 max-md:text-center max-[440px]:p-[10px] max-[440px]:text-left">
+          <h2 class="text-[2.5rem] -mt-[10px] mb-5 max-md:text-[2rem] max-[440px]:text-[20px] max-[440px]:mb-[10px]">Description</h2>
+          <p class="text-[1.8rem] leading-[1.6] m-0 max-md:text-[1.5rem] max-[440px]:text-base max-[440px]:leading-[1.4] max-[440px]:text-justify">
+            {{ book.bookDescription || 'No description available for this magical tome.' }}
+          </p>
         </div>
       </div>
 
@@ -140,6 +174,7 @@ export default {
     const addingToCart = ref(false)
     const message = ref('')
     const messageType = ref('')
+    const selectedFeatures = ref([])
 
     const promotionBooks = computed(() => booksStore.promotionBooks)
     const books = computed(() => booksStore.books)
@@ -147,6 +182,14 @@ export default {
     const hasDiscount = (book) => {
       return promotionBooks.value.some(promo => promo.bookID === book.bookID)
     }
+    
+    const features = computed(() => {
+      return [
+        { label: 'Fire Resistant', value: 'Fire Resistant' },
+        { label: 'Self Repairing', value: 'Self Repairing' },
+        { label: 'Magical Lock', value: 'Magical Lock' }
+      ]
+    })
 
     const getDiscountPercentage = (book) => {
       const promotionInfo = promotionBooks.value.find(promo => promo.bookID === book.bookID)
@@ -177,6 +220,20 @@ export default {
     const increaseQuantity = () => {
       if (quantity.value < 99) {
         quantity.value++
+      }
+    }
+
+    const handleFeatureChange = (featureValue, event) => {
+      if (event.target.checked) {
+        // Only allow one feature to be selected (radio-like behavior)
+        selectedFeatures.value = [featureValue]
+      } else {
+        // If unchecking, ensure at least one is selected
+        if (selectedFeatures.value.length === 1) {
+          event.target.checked = true
+          return
+        }
+        selectedFeatures.value = selectedFeatures.value.filter(v => v !== featureValue)
       }
     }
 
@@ -230,7 +287,10 @@ export default {
       message.value = ''
 
       try {
-        const enchantment = hasDiscount(book.value) ? 'Promotion' : 'Standard'
+        // Use selected feature or default to Fire Resistant
+        const enchantment = selectedFeatures.value.length > 0 
+          ? selectedFeatures.value[0] 
+          : 'Fire Resistant'
 
         // Use the correct endpoint
         await axios.post('/api/cart/add', {
@@ -253,6 +313,13 @@ export default {
         setTimeout(() => { message.value = '' }, 3000)
       }
     }
+    
+    // Watch book changes to set default feature
+    watch(() => book.value, (newBook) => {
+      if (newBook) {
+        selectedFeatures.value = ['Fire Resistant']
+      }
+    }, { immediate: true })
 
     onMounted(async () => {
       try {
@@ -291,19 +358,44 @@ export default {
       getDisplayPrice,
       decreaseQuantity,
       increaseQuantity,
-      addToCart
+      addToCart,
+      features,
+      selectedFeatures,
+      handleFeatureChange
     }
   }
 }
 </script>
 
 <style scoped>
-@keyframes sparkle {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100px);
+/* Stars animation is now handled in template */
+
+/* Checkbox checked state styling */
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: #000000;
+  font-size: 28px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+  border: 2px solid #000000 !important;
+  background-color: #ffffff !important;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #ffffff !important;
+  border-color: #000000 !important;
+}
+
+@media screen and (max-width: 440px) {
+  input[type="checkbox"]:checked::after {
+    font-size: 14px;
   }
 }
 </style>
