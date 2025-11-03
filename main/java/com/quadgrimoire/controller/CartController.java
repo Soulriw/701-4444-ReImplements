@@ -1,21 +1,13 @@
 package com.quadgrimoire.controller;
 
 import com.quadgrimoire.model.Cart;
-import com.quadgrimoire.model.Book;
-import com.quadgrimoire.model.History;
-import com.quadgrimoire.repository.CartRepository;
-import com.quadgrimoire.repository.BookRepository;
-import com.quadgrimoire.repository.HistoryRepository;
+import com.quadgrimoire.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api")
@@ -23,145 +15,50 @@ import java.util.ArrayList;
 public class CartController {
     
     @Autowired
-    private CartRepository cartRepository;
-    
-    @Autowired
-    private BookRepository bookRepository;
-    
-    @Autowired
-    private HistoryRepository historyRepository;
+    private CartService cartService;
     
     @GetMapping("/cart")
     public ResponseEntity<List<Cart>> getCart() {
-        List<Cart> carts = cartRepository.findAll();
+        List<Cart> carts = cartService.getAllCartItems();
         return ResponseEntity.ok(carts);
     }
     
     @GetMapping("/cart/count")
     public ResponseEntity<Map<String, Object>> getCartCount() {
-        Long totalItems = cartRepository.getTotalCartCount();
-        Map<String, Object> response = new HashMap<>();
-        response.put("count", totalItems != null ? totalItems : 0);
+        Long totalItems = cartService.getCartCount();
+        Map<String, Object> response = Map.of("count", totalItems);
         return ResponseEntity.ok(response);
     }
     
     @PostMapping("/cart/add")
     public ResponseEntity<Map<String, Object>> addToCart(@RequestBody Map<String, Object> cartData) {
-        Integer bookID = (Integer) cartData.get("bookID");
-        Integer quantity = cartData.containsKey("quantity") ? (Integer) cartData.get("quantity") : 1;
-        String enchantment = cartData.containsKey("enchantment") ? (String) cartData.get("enchantment") : "";
-        
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            // Check if book exists in cart
-            List<Cart> existingItems = cartRepository.findByCartBookID(bookID);
-            if (!existingItems.isEmpty()) {
-                response.put("success", true);
-                response.put("message", "Item is already in your cart");
-                response.put("alreadyInCart", true);
-                return ResponseEntity.ok(response);
-            }
-            
-            // Get book details
-            Optional<Book> bookOpt = bookRepository.findById(bookID);
-            if (bookOpt.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            
-            Book book = bookOpt.get();
-            
-            // Create cart entry
-            Cart cart = new Cart();
-            cart.setCartBookID(bookID);
-            cart.setBookName(book.getBookName());
-            cart.setCategoryID(book.getCategoryID());
-            cart.setCategoryName(book.getCategoryName());
-            cart.setBookDescription(book.getBookDescription());
-            cart.setPrice(book.getPrice());
-            cart.setProPrice(book.getProPrice() != null ? book.getProPrice() : book.getPrice());
-            cart.setQuantity(quantity);
-            cart.setEnchantment(enchantment);
-            
-            cartRepository.save(cart);
-            
-            response.put("success", true);
-            response.put("message", "Item added to cart successfully");
-            response.put("cartID", cart.getCartID());
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("error", "Failed to add item to cart");
-            return ResponseEntity.ok(response);
-        }
+        Map<String, Object> response = cartService.addToCart(cartData);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
     }
     
     @DeleteMapping("/cart/remove/{id}")
     public ResponseEntity<Map<String, Object>> removeFromCart(@PathVariable Integer id) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            cartRepository.deleteById(id);
-            response.put("success", true);
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("error", "Failed to remove item from cart");
-            return ResponseEntity.badRequest().body(response);
-        }
+        Map<String, Object> response = cartService.removeFromCart(id);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
     }
     
     @PostMapping("/checkout")
     public ResponseEntity<Map<String, Object>> checkout(@RequestBody Map<String, List<Integer>> checkoutData) {
         List<Integer> cartIds = checkoutData.get("cartIds");
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            if (cartIds == null || cartIds.isEmpty()) {
-                response.put("success", false);
-                response.put("error", "No items selected for checkout");
-                return ResponseEntity.badRequest().body(response);
-            }
-            
-            List<Cart> cartItems = cartRepository.findAllById(cartIds);
-            
-            if (cartItems.isEmpty()) {
-                response.put("success", false);
-                response.put("error", "No cart items found");
-                return ResponseEntity.badRequest().body(response);
-            }
-            
-            // Convert cart items to history entries
-            List<History> historyEntries = new ArrayList<>();
-            for (Cart cartItem : cartItems) {
-                History history = new History();
-                history.setBookID(cartItem.getCartBookID());
-                history.setBookName(cartItem.getBookName());
-                history.setCategoryID(cartItem.getCategoryID());
-                history.setCategoryName(cartItem.getCategoryName());
-                history.setQuantity(cartItem.getQuantity());
-                
-                // Use promotion price if available, otherwise use regular price
-                BigDecimal sellPrice = cartItem.getProPrice() != null ? cartItem.getProPrice() : cartItem.getPrice();
-                history.setSellPrice(sellPrice);
-                history.setEnchantment(cartItem.getEnchantment());
-                
-                historyEntries.add(history);
-            }
-            
-            // Save all history entries
-            historyRepository.saveAll(historyEntries);
-            
-            // Remove from cart
-            cartRepository.deleteAllById(cartIds);
-            
-            response.put("success", true);
-            response.put("message", "Checkout completed successfully");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("error", "Failed to complete checkout: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(response);
-        }
+        Map<String, Object> response = cartService.checkout(cartIds);
+        return response.get("success").equals(true) ? 
+            ResponseEntity.ok(response) : 
+            ResponseEntity.badRequest().body(response);
+    }
+    
+    @GetMapping("/cart/summary")
+    public ResponseEntity<Map<String, Object>> getCartSummary() {
+        Map<String, Object> summary = cartService.getCartSummary();
+        return ResponseEntity.ok(summary);
     }
 }
 

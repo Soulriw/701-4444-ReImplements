@@ -68,7 +68,7 @@ export const useCartStore = defineStore('cart', {
   getters: {
     totalItems: (state) => state.items.reduce((total, item) => total + item.quantity, 0),
     totalPrice: (state) => state.items.reduce((total, item) => {
-      const price = item.isPromotionBook ? item.proPrice : item.price
+      const price = (item.proPrice && item.proPrice !== item.price) ? item.proPrice : item.price
       return total + (price * item.quantity)
     }, 0)
   },

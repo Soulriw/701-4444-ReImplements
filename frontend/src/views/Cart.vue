@@ -93,12 +93,19 @@
                 />
               </div>
 
-              <div class="flex-1">
-                <h3 class="text-[#FEC564] text-[24px] mb-[10px] lg:text-[24px] md:text-[24px] max-md:text-[20px] max-[440px]:text-[16px] max-[440px]:mb-[5px] max-[375px]:text-[14px]">{{ item.bookName }}</h3>
-                
-                <div class="flex items-center gap-[10px] mb-[10px] max-[440px]:mb-[5px]">
-                  <span v-if="item.isPromotionBook && item.hasDiscount" class="text-[#999] line-through">{{ item.price }} G</span>
-                  <span :class="item.isPromotionBook && item.hasDiscount ? 'text-[#FEC564] font-bold text-[18px] lg:text-[18px] md:text-[18px] max-md:text-[16px] max-[440px]:text-[14px] max-[375px]:text-[12px]' : 'text-[#FEC564] font-bold text-[18px]'">{{ item.isPromotionBook && item.hasDiscount ? item.proPrice : item.price }} G</span>
+                <div class="item-price">
+                  <div v-if="item.isPromotionBook && item.hasDiscount" class="price-container">
+                    <span class="original-price">{{ item.price }} G</span>
+                    <span class="promo-price">{{ item.proPrice }} G</span>
+                    <div class="discount-badge">{{ item.discountPercentage }}% OFF</div>
+                  </div>
+                  <div v-else class="price-container">
+                    <span class="regular-price">{{ item.price }} G</span>
+                  </div>
+                  
+                  <div class="total-price">
+                    Total: {{ ((item.proPrice && item.proPrice !== item.price) ? item.proPrice : item.price) * item.quantity }} G
+                  </div>
                 </div>
 
                 <div v-if="item.enchantment" class="text-white text-[14px] mb-[10px]">
@@ -217,7 +224,7 @@ export default {
       return cartItems.value
         .filter(item => selectedItems.value.includes(item.cartID))
         .reduce((total, item) => {
-          const price = item.isPromotionBook ? item.proPrice : item.price
+          const price = (item.proPrice && item.proPrice !== item.price) ? item.proPrice : item.price
           return total + (price * item.quantity)
         }, 0)
     })
@@ -227,23 +234,18 @@ export default {
         await cartStore.fetchCartItems()
         cartItems.value = cartStore.items
         
-        // Process promotion information
+        // Process promotion information - now using backend data
         cartItems.value.forEach(item => {
-          const promotionInfo = cartStore.promotionBooks.find(promo => 
-            String(promo.bookID) === String(item.cartBookID)
-          )
-          
-          if (promotionInfo) {
+          // Check if item has promotion price from backend
+          if (item.proPrice && item.proPrice !== item.price) {
             item.isPromotionBook = true
-            item.proPrice = promotionInfo.proPrice
-            item.hasDiscount = parseFloat(promotionInfo.proPrice) < parseFloat(item.price)
+            item.hasDiscount = parseFloat(item.proPrice) < parseFloat(item.price)
             
             if (item.hasDiscount) {
-              item.discountPercentage = Math.round((1 - (promotionInfo.proPrice / item.price)) * 100)
+              item.discountPercentage = Math.round((1 - (item.proPrice / item.price)) * 100)
             }
           } else {
             item.isPromotionBook = false
-            item.proPrice = item.price
             item.hasDiscount = false
           }
         })
