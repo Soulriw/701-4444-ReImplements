@@ -104,8 +104,8 @@
 
         <!-- Promotion Books Grid -->
         <div class="p-8 max-w-[1600px] mx-auto z-[500] max-[1024px]:p-6 max-[768px]:p-4 max-[440px]:p-3.5 max-[375px]:p-2.5">
-          <div class="grid grid-cols-2 gap-4 max-xl:grid-cols-5 max-lg:grid-cols-2 justify-center">
-            <div v-for="book in firstPageBooks" :key="book.bookID">
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 justify-center">
+            <div v-for="book in firstPageBooks" :key="book.bookID" class="w-full">
               <BookItem :book="book" />
             </div>
           </div>
