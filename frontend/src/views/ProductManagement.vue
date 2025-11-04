@@ -169,7 +169,7 @@
     <!-- Add/Edit Product Modal -->
     <div 
       v-if="showAddModal || editingBook" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
+      class="pt-20 fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[9999] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="closeModal"
     >
       <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
@@ -309,7 +309,7 @@
     <!-- Delete Confirmation Modal -->
     <div 
       v-if="showDeleteModal" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
+      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[9999] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="showDeleteModal = false"
     >
       <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[90vh] overflow-y-auto font-['Irish_Grover'] relative max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
@@ -344,7 +344,7 @@
     <!-- Description Modal -->
     <div 
       v-if="showDescriptionModal && selectedBook" 
-      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[1000] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
+      class="fixed inset-0 bg-[rgba(0,0,0,0.7)] flex justify-center items-center z-[9999] max-md:p-[10px] max-[480px]:p-[8px] max-[375px]:p-[5px]"
       @click="showDescriptionModal = false"
     >
       <div class="bg-[#2D1A47] text-[#FEC564] p-[30px] rounded-[10px] max-w-[500px] w-[90%] max-h-[80vh] overflow-y-auto font-['Irish_Grover'] max-md:p-[20px] max-md:max-w-[450px] max-[480px]:p-[15px] max-[480px]:max-w-[400px] max-[375px]:p-[12px] max-[375px]:max-w-[350px]" @click.stop>
